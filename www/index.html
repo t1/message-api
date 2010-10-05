@@ -7,16 +7,16 @@
 
 <p>We want to evolve it into a standard in some way (in some fits of megalomania I think it maybe even become JMS 2.0 one day ;-). As a first step we make it publicly available so everybody can take a look at what we're up to.</p>
 
-<p>We welcome <i>any</i> feedback - from feature requests to patches, from downloads to success stories. Yes, downloading is participation, too: Without users, we won't be able to get feedback, and having lot's of users and still no comments could mean that the project is just perfect ;-)</p>
+<p>We welcome <i>any</i> feedback - from feature requests to patches, from downloads to success stories. Yes, downloading is feedback, too: Having lot's of users and still no comments could mean that the project is just perfect, couldn't it? ;-)</p>
 
 <h3>Motivation</h3>
-<p>Business code should concentrate on the message that is  to be sent or what it has to do when a message is received. What  technology is used, where the message is going to or coming from, how the  message is transformed, etc. is to be provided by a configurable adapter  layer and injected into the business code.</p>
+<p>Business code should concentrate on the message that is  to be sent or what it has to do when a message is received. What  technology is used, where the message is going to or coming from, how the  message is transformed, etc. has to be provided by a configurable adapter  layer and injected into the business code.</p>
 
-<p>The idea is simple: You annotate an interface as <tt>@MessageApi</tt>. An annotation processor converts all your methods into POJOs, e.g. it transforms a method <tt>public void createCustomer(String firstName, String lastName)</tt> into a POJO with the two parameters as properties (i.e. it has a <tt>getFirstName()</tt> method). These POJOs are immutable, contain <tt>hashCode</tt>, <tt>equals</tt>, and <tt>toString</tt> methods, and are properly annotated for JAXB. You then package the interface, POJOs, and any helper classes into an API jar to be called by clients and implemented by services.</p>
+<p>The idea is simple: You annotate an interface as <tt>@MessageApi</tt>. An annotation processor converts all methods in that interface into POJOs, e.g. it transforms a method <tt>public void createCustomer(String firstName, String lastName)</tt> into a POJO with the two parameters as properties (i.e. it has a <tt>getFirstName()</tt> method). These POJOs are immutable, contain <tt>hashCode</tt>, <tt>equals</tt>, and <tt>toString</tt> methods, and are properly annotated for JAXB. You then package the interface and the generated POJOs into an API jar to be called by clients and implemented by services.</p>
 
-<p>To use the MessageApi, the container injects a proxy for that interface into your business code, and if it calls e.g. the <tt>createCustomer</tt> method, the proxy converts the call into an instance of the POJO, marshalls it using JAXB, creates a text message, queries a registry for the correct queue, and posts the message. The business code can rely on two things: The call is asynchronous (i.e. only technical stuff happens within the method call that hardly fails) and the call is transactional (i.e. if the transaction fails for any reason, no message is sent).</p>
+<p>To use the MessageApi, the container injects a proxy for that interface into your business code, and if it calls e.g. the <tt>createCustomer</tt> method, the proxy converts the call into an instance of the POJO, marshalls it using JAXB, creates a text message containing it, queries a registry for the correct queue, and places the message there. The business code can rely on two things: The call is asynchronous (i.e. only technical stuff happens within the method call... and that should hardly ever fail) and the call is transactional (i.e. if the whole transaction fails for any reason, no message is sent).</p>
 
-<p>On the receiver side, an MDB receives the message, unmarshals the POJO, and calls the corresponding method in your business code that implements the interface.</p>
+<p>On the receiver side, an MDB receives the message, unmarshalls the POJO, and calls the corresponding method in your business code that implements the messaging interface. Also the assumptions the business code can make are mirrored: The message was asynchronous (i.e. the calling business code has probably long finished) and the call is transactional (i.e. if the whole transaction fails for any reason, the message is not consumed).</p>
 
 <h3>Participation</h3>
 <p>You can participate in a variety of ways:</p>
@@ -25,5 +25,6 @@
 <li>You can subscribe to one of this project's mailing lists, by clicking <a href="https://messageapi.dev.java.net/servlets/ProjectMailingListList">here</a></li>
 <li>You can submit a project issue, or query existing issues, by clicking <a href="https://messageapi.dev.java.net/servlets/ProjectIssues">here</a></li>
 <li>You can access the Subversion repository, by clicking <a href="https://messageapi.dev.java.net/source/browse/">here</a> </li>
-<li>If you are not a member, you can supply patches to the mailing lists or to the issues, or you can even request membership to this project <a href="https://messageapi.dev.java.net/servlets/ProjectMembershipRequest">here</a>.</li>
-</ul> 
+<li>You can supply patches to the mailing lists or to the issues, or you can even request membership to this project <a href="https://messageapi.dev.java.net/servlets/ProjectMembershipRequest">here</a>.</li>
+</ul>
+
