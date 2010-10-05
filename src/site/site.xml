@@ -1,0 +1,49 @@
+<project xmlns="mvn-site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="mvn-site http://maven.apache.org/xsd/decoration-1.0.0.xsd ">
+	<body>
+		<!--
+			A bug in the site plugin prevents us from inheriting relative paths.
+			See http://jira.codehaus.org/browse/MSITE-420 - So we have to copy
+			the complete structure instead:
+		-->
+		<menu name="General" inherit="top">
+			<item name="About" href="index.html" />
+			<item name="Release Notes" href="jira-report.html" />
+			<item name="Issues" href="issue-tracking.html" />
+			<item name="Community" href="mail-lists.html" />
+			<item name="Team" href="team-list.html" />
+		</menu>
+		<menu name="Using" inherit="top">
+			<item name="Usage" href="usage.html" />
+			<item name="API" href="apidocs/index.html" />
+		</menu>
+		<menu name="Operating" inherit="top">
+			<item name="Deployment" href="deployment.html" />
+			<item name="Operation" href="operation.html" />
+		</menu>
+		<menu name="Developing" inherit="top">
+			<item name="Design">
+				<item name="Design" href="design.html" />
+				<item name="Conventions" href="conventions.html" />
+			</item>
+			<item name="Source">
+				<item name="Source XRef" href="xref/index.html" />
+				<item name="Source Repo" href="source-repository.html" />
+				<item name="Sonar" href="sonar.html" />
+				<item name="Cobertura" href="cobertura/index.html" />
+				<item name="Hudson" href="integration.html" />
+			</item>
+			<item name="Changes">
+				<item name="Changelog" href="changelog.html" />
+				<item name="Developer Activity" href="dev-activity.html" />
+				<item name="File Activity" href="file-activity.html" />
+			</item>
+			<item name="Maven">
+				<item name="Modules" href="modules.html" />
+				<item name="Dependencies" href="dependencies.html" />
+				<item name="Plugins" href="plugins.html" />
+				<item name="Plugin-Mgmt" href="plugin-management.html" />
+			</item>
+		</menu>
+	</body>
+</project>

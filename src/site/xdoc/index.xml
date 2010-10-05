@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>MessageAPI - About</title>
+	</properties>
+
+	<body>
+		<section name="About Message-API">
+			<p>
+				This project arose from the simple thought that the step the EJB
+				standard took between version 2.1 and 3.0 was missing in the JMS
+				standard: To provide a simple to use, pure Java interface solution
+				to remote calls... asynchronous in this case.
+			</p>
+			<p>
+				See the Javadoc for the
+				<a href="apidocs/com/oneandone/consumer/messageapi/MessageApi.html">MessageApi</a>
+				interface for more details.
+			</p>
+		</section>
+	</body>
+</document>

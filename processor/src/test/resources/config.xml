@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<registry>
+    <sender api="com.oneandone.consumer.message.MessageSenderRegistryTest$TestApi">
+        <config>
+            <factoryName>java:/JmsXA</factoryName>
+            <queueName>queue/ResenderQueue</queueName>
+            <user>root</user>
+            <pass>bkmkdpcwgz</pass>
+        </config>
+    </sender>
+</registry>

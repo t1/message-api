@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.oneandone.consumer.tools</groupId>
+		<artifactId>message-api</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.oneandone.consumer.tools.message-api</groupId>
+	<artifactId>processor</artifactId>
+	<name>Annotation Processor</name>
+	<description>The annotation processors for MessageApis</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<!-- the annotation processors have not yet been built -->
+					<proc>none</proc>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.3.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>joda-time:joda-time</include>
+									<include>com.google.collections:google-collections</include>
+									<include>com.oneandone.consumer.tools.collections:consumer-collection-tools</include>
+									<include>com.oneandone.consumer.tools.message-api:common</include>
+								</includes>
+							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>com.google.collections:google-collections</artifact>
+									<excludes>
+										<exclude>README</exclude>
+									</excludes>
+								</filter>
+								<filter>
+									<artifact>joda-time:joda-time</artifact>
+									<excludes>
+										<exclude>META-INF/LICENSE.txt</exclude>
+										<exclude>META-INF/NOTICE.txt</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.oneandone.consumer.tools.message-api</groupId>
+			<artifactId>common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

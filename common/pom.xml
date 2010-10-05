@@ -1,0 +1,18 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.oneandone.consumer.tools</groupId>
+		<artifactId>message-api</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.oneandone.consumer.tools.message-api</groupId>
+	<artifactId>common</artifactId>
+	<name>Common</name>
+	<description>
+		DO NOT DEPEND DIRECTLY ON THIS MODULE!
+		Please use the annotation processor module for your APIs instead;
+		and/or use the adapter module at runtime.
+		This module contains annotations and classes common to the adapter and processor modules.
+	</description>
+</project>
