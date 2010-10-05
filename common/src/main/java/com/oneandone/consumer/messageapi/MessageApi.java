@@ -18,11 +18,11 @@ import java.lang.annotation.*;
  * By completely hiding the messaging technology, it is possible to switch e.g. from JMS to ESB or
  * any other infrastructure without touching the business code. An even greater advantage is that
  * there is not need to create the same boiler plate code every time a message needs to be sent; a
- * procedure that can be quite error prone with e.g. the quite complex JMS API. Probably the biggest
- * advantage is that all messages conform to a common schema agreed upon by sender and receiver.
- * Whenever the schema is changed in a breaking way, a new version of the API has to be built into
- * the client requiring these changes, while an arbitrary number of versions of the receiver can be
- * deployed at once.
+ * procedure that can be quite error prone with e.g. the quite complex JMS API. This obviously also
+ * makes testing much easier. But probably the biggest advantage is that the compiler enforces that
+ * all messages conform to a common schema agreed upon by sender and receiver. Whenever the schema
+ * is changed in a breaking way, a new version of the API has to be built for the client requiring
+ * these changes, while an arbitrary number of versions of the receiver can be deployed at once.
  * <h3>Sender</h3>
  * The sender can safely assume that nothing "remote" is happening <i>inside</i> the call, i.e.:
  * <ul>
