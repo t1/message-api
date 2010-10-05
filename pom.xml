@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.oneandone.access</groupId>
+		<artifactId>access</artifactId>
+		<version>1.0.6</version>
+	</parent>
+
+	<groupId>com.oneandone.consumer.tools</groupId>
+	<artifactId>message-api</artifactId>
+	<version>1.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>MessageAPI</name>
+	<description>
+		Root POM from the MessagingApi;
+		see the javadoc of the MessageApi annotation for details
+	</description>
+	<inceptionYear>2010</inceptionYear>
+
+	<developers>
+		<developer>
+			<id>rdohna</id>
+			<name>Rüdiger zu Dohna</name>
+			<email>ruediger.dohna@1und1.de</email>
+			<url>http://people.intranet.1and1.com/xml/people/view?21238759</url>
+			<roles>
+				<role>Contact</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>mleim</id>
+			<name>Martin Leim</name>
+			<email>martin.leim@1und1.de</email>
+			<url>http://people.intranet.1and1.com/xml/people/view?21249700</url>
+		</developer>
+	</developers>
+
+	<properties>
+		<java-version>1.6</java-version>
+		<hudson>consumer%20processes/job/messaging-adapter</hudson>
+		<jira>MSGAPI</jira>
+	</properties>
+
+	<scm>
+		<connection>scm:svn:https://svn.schlund.de/svn/consumer_development/java/com/oneandone/consumer/tools/messaging/trunk</connection>
+		<developerConnection>scm:svn:https://svn.schlund.de/svn/consumer_development/java/com/oneandone/consumer/tools/messaging/trunk</developerConnection>
+		<url>https://svn.schlund.de/viewcvs/consumer_development/java/com/oneandone/consumer/tools/messaging/trunk</url>
+	</scm>
+
+	<modules>
+		<module>common</module>
+		<module>processor</module>
+		<module>adapter</module>
+		<module>test</module>
+	</modules>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<code>javadoc:aggregate</code>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jbossall-client</artifactId>
+			<version>4.2.3.GA</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.oneandone.consumer.tools.collections</groupId>
+			<artifactId>consumer-collection-tools</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<!-- test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.twip</groupId>
+			<artifactId>twip</artifactId>
+			<version>3.3alpha4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.8.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockejb</groupId>
+			<artifactId>mockejb</artifactId>
+			<version>0.6-beta2</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>0.9.24</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

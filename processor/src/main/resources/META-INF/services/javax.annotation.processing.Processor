@@ -1,0 +1,2 @@
+com.oneandone.consumer.messageapi.processor.MessageApiAnnotationProcessor
+com.oneandone.consumer.messageapi.processor.XmlRootElementAnnotationProcessor
