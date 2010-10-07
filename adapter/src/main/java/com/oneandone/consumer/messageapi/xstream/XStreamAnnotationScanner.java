@@ -13,6 +13,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * Scans the JAXB annotations of the classes in the given contextPath (colon separated path of
+ * package names). The acquired info is then added to XStream.
+ */
 class XStreamAnnotationScanner implements Runnable {
     private final String contextPath;
     private final ClassLoader classLoader;

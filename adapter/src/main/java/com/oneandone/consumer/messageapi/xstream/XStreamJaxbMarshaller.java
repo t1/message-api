@@ -10,6 +10,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * Marshals objects using XStream.
+ */
 class XStreamJaxbMarshaller extends AbstractMarshallerImpl {
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
