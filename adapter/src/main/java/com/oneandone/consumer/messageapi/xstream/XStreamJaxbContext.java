@@ -9,6 +9,9 @@ import javax.xml.bind.*;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * {@link JAXBContext} for XStream.
+ */
 class XStreamJaxbContext extends JAXBContext {
 
     @SuppressWarnings("unused")
