@@ -1,15 +1,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<h3>Prerequisites</h3>
-<ul>
-<li>A container that supports JMS (only tried with <a href="http://www.jboss.org/jbossas/downloads.html">JBoss</a>, yet)</li>
-</ul>
+<h3>Assumptions</h3>
+<p>We use maven and JBoss, but it should also work with ant and any other JMS container.</p>
+
+<h3>Server Setup</h3>
+<ol>
+<li>download <a href="http://sourceforge.net/projects/jboss/files/JBoss/JBoss-6.0.0.M5/jboss-as-distribution-6.0.0.20100911-M5.zip/download">JBoss 6.0.0.M5</a></li>
+<li>unzip it to a directory you like (we call this <tt>${jboss}</tt>)</li>
+<li>start <tt>${jboss}/bin/run.sh</tt></li>
+<li>wait for <tt>... JBossAS [6.0.0.20100911-M5 "Neo"] Started in 32s:736ms</tt>
+<li>open <a href="http://localhost:8080/admin-console/">admin console</a></li>
+<li>log in (admin/admin is the default)</li>
+<li>click in the navigation tree on <tt>JBossAS Servers/JBoss AS 6 (default)/Applications/Web Application (WAR)s</tt></li>
+<li>click on the button on the right <tt>Add a new resource</tt></li>
+<li>click on the <tt>Browse...</tt> button, select the war you just created, and click <tt>Open</tt></li>
+<li>open <a href="http://localhost:8080/quickstart">your war</a></li>
+</ol>
 
 <h3>Sending a message</h3>
-<ul>
+<ol>
 <li>A</li>
 <li>B</li>
 <li>C</li>
-</ul>
+</ol>
 
 <h3>Receiving a message</h3>
 <p>todo</p>
