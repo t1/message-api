@@ -4,8 +4,8 @@
         <config>
             <factoryName>java:/JmsXA</factoryName>
             <queueName>queue/ResenderQueue</queueName>
-            <user>root</user>
-            <pass>bkmkdpcwgz</pass>
+            <user>admin</user>
+            <pass>admin</pass>
         </config>
     </sender>
 </registry>
