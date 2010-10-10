@@ -13,6 +13,7 @@ import net.sf.twip.TwiP;
 import net.sf.twip.Values;
 
 import org.joda.time.LocalDate;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockejb.jms.MapMessageImpl;
@@ -26,6 +27,7 @@ import com.oneandone.consumer.messageapi.converter.StringToBooleanConverter;
 import com.oneandone.consumer.messageapi.test.defaultjaxb.JodaTimeApi;
 
 @RunWith(TwiP.class)
+@Ignore
 public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private static final String OPERATION_FIELD_NAME = "event";
@@ -79,7 +81,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     private BoxedPrimitivesTestApi boxedPrimitivesServiceMock;
 
     @Test
-    public void shouldCallServiceWhenSendingAsMapMessage() throws JMSException {
+    public void shouldCallServiceWhenSendingAsMapMessage() {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).build();
         MappedApi service = service(mapping);
@@ -93,7 +95,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void sendShouldFailWithUnmappedName() throws JMSException {
+    public void sendShouldFailWithUnmappedName() {
         // Given
         Mapping mapping = partialMapping();
         MappedApi service = service(mapping);
@@ -121,7 +123,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void receiveShouldFailWithUnmappedName() throws JMSException {
+    public void receiveShouldFailWithUnmappedName() {
         // Given
         Mapping sendMapping = new MappingBuilder(OPERATION_FIELD_NAME).mapOperation("mappedCall",
                 "OP").build();
@@ -278,7 +280,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldCallServiceIfSendingOptionalParameter() throws JMSException {
+    public void shouldCallServiceIfSendingOptionalParameter() {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).build();
         MappedApi service = service(mapping);
@@ -292,7 +294,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldCallServiceWithEmptyValueIfNotSendingOptionalParameter() throws JMSException {
+    public void shouldCallServiceWithEmptyValueIfNotSendingOptionalParameter() {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).build();
         MappedApi service = service(mapping);
@@ -306,8 +308,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldCallServiceWithDefaultValueIfNotSendingOptionalParameter()
-            throws JMSException {
+    public void shouldCallServiceWithDefaultValueIfNotSendingOptionalParameter() {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).mapField("string",
                 FieldMapping.mapWithDefault("string", "default value")).build();
@@ -322,8 +323,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldCallServiceWithDefaultValueIfNotSendingMandatoryParameter()
-            throws JMSException {
+    public void shouldCallServiceWithDefaultValueIfNotSendingMandatoryParameter() {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).mapField("s1",
                 FieldMapping.mapWithDefault("s1", "default value")).build();
@@ -414,7 +414,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         return JmsMapSenderFactory.create(MappedApi.class, CONFIG, mapping).get();
     }
 
-    private void receive(Message message, Mapping mapping) throws JMSException {
+    private void receive(Message message, Mapping mapping) {
         MapMessageDecoder.create(MappedApi.class, serviceMock, mapping).onMessage(message);
     }
 

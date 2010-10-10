@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.oneandone.consumer.messageapi.MessageApi;
 import com.oneandone.consumer.messageapi.adapter.PojoInvoker;
-import com.oneandone.consumer.tools.collect.iterables.IterableEnumeration;
 
 /**
  * Takes a {@link MapMessage}, deserializes it and calls the corresponding method in an
@@ -52,11 +51,12 @@ public class MapMessageDecoder<T> implements MessageListener {
     }
 
     private Map<String, String> convert(MapMessage message) {
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         try {
             @SuppressWarnings("unchecked")
             Enumeration<String> mapNames = message.getMapNames();
-            ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-            for (String name : IterableEnumeration.make(mapNames)) {
+            while (mapNames.hasMoreElements()) {
+                String name = mapNames.nextElement();
                 String value = message.getString(name);
                 if (value == null)
                     throw new RuntimeException("no value for field [" + name + "]");

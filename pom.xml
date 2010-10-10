@@ -13,6 +13,7 @@
 		see the javadoc of the MessageApi annotation for details
 	</description>
 	<inceptionYear>2010</inceptionYear>
+	<url>http://messageapi.dev.java.net</url>
 
 	<developers>
 		<developer>
@@ -44,7 +45,7 @@
 	</properties>
 
 	<build>
-		<defaultGoal>package</defaultGoal>
+		<defaultGoal>verify</defaultGoal>
 		<!-- IMPORTANT: I specify as many plugin versions as possible. -->
 		<!-- This is to: -->
 		<!-- a) get the correct version without mvn -U -->
@@ -257,6 +258,7 @@
 		<module>processor</module>
 		<module>adapter</module>
 		<module>test</module>
+		<module>quickstart</module>
 	</modules>
 
 	<dependencies>
@@ -266,11 +268,10 @@
 			<version>1.6.2</version>
 		</dependency>
 		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jbossall-client</artifactId>
-			<version>4.2.3.GA</version>
-			<scope>compile</scope>
-			<optional>true</optional>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.collections</groupId>
