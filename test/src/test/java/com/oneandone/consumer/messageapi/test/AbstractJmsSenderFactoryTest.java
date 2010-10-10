@@ -44,7 +44,7 @@ public abstract class AbstractJmsSenderFactoryTest {
         MockContextFactory.revertSetAsInitial();
     }
 
-    protected Message captureMessage() throws JMSException {
+    protected Message captureMessage() {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
         verify(targetMDB).onMessage(messageCaptor.capture());
         return messageCaptor.getValue();

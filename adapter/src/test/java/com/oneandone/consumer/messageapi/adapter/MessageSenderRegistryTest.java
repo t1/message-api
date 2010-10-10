@@ -1,9 +1,11 @@
 package com.oneandone.consumer.messageapi.adapter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oneandone.consumer.messageapi.adapter.xml.JmsXmlSenderFactory;
 
+@Ignore
 public class MessageSenderRegistryTest {
 
     public interface TestApi1 {

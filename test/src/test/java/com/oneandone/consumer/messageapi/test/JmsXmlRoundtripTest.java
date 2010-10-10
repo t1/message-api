@@ -10,6 +10,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.joda.time.Instant;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,6 +21,7 @@ import com.oneandone.consumer.messageapi.adapter.xml.*;
 import com.oneandone.consumer.messageapi.test.defaultjaxb.JodaTimeApi;
 
 @RunWith(Parameterized.class)
+@Ignore
 public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private final JaxbProvider jaxbProvider;
