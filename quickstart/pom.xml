@@ -9,6 +9,11 @@
 	<name>messageapi quickstart</name>
 	<url>http://messageapi.dev.java.net</url>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>java.net2</id>
@@ -27,6 +32,7 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<encoding>utf8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -36,6 +42,25 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/annotations</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -86,6 +111,18 @@
 			<artifactId>javaee-web-api</artifactId>
 			<version>6.0</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oneandone.consumer.tools.message-api</groupId>
+			<artifactId>processor</artifactId>
+			<version>1.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oneandone.consumer.tools.message-api</groupId>
+			<artifactId>adapter</artifactId>
+			<version>1.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- test -->
