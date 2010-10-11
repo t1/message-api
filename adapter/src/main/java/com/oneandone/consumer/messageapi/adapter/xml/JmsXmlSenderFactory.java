@@ -38,7 +38,7 @@ public class JmsXmlSenderFactory<T> extends AbstractJmsSenderFactory<T, String> 
     @Override
     protected String toPayload(Method method, Object[] args) {
         Writer writer = new StringWriter();
-        T xmlSender = ToXmlEncoderFactory.create(api, jaxbProvider).get(writer);
+        T xmlSender = ToXmlEncoder.create(api, writer, jaxbProvider);
 
         try {
             method.invoke(xmlSender, args);

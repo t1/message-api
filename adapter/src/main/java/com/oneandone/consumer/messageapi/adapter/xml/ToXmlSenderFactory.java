@@ -19,16 +19,18 @@ public class ToXmlSenderFactory<T> implements MessageSenderFactory<T> {
         return new ToXmlSenderFactory<T>(api, jaxbProvider, writer);
     }
 
-    private final ToXmlEncoderFactory<T> encoderFactory;
+    private final Class<T> api;
+    private final JaxbProvider jaxbProvider;
     private final Writer writer;
 
     public ToXmlSenderFactory(Class<T> api, JaxbProvider jaxbProvider, Writer writer) {
-        this.encoderFactory = ToXmlEncoderFactory.create(api, jaxbProvider);
+        this.api = api;
+        this.jaxbProvider = jaxbProvider;
         this.writer = writer;
     }
 
     @Override
     public T get() {
-        return encoderFactory.get(writer);
+        return ToXmlEncoder.create(api, writer, jaxbProvider);
     }
 }

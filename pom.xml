@@ -258,7 +258,6 @@
 		<module>processor</module>
 		<module>adapter</module>
 		<module>test</module>
-		<module>quickstart</module>
 	</modules>
 
 	<dependencies>
