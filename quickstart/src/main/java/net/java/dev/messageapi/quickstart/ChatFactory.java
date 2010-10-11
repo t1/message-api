@@ -10,6 +10,6 @@ public class ChatFactory {
 	@Produces
 	ChatApi create() {
 		Writer writer = new OutputStreamWriter(System.out);
-		return ToXmlSenderFactory.create(ChatApi.class, writer).get();
+		return ToXmlEncoder.create(ChatApi.class, writer);
 	}
 }

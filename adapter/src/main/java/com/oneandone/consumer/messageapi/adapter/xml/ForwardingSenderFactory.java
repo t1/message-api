@@ -23,13 +23,13 @@ public class ForwardingSenderFactory<T> implements MessageSenderFactory<T> {
     }
 
     private final Class<T> api;
-    private final ToXmlEncoderFactory<T> encoderFactory;
     private final XmlStringDecoder<T> decoder;
+    private final JaxbProvider jaxbProvider;
 
     public ForwardingSenderFactory(Class<T> api, T impl, JaxbProvider jaxbProvider) {
         this.api = api;
-        this.encoderFactory = ToXmlEncoderFactory.create(api, jaxbProvider);
         this.decoder = XmlStringDecoder.create(api, impl, jaxbProvider);
+        this.jaxbProvider = jaxbProvider;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ForwardingSenderFactory<T> implements MessageSenderFactory<T> {
     private void forward(Class<T> api, Method method, Object[] args) throws IllegalAccessException,
             InvocationTargetException {
         Writer writer = new StringWriter();
-        T xmlSender = encoderFactory.get(writer);
+        T xmlSender = ToXmlEncoder.create(api, writer, jaxbProvider);
         method.invoke(xmlSender, args);
 
         decoder.decode(writer.toString());

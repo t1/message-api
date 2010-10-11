@@ -14,7 +14,7 @@ public enum JaxbProvider {
 
     /**
      * Don't change the provider... the configuration can remain as it is. This may be the
-     * {@link #DEFAULT} or it may already have been configured externally.
+     * {@link #SUN_JDK default} or it may already have been configured externally.
      */
     UNCHANGED(null),
 
