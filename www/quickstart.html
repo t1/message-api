@@ -2,11 +2,84 @@
 <h3>Assumptions</h3>
 <p>We have tested this with maven and Glassfish 3.0.1, because we use CDI for dependency injection.</p>
 
+<h3>Build the MessageApi</h3>
+<ol>
+<li><tt>svn co https://messageapi.dev.java.net/svn/messageapi/trunk messageapi</tt></li>
+<li><tt>cd messageapi</tt></li>
+<li><tt>mvn clean install</tt></li>
+</ol>
+
+<h3>Create the API</h3>
+<ol>
+<li><tt>mkdir chat-api</tt></li>
+<li>copy <h href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/chat/pom.xml">pom.xml</h> into the chat-api folder</li>
+<li>create the class ChatApi:
+<pre>@MessageApi
+public interface ChatApi {
+	public void send(String message);
+}</pre>
+</li>
+<li>if you use Eclipse, you can:
+<ul>
+<li>edit the project properties</li>
+<li>go to <tt>Java Compiler/Annotation Processing/Factory Path</tt></li>
+<li>enable project specific settings</li>
+<li>add the variable path <tt>M2_REPO/com/oneandone/consumer/tools/message-api/processor/1.1-SNAPSHOT/processor-1.1-SNAPSHOT.jar</tt></li>
+<li>go to <tt>Java Compiler/Annotation Processing</tt></li>
+<li>enable project specific settings</li>
+<li>set the generated source directory to <tt>target/generated-sources/annotations</tt></li>
+</ul>
+Now you can see errors from the annotation processor and the generated source directly in Eclipse
+</li>
+<li><tt>mvn clean install</tt></li>
+<li></li>
+</ol>
+
 <h3>Sending a message</h3>
 <ol>
-<li><tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=my -DartifactId=quickstart -Dpackage=quickstart</tt></li>
-<li>B</li>
-<li>C</li>
+<li>create the maven web project <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat -Dpackage=net.java.dev.messageapi.chat</tt></li>
+<li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api</tt></li>
+<li>replace the file <tt>src/main/webapp/index.jsp</tt> with this file: <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/quickstart/src/main/webapp/index.xhtml"><tt>index.xhtml</tt></a></li>
+<li>create a folder <tt>src/main/webapp/WEB-INF</tt></li>
+<li>create an <i>empty</i> file <tt>beans.xml</tt> in the <tt>WEB-INF</tt> folder</li>
+<li>put the default JSF <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/quickstart/src/main/webapp/WEB-INF/web.xml"><tt>web.xml</tt></a> into the <tt>WEB-INF</tt> folder</li>
+<li>create a control class for the JSF page:
+<pre>
+@Named
+@Stateless
+public class ChatControl {
+
+	private final List<String> messages = new ArrayList<String>();
+
+	@Inject
+	ChatApi chat;
+
+	public String getMessage() {
+		return "enter your message here";
+	}
+
+	public void setMessage(String message) {
+		messages.add(message);
+		chat.send(message);
+	}
+
+	public List<String> getMessages() {
+		return messages;
+	}
+}
+</pre></li>
+<li>create a factory class:
+<pre>
+public class ChatFactory {
+	@Produces
+	ChatApi create() {
+		Writer writer = new OutputStreamWriter(System.out);
+		return ToXmlEncoder.create(ChatApi.class, writer);
+	}
+}
+</pre></li>
+<li><tt>mvn clean verify</tt></li>
+<li>deploy the <tt>chat.war</tt> to Glassfish</li>
 </ol>
 
 <h3>Receiving a message</h3>

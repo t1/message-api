@@ -1,9 +1,11 @@
-package net.java.dev.messageapi.quickstart;
+package net.java.dev.messageapi.chat;
 
 import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.*;
+
+import net.java.dev.messageapi.ChatApi;
 
 @Named
 @Stateless
