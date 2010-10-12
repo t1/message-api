@@ -1,10 +1,12 @@
-package net.java.dev.messageapi.quickstart;
+package net.java.dev.messageapi.chat;
 
 import java.io.*;
 
 import javax.enterprise.inject.Produces;
 
-import com.oneandone.consumer.messageapi.adapter.xml.*;
+import com.oneandone.consumer.messageapi.adapter.xml.ToXmlEncoder;
+
+import net.java.dev.messageapi.ChatApi;
 
 public class ChatFactory {
 	@Produces

@@ -1,4 +1,4 @@
-package net.java.dev.messageapi.quickstart;
+package net.java.dev.messageapi;
 
 import com.oneandone.consumer.messageapi.MessageApi;
 
