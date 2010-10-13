@@ -30,8 +30,8 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
     protected final JmsConfig config;
     private final Logger log;
     private Context jndiContext = null;
-    private QueueConnectionFactory queueConnectionFactory = null;
-    private Queue queue = null;
+    private ConnectionFactory connectionFactory = null;
+    private Destination destination = null;
 
     public AbstractJmsSenderFactory(Class<T> api, JmsConfig config) {
         if (api == null)
@@ -43,17 +43,17 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         this.log = LoggerFactory.getLogger(api);
     }
 
-    protected void close(QueueSender queueSender) throws JMSException {
-        if (queueSender != null) {
+    protected void close(MessageProducer messageProducer) throws JMSException {
+        if (messageProducer != null) {
             try {
-                queueSender.close();
+                messageProducer.close();
             } catch (Exception e) {
                 // do nothing on errors during cleanup
             }
         }
     }
 
-    protected void close(QueueSession session) throws JMSException {
+    protected void close(Session session) throws JMSException {
         if (session != null) {
             try {
                 session.close();
@@ -63,7 +63,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         }
     }
 
-    protected void close(QueueConnection connection) throws JMSException {
+    protected void close(Connection connection) throws JMSException {
         if (connection != null) {
             try {
                 connection.close();
@@ -75,8 +75,8 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
 
     protected void resetLookupCache() {
         jndiContext = null;
-        queueConnectionFactory = null;
-        queue = null;
+        connectionFactory = null;
+        destination = null;
     }
 
     private Context getJNDIContext(JmsConfig config) throws NamingException {
@@ -86,20 +86,19 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         return jndiContext;
     }
 
-    protected QueueConnectionFactory getQueueConnectionFactory(JmsConfig config)
-            throws NamingException {
-        if (queueConnectionFactory == null) {
-            queueConnectionFactory = (QueueConnectionFactory) getJNDIContext(config).lookup(
+    protected ConnectionFactory getConnectionFactory(JmsConfig config) throws NamingException {
+        if (connectionFactory == null) {
+            connectionFactory = (ConnectionFactory) getJNDIContext(config).lookup(
                     config.getFactoryName());
         }
-        return queueConnectionFactory;
+        return connectionFactory;
     }
 
-    protected Queue getQueue(JmsConfig config) throws NamingException {
-        if (queue == null) {
-            queue = (Queue) getJNDIContext(config).lookup(config.getQueueName());
+    protected Destination getDestination(JmsConfig config) throws NamingException {
+        if (destination == null) {
+            destination = (Destination) getJNDIContext(config).lookup(config.getDestinationName());
         }
-        return queue;
+        return destination;
     }
 
     public JmsConfig getConfig() {
@@ -125,21 +124,20 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
 
     protected void sendJms(M payload) {
         try {
-            QueueConnection connection = null;
-            QueueSession session = null;
-            QueueSender queueSender = null;
+            Connection connection = null;
+            Session session = null;
+            MessageProducer messageProducer = null;
             boolean sent = false;
 
             log.debug("sending to {} payload: {}", config.getFactoryName(), payload);
 
             try {
-                QueueConnectionFactory factory = getQueueConnectionFactory(config);
-                connection = factory.createQueueConnection(config.getUser(), config.getPass());
-                session = connection.createQueueSession(config.isTransacted(),
-                        Session.AUTO_ACKNOWLEDGE);
+                ConnectionFactory factory = getConnectionFactory(config);
+                connection = factory.createConnection(config.getUser(), config.getPass());
+                session = connection.createSession(config.isTransacted(), Session.AUTO_ACKNOWLEDGE);
 
-                Queue queue = getQueue(config);
-                queueSender = session.createSender(queue);
+                Destination destination = getDestination(config);
+                messageProducer = session.createProducer(destination);
 
                 javax.jms.Message msg = createJmsMessage(payload, session);
 
@@ -153,7 +151,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
                             additionalProperty.getValue());
                 }
 
-                queueSender.send(msg);
+                messageProducer.send(msg);
 
                 log.info("sent message id {} to {}", msg.getJMSMessageID(), msg.getJMSDestination());
                 sent = true;
@@ -161,7 +159,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
                 if (!sent) {
                     resetLookupCache();
                 }
-                close(queueSender);
+                close(messageProducer);
                 close(session);
                 close(connection);
             }
@@ -172,7 +170,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         }
     }
 
-    protected abstract javax.jms.Message createJmsMessage(M body, QueueSession session)
+    protected abstract javax.jms.Message createJmsMessage(M body, Session session)
             throws JMSException;
 
     private String getApiVersion() {

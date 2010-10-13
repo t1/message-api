@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.jms.JMSException;
-import javax.jms.QueueSession;
+import javax.jms.Session;
 
 import com.oneandone.consumer.messageapi.MessageApi;
 import com.oneandone.consumer.messageapi.adapter.*;
@@ -52,7 +52,7 @@ public class JmsXmlSenderFactory<T> extends AbstractJmsSenderFactory<T, String> 
     }
 
     @Override
-    protected javax.jms.Message createJmsMessage(String payload, QueueSession session)
+    protected javax.jms.Message createJmsMessage(String payload, Session session)
             throws JMSException {
         return session.createTextMessage(payload);
     }

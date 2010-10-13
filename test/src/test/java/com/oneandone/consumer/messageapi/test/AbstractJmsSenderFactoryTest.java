@@ -35,7 +35,7 @@ public abstract class AbstractJmsSenderFactoryTest {
         InitialContext context = new InitialContext();
         MockContainer mockContainer = new MockContainer(context);
 
-        mockContainer.deploy(new MDBDescriptor(CONFIG.getFactoryName(), CONFIG.getQueueName(),
+        mockContainer.deploy(new MDBDescriptor(CONFIG.getFactoryName(), CONFIG.getDestinationName(),
                 targetMDB));
     }
 
