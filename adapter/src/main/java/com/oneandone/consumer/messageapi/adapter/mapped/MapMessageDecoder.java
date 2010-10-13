@@ -1,6 +1,5 @@
 package com.oneandone.consumer.messageapi.adapter.mapped;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -98,7 +97,7 @@ public class MapMessageDecoder<T> implements MessageListener {
         return ctor.newInstance();
     }
 
-    private String getClassName(String methodName) throws IOException {
+    private String getClassName(String methodName) {
         return api.getPackage().getName() + "." //
                 + Character.toUpperCase(methodName.charAt(0)) //
                 + methodName.substring(1);

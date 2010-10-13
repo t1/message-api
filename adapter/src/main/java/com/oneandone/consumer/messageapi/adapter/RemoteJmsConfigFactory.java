@@ -10,7 +10,7 @@ public final class RemoteJmsConfigFactory {
     private static final String FACTORY = "ConnectionFactory";
 
     private RemoteJmsConfigFactory() {
-
+        // just hide the constructor
     }
 
     public static JmsConfig getRemoteJmsConfig(String providerUrl, String queueName,

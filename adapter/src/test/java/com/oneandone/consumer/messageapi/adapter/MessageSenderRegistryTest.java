@@ -25,24 +25,24 @@ public class MessageSenderRegistryTest {
 
     @Test
     public void canAddOnce() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
     }
 
     @Test
     public void canAddTwoDifferentApis() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
-        registry.add(TestApi2.class, JmsXmlSenderFactory.create(TestApi2.class, config2));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
+        registry.add(TestApi2.class, JmsXmlSenderFactory.createFactory(TestApi2.class, config2));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void cantAddSameApiTwice() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config2));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config2));
     }
 
     @Test
     public void canRemoveApi() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
         registry.remove(TestApi1.class);
     }
 
@@ -53,20 +53,20 @@ public class MessageSenderRegistryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void cantRemoveWrongApi() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
         registry.remove(TestApi2.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void cantRemoveTwice() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
         registry.remove(TestApi1.class);
         registry.remove(TestApi1.class);
     }
 
     @Test
     public void canGetApi() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
         registry.get(TestApi1.class);
     }
 
@@ -77,7 +77,7 @@ public class MessageSenderRegistryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void cantGetWrongApi() throws Exception {
-        registry.add(TestApi1.class, JmsXmlSenderFactory.create(TestApi1.class, config1));
+        registry.add(TestApi1.class, JmsXmlSenderFactory.createFactory(TestApi1.class, config1));
         registry.get(TestApi2.class);
     }
 }

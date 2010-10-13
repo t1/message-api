@@ -3,7 +3,6 @@ package com.oneandone.consumer.messageapi.xstream;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 /**
  * This creates a very rudimentary JAXBContext for XStream: Only marshalling and only a very limited
@@ -12,7 +11,7 @@ import javax.xml.bind.JAXBException;
 public class XStreamJaxbContextFactory {
 
     public static JAXBContext createContext(String contextPath, ClassLoader classLoader,
-            Map<String, Object> properties) throws JAXBException {
+            Map<String, Object> properties) {
         return new XStreamJaxbContext(contextPath, classLoader, properties);
     }
 

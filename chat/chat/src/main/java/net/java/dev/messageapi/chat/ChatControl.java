@@ -16,26 +16,23 @@ import com.oneandone.consumer.messageapi.adapter.xml.JmsXmlSenderFactory;
 @Stateless
 public class ChatControl {
 
-    private final List<String> messages = new ArrayList<String>();
+	private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig("java:/JmsXA", "Chat",
+			"admin", "admin");
 
-    private final ChatApi chat = createChatApi();
+	private final List<String> messages = new ArrayList<String>();
 
-    public String getMessage() {
-        return "enter your message here";
-    }
+	private final ChatApi chat = JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
 
-    private ChatApi createChatApi() {
-        JmsConfig config = DefaultJmsConfigFactory.getJmsConfig("java:/JmsXA", "ChatTopic",
-                "admin", "admin");
-        return JmsXmlSenderFactory.create(ChatApi.class, config).get();
-    }
+	public String getMessage() {
+		return "enter your message here";
+	}
 
-    public void setMessage(String message) {
-        messages.add(message);
-        chat.send(message);
-    }
+	public void setMessage(String message) {
+		messages.add(message);
+		chat.send(message);
+	}
 
-    public List<String> getMessages() {
-        return messages;
-    }
+	public List<String> getMessages() {
+		return messages;
+	}
 }
