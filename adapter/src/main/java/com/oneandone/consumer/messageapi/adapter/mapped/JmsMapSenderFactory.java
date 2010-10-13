@@ -30,7 +30,7 @@ public class JmsMapSenderFactory<T> extends AbstractJmsSenderFactory<T, Map<Stri
     }
 
     @Override
-    protected Message createJmsMessage(Map<String, Object> payload, QueueSession session)
+    protected Message createJmsMessage(Map<String, Object> payload, Session session)
             throws JMSException {
         MapMessage message = session.createMapMessage();
         populateBody(message, payload);
