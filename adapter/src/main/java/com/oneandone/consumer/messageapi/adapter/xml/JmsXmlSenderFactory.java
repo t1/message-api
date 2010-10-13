@@ -19,11 +19,19 @@ import com.oneandone.consumer.messageapi.adapter.*;
  */
 public class JmsXmlSenderFactory<T> extends AbstractJmsSenderFactory<T, String> {
 
-    public static <T> JmsXmlSenderFactory<T> create(Class<T> api, JmsConfig config) {
-        return create(api, config, JaxbProvider.UNCHANGED);
+    public static <T> T createProxy(Class<T> api, JmsConfig config) {
+        return createProxy(api, config, JaxbProvider.UNCHANGED);
     }
 
-    public static <T> JmsXmlSenderFactory<T> create(Class<T> api, JmsConfig config,
+    public static <T> T createProxy(Class<T> api, JmsConfig config, JaxbProvider jaxbProvider) {
+        return createFactory(api, config, jaxbProvider).get();
+    }
+
+    public static <T> JmsXmlSenderFactory<T> createFactory(Class<T> api, JmsConfig config) {
+        return createFactory(api, config, JaxbProvider.UNCHANGED);
+    }
+
+    public static <T> JmsXmlSenderFactory<T> createFactory(Class<T> api, JmsConfig config,
             JaxbProvider jaxbProvider) {
         return new JmsXmlSenderFactory<T>(api, config, jaxbProvider);
     }

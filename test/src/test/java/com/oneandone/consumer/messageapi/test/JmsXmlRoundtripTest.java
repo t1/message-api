@@ -54,7 +54,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldCallServiceWhenSendingAsXmlMessage() throws JMSException {
         // TODO split into send and receive using MockEJB
         // Given
-        TestApi service = JmsXmlSenderFactory.create(TestApi.class, CONFIG, jaxbProvider).get();
+        TestApi service = JmsXmlSenderFactory.createFactory(TestApi.class, CONFIG, jaxbProvider).get();
 
         // When
         service.multiCall("a", "b");
@@ -70,7 +70,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldSendUsingImplicitConversion() throws Exception {
         // Given
         Instant now = new Instant();
-        JodaTimeApi service = JmsXmlSenderFactory.create(JodaTimeApi.class, CONFIG, jaxbProvider).get();
+        JodaTimeApi service = JmsXmlSenderFactory.createFactory(JodaTimeApi.class, CONFIG, jaxbProvider).get();
 
         // When
         service.instantCall(now);

@@ -8,8 +8,6 @@ import com.oneandone.consumer.messageapi.reflection.ReflectionAdapter;
 
 /**
  * Creates instances of the class corresponding to a method invocation.
- * 
- * @see ApiToMessagePojoProcessor
  */
 public class MessageCallFactory<T> implements Function<Object[], T> {
 

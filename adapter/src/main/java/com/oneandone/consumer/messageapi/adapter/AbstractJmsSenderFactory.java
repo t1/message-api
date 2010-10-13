@@ -43,7 +43,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         this.log = LoggerFactory.getLogger(api);
     }
 
-    protected void close(MessageProducer messageProducer) throws JMSException {
+    protected void close(MessageProducer messageProducer) {
         if (messageProducer != null) {
             try {
                 messageProducer.close();
@@ -53,7 +53,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         }
     }
 
-    protected void close(Session session) throws JMSException {
+    protected void close(Session session) {
         if (session != null) {
             try {
                 session.close();
@@ -63,7 +63,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
         }
     }
 
-    protected void close(Connection connection) throws JMSException {
+    protected void close(Connection connection) {
         if (connection != null) {
             try {
                 connection.close();

@@ -15,6 +15,7 @@ import com.oneandone.consumer.messageapi.MessageApi;
 public final class DefaultJmsConfigFactory {
 
     private DefaultJmsConfigFactory() {
+        // just hide the constructor
     }
 
     public static JmsConfig getJmsConfig(String factoryName, String queueName, String user,

@@ -18,6 +18,7 @@ public final class JbossJmsConfigFactory {
     private static final Supplier<Properties> DEFAULT_CONTEXT = Suppliers.ofInstance(new Properties());
 
     private JbossJmsConfigFactory() {
+        // just hide the constructor
     }
 
     private final static String FACTORY_TRANSACTED = "java:/JmsXA";
