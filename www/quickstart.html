@@ -6,16 +6,16 @@
 <ol>
 <li><tt>svn co https://messageapi.dev.java.net/svn/messageapi/trunk messageapi</tt></li>
 <li><tt>cd messageapi</tt></li>
-<li><tt>mvn clean install</tt></li>
-<li><small style="color:green">we are working on getting the messageapi into a maven repository</small></li>
+<li><tt>mvn clean install</tt>
+<br/><small style="color:green">we are working on getting the messageapi into a maven repository</small></li>
 </ol>
 
 <h3>Create the API</h3>
 <ol>
 <li><tt>mkdir chat-api</tt></li>
-<li>copy <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/chat/chat-api/pom.xml">pom.xml</a> into the chat-api folder</li>
-<li><small style="color:green">we are working on publishing a maven artifact for this</small></li>
-<li>create the class ChatApi:
+<li>copy <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/chat/chat-api/pom.xml">pom.xml</a> into the chat-api folder
+<br/><small style="color:green">we are working on publishing a maven artifact for this</small></li>
+<li>create the API:
 <pre>@MessageApi
 public interface ChatApi {
 	public void send(String message);
@@ -73,7 +73,7 @@ public class ChatControl {
 }
 
 </pre></li>
-<li>create a factory class:
+<li>create a procuder:
 <pre>
 public class ChatFactory {
     private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig("java:/JmsXA", "Chat", "admin", "admin");
@@ -83,8 +83,8 @@ public class ChatFactory {
         return JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
     }
 }
-
-</pre></li>
+</pre>
+<small style="color:green">we are working on either a generic producer or generating this one</small></li>
 <li>create the MDB:
 <pre>
 @MessageDriven(activationConfig = { //
