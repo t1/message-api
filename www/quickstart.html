@@ -1,18 +1,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <h3>Assumptions</h3>
-<p>We have tested this with maven and Glassfish 3.0.1, because we use CDI for dependency injection.</p>
+<p>We have tested this with maven and JBoss 6.0M5, because we use CDI for dependency injection.</p>
 
 <h3>Build the MessageApi</h3>
 <ol>
 <li><tt>svn co https://messageapi.dev.java.net/svn/messageapi/trunk messageapi</tt></li>
 <li><tt>cd messageapi</tt></li>
 <li><tt>mvn clean install</tt></li>
+<li><small style="color:green">we are working on getting the messageapi into a maven repository</small></li>
 </ol>
 
 <h3>Create the API</h3>
 <ol>
 <li><tt>mkdir chat-api</tt></li>
 <li>copy <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/chat/chat-api/pom.xml">pom.xml</a> into the chat-api folder</li>
+<li><small style="color:green">we are working on publishing a maven artifact for this</small></li>
 <li>create the class ChatApi:
 <pre>@MessageApi
 public interface ChatApi {
@@ -29,12 +31,12 @@ public interface ChatApi {
 <li>enable project specific settings</li>
 <li>set the generated source directory to <tt>target/generated-sources/annotations</tt></li>
 </ul>
-Now you can see errors from the annotation processor and the generated source directly in Eclipse
+Now the sources are generated and errors displayed directly in Eclipse
 </li>
 <li><tt>mvn clean install</tt></li>
 </ol>
 
-<h3>Sending a message</h3>
+<h3>Create the Application</h3>
 <ol>
 <li>create the maven web project <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat -Dpackage=net.java.dev.messageapi.chat</tt></li>
 <li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api</tt></li>
@@ -48,38 +50,97 @@ Now you can see errors from the annotation processor and the generated source di
 @Stateless
 public class ChatControl {
 
-	private final List<String> messages = new ArrayList<String>();
+    private static final List<String> messages = new ArrayList<String>();
 
-	@Inject
-	ChatApi chat;
+    @Inject
+    private ChatApi chat;
 
-	public String getMessage() {
-		return "enter your message here";
-	}
+    public String getMessage() {
+        return "enter your message here";
+    }
 
-	public void setMessage(String message) {
-		messages.add(message);
-		chat.send(message);
-	}
+    public void setMessage(String message) {
+        chat.send(message);
+    }
 
-	public List<String> getMessages() {
-		return messages;
-	}
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public void receiveMessage(@Observes String message) {
+        messages.add(message);
+    }
 }
+
 </pre></li>
 <li>create a factory class:
 <pre>
 public class ChatFactory {
-	@Produces
-	ChatApi create() {
-		Writer writer = new OutputStreamWriter(System.out);
-		return ToXmlEncoder.create(ChatApi.class, writer);
-	}
+    private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig("java:/JmsXA", "Chat", "admin", "admin");
+
+    @Produces
+    ChatApi create() {
+        return JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
+    }
 }
+
 </pre></li>
-<li><tt>mvn clean verify</tt></li>
-<li>deploy the <tt>chat.war</tt> to Glassfish</li>
+<li>create the MDB:
+<pre>
+@MessageDriven(activationConfig = { //
+@ActivationConfigProperty(propertyName = "destination", propertyValue = "Chat") //
+})
+public class ChatListener implements MessageListener {
+
+    private final XmlStringDecoder<ChatApi> decoder = //
+    XmlStringDecoder.create(ChatApi.class, new ChatApi() {
+        @Override
+        public void send(String message) {
+            event.fire(message);
+        }
+    });
+
+    @Inject
+    Event<String> event;
+
+    @Override
+    public void onMessage(Message message) {
+        String xml = getText(message);
+        decoder.decode(xml);
+    }
+
+    private String getText(Message message) {
+        try {
+            return ((TextMessage) message).getText();
+        } catch (JMSException e) {
+            throw new RuntimeException("can't get text", e);
+        }
+    }
+}
+</pre>
+<li>build the war: <tt>mvn clean verify</tt></li>
 </ol>
 
-<h3>Receiving a message</h3>
-<p>todo</p>
+<h3>Deploy (JBoss)</h3>
+<ol>
+<li>open the <a href="http://localhost:8080/admin-console">admin console</a></li>
+<li>create the <tt>Chat</tt> topic<ol>
+    <li>go to <tt>JMS Topics</tt></li>
+    <li>add a new resource</li>
+    <li>select the template <tt>default (JMS Topic)</tt></li>
+    <li>set the <tt>Name</tt> and <tt>JNDI Name</tt> to <tt>Chat</tt></li>
+    <li>hit return, so you get to add a new subscriber</li>
+    <li>set the name to <tt>guest</tt> and allow everything</li>
+    <li>hit return then save</li>
+</ol></li>
+<li>deploy the app<ol>
+    <li>go to <tt>Web Application (WAR)s</tt></li>
+    <li>add a new resource</li>
+    <li>browse for your <tt>chat.war</tt></li>
+    <li>hit <tt>continue</tt></li>
+    <li>wait until the deploy is finished</li>
+</ol></li>
+<li>open the <a href="http://localhost:8080/chat">app<a>
+<br/><small>Note that the received messages list is not updated asynchronously.</small></li>
+</ol>
+

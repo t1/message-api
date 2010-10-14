@@ -15,7 +15,7 @@ import com.oneandone.consumer.messageapi.MessageApi;
 public class XmlMessageDecoder<T> implements MessageListener {
 
     public static <T> XmlMessageDecoder<T> create(Class<T> api, T impl) {
-        return create(api, impl, JaxbProvider.UNCHANGED);
+        return new XmlMessageDecoder<T>(api, impl);
     }
 
     public static <T> XmlMessageDecoder<T> create(Class<T> api, T impl, JaxbProvider jaxbProvider) {
@@ -24,8 +24,16 @@ public class XmlMessageDecoder<T> implements MessageListener {
 
     private final XmlStringDecoder<T> decoder;
 
+    public XmlMessageDecoder(XmlStringDecoder<T> decoder) {
+        this.decoder = decoder;
+    }
+
+    public XmlMessageDecoder(Class<T> api, T impl) {
+        this(XmlStringDecoder.create(api, impl));
+    }
+
     public XmlMessageDecoder(Class<T> api, T impl, JaxbProvider jaxbProvider) {
-        this.decoder = XmlStringDecoder.create(api, impl, jaxbProvider);
+        this(XmlStringDecoder.create(api, impl, jaxbProvider));
     }
 
     @Override
