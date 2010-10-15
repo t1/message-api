@@ -22,7 +22,10 @@ public final class JmsConfig {
     private final String user;
     private final String pass;
     private final boolean transacted;
+
+    @XmlTransient
     private final Supplier<Properties> contextPropertiesSupplier;
+    @XmlTransient
     private final Supplier<Map<String, Object>> headerSupplier;
 
     // just to satisfy JAXB
