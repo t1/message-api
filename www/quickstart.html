@@ -1,6 +1,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <h3>Assumptions</h3>
-<p>We have tested this with maven and JBoss 6.0M5, because we use CDI for dependency injection.</p>
+<p>We have tested this with maven and JBoss 6.0M5, because we use CDI for dependency injection. But it should work with any container supporting JMS.</p>
 
 <h3>Build the MessageApi</h3>
 <ol>
@@ -31,14 +31,14 @@ public interface ChatApi {
 <li>enable project specific settings</li>
 <li>set the generated source directory to <tt>target/generated-sources/annotations</tt></li>
 </ul>
-Now the sources are generated and errors displayed directly in Eclipse
+Now the POJO sources are generated and errors displayed directly in Eclipse
 </li>
 <li><tt>mvn clean install</tt></li>
 </ol>
 
 <h3>Create the Application</h3>
 <ol>
-<li>create the maven web project <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat -Dpackage=net.java.dev.messageapi.chat</tt></li>
+<li>create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat -Dpackage=net.java.dev.messageapi.chat</tt></li>
 <li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api</tt></li>
 <li>replace the file <tt>src/main/webapp/index.jsp</tt> with this file: <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/chat/chat/src/main/webapp/index.xhtml"><tt>index.xhtml</tt></a></li>
 <li>create a folder <tt>src/main/webapp/WEB-INF</tt></li>
@@ -71,7 +71,6 @@ public class ChatControl {
         messages.add(message);
     }
 }
-
 </pre></li>
 <li>create a procuder:
 <pre>
@@ -84,7 +83,7 @@ public class ChatFactory {
     }
 }
 </pre>
-<small style="color:green">we are working on either a generic producer or generating this one</small></li>
+<small style="color:green">we are working on either a generic producer or generating one; so you would only have to configure the Queue somehow.</small></li>
 <li>create the MDB:
 <pre>
 @MessageDriven(activationConfig = { //
@@ -131,7 +130,7 @@ public class ChatListener implements MessageListener {
     <li>set the <tt>Name</tt> and <tt>JNDI Name</tt> to <tt>Chat</tt></li>
     <li>hit return, so you get to add a new subscriber</li>
     <li>set the name to <tt>guest</tt> and allow everything</li>
-    <li>hit return then save</li>
+    <li>hit return, then save</li>
 </ol></li>
 <li>deploy the app<ol>
     <li>go to <tt>Web Application (WAR)s</tt></li>
