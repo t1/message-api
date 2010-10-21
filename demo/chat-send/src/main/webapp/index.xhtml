@@ -9,11 +9,9 @@
     <h:body>
         <h:form>
             <h2>Please enter your message</h2>
-            #{chatControl.messages}
-            <p/>
             <h:inputText id="message" 
                          required="true"
-                         value="#{chatControl.message}"
+                         value="#{chatSendControl.message}"
                          requiredMessage="A message is required."
                          maxlength="250"/>
             <h:commandButton id="submit" value="Submit" action="index"/>
