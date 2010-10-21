@@ -4,20 +4,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html">
     <h:head>
-        <title>Chat</title>
+        <title>Chat-History</title>
     </h:head>
     <h:body>
-        <h:form>
-            <h2>Please enter your message</h2>
-            #{chatControl.messages}
-            <p/>
-            <h:inputText id="message" 
-                         required="true"
-                         value="#{chatControl.message}"
-                         requiredMessage="A message is required."
-                         maxlength="250"/>
-            <h:commandButton id="submit" value="Submit" action="index"/>
-        </h:form>
+        <h2>Messages Received</h2>
+        ${chatReceiver.messages}
+        <br/>
+        <small>Please refresh manually</small>
     </h:body>
 </html>
 
