@@ -39,7 +39,7 @@ Now the POJO sources are generated (and errors displayed) directly in Eclipse
 <h3>Create the Sender</h3>
 <ol>
 <li>create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-send -Dpackage=net.java.dev.messageapi.chat</tt></li>
-<li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api</tt></li>
+<li>add dependencies to the <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
 <li>replace the file <tt>src/main/webapp/index.jsp</tt> with this <tt>index.xhtml</tt>:<pre>
 &lt;?xml version='1.0' encoding='UTF-8' ?&gt;
 &lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -102,7 +102,7 @@ public class ChatFactory {
 <h3>Create the Receiver</h3>
 <ol>
 <li>create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-<b>receive</b> -Dpackage=net.java.dev.messageapi.chat</tt></li>
-<li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api</tt></li>
+<li>add dependencies to the <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
 <li>replace the file <tt>src/main/webapp/index.jsp</tt> with this <tt>index.xhtml</tt>:<pre>
 &lt;?xml version='1.0' encoding='UTF-8' ?&gt;
 &lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
