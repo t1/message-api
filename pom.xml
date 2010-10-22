@@ -261,16 +261,22 @@
 	</modules>
 
 	<dependencies>
+		<!-- provided -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<!-- actually we'd only need 5.0 -->
+			<!-- but that's not available -->
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- optional -->
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>1.6.2</version>
-		</dependency>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.google.collections</groupId>
