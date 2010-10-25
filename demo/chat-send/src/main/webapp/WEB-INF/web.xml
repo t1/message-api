@@ -7,12 +7,9 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ChatSend</servlet-name>
-		<url-pattern>/ChatSend</url-pattern>
+		<url-pattern>/chat-send</url-pattern>
 	</servlet-mapping>
-	<session-config>
-		<session-timeout>30</session-timeout>
-	</session-config>
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>chat-send</welcome-file>
 	</welcome-file-list>
 </web-app>
