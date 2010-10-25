@@ -12,7 +12,7 @@ import net.java.dev.messageapi.ChatApi;
 @Stateless
 public class ChatReceiver implements ChatApi {
 
-    private static List<String> messages = new ArrayList<String>();
+    static List<String> messages = new ArrayList<String>();
 
     @Override
     public void send(String message) {
