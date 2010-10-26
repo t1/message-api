@@ -7,11 +7,11 @@ import net.java.dev.messageapi.ChatApi;
 
 import com.oneandone.consumer.messageapi.adapter.xml.XmlStringDecoder;
 
-@MessageDriven(mappedName = "topic/testTopic")
+@MessageDriven(mappedName = "ChatTopic", activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "ChatTopic") })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ChatMDB implements MessageListener {
-    @EJB
-    ChatApi receiver;
+
+    private final ChatApi receiver = new ChatReceiver();
 
     @Override
     public void onMessage(Message message) {

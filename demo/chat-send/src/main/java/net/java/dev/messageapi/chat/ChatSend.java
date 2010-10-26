@@ -16,7 +16,7 @@ public class ChatSend extends HttpServlet {
 
     // params are factory, destination, user, password
     private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig(
-            "jms/ConnectionFactory", "topic/testTopic", "guest", "guest");
+            "ConnectionFactory", "ChatTopic", "guest", "guest");
 
     private final ChatApi chat = JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
 

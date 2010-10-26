@@ -91,16 +91,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>0.9.25</version>
-		</dependency>
-		<dependency>
 			<groupId>net.java.dev.messageapi</groupId>
 			<artifactId>chat-api</artifactId>
 			<version>1.0</version>
