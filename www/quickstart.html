@@ -3,11 +3,12 @@
 <h3>Quickstart</h3>
 <p>This is a step-by-step guide to create a simple chat application. It has a sender that posts messages you type to a JMS Topic and a receiver that listens and displays all messages coming in from that topic. Both are implemented as simplistic web applications.</p>
 
-<p>Most of the things in here would have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/trunk/demo/">here</a>.</p>
+<p>Most of the things in here could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/trunk/demo/">here</a>.</p>
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
-<p>We have tested this with maven and JBoss 6.0M5, because we use CDI for dependency injection. But it should be easy to adapt it for any container supporting JMS and any build tool.</p>
+<p>We have tested this with maven and JBoss 4.2.3. But it should be easy to adapt it for any container supporting JMS and any build tool.</p>
+
 
 <h3>Build the MessageApi</h3>
 <ol>
@@ -17,7 +18,7 @@
 <br/><small style="color:green">we are working on getting the messageapi into a maven repository</small></li>
 </ol>
 
-<h3>Create the API</h3>
+<h3>Create the Chat-API</h3>
 <ol>
 <li><tt>mkdir chat-api</tt></li>
 <li>copy <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/demo/chat-api/pom.xml">pom.xml</a> into the chat-api folder
