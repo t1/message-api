@@ -7,8 +7,7 @@
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
-<p>We have tested this with maven and JBoss 4.2.3. But it should be easy to adapt it for any container supporting JMS and any build tool.</p>
-
+<p>We have tested this with maven and JBoss 4.2.3. But it should be easy to adapt it to run on any container supporting JMS and to use any build tool.</p>
 
 <h3>Build the MessageApi</h3>
 <ol>
@@ -22,7 +21,7 @@
 <ol>
 <li><tt>mkdir chat-api</tt></li>
 <li>copy <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/demo/chat-api/pom.xml">pom.xml</a> into the chat-api folder
-<br/><small style="color:green">we are working on publishing a maven artifact for this</small></li>
+<br/><small style="color:green">we are working on publishing a maven archetype for this</small></li>
 <li>create the API:
 <pre>@MessageApi
 public interface ChatApi {
@@ -91,7 +90,7 @@ public class ChatSendControl {
 	}
 }
 </pre></li>
-<li>create a procuder:
+<li>create a producer:
 <pre>
 public class ChatFactory {
     private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig("java:/JmsXA",
