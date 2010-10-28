@@ -6,6 +6,7 @@
 	<artifactId>chat-receive-ear</artifactId>
 	<packaging>ear</packaging>
 	<version>1.0-SNAPSHOT</version>
+	<name>Chat-Receive EAR</name>
 
 	<build>
 		<finalName>chat-receive</finalName>
@@ -15,13 +16,15 @@
 				<artifactId>maven-ear-plugin</artifactId>
 				<version>2.4.2</version>
 				<configuration>
+					<generateApplicationXml>true</generateApplicationXml>
+					<!--<earSourceDirectory>target/classes</earSourceDirectory>-->
+					<!--
+						<finalName>apps_dslorder-orderprocessor-${version_major}.${version_minor}</finalName>
+					-->
 					<jboss>
 						<version>4.2</version>
 						<loader-repository>${project.groupId}:loader=${project.artifactId}</loader-repository>
 					</jboss>
-<!--					<earSourceDirectory>target/classes</earSourceDirectory>-->
-<!--					<finalName>apps_dslorder-orderprocessor-${version_major}.${version_minor}</finalName>-->
-<!--					<outputDirectory>${project.build.directory}</outputDirectory>-->
 					<modules>
 						<jarModule>
 							<groupId>net.java.dev.messageapi</groupId>
@@ -34,7 +37,6 @@
 							<includeInApplicationXml>true</includeInApplicationXml>
 						</jarModule>
 					</modules>
-					<generateApplicationXml>true</generateApplicationXml>
 				</configuration>
 			</plugin>
 		</plugins>
