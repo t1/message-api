@@ -7,9 +7,7 @@ import net.java.dev.messageapi.ChatApi;
 
 import com.oneandone.consumer.messageapi.adapter.xml.XmlStringDecoder;
 
-@MessageDriven(mappedName = "ChatTopic", activationConfig = {
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "topic/ChatTopic"),
-		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic") })
+@MessageDriven(mappedName = "ChatTopic")
 public class ChatMDB implements MessageListener {
 
 	private final ChatApi receiver = new ChatReceiver();
@@ -17,7 +15,6 @@ public class ChatMDB implements MessageListener {
 	@Override
 	public void onMessage(Message message) {
 		String xml = getText(message);
-		System.out.println("received: " + xml);
 		XmlStringDecoder.create(ChatApi.class, receiver).decode(xml);
 	}
 

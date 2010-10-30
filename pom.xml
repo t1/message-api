@@ -261,23 +261,6 @@
 	</modules>
 
 	<dependencies>
-		<!-- ubiquitous dependencies -->
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>1.6.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-
 		<!-- provided -->
 		<dependency>
 			<groupId>javax</groupId>
@@ -286,6 +269,26 @@
 			<!-- but that's not available -->
 			<version>6.0</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- optional -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>1.6.2</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<version>1.0</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- test -->
