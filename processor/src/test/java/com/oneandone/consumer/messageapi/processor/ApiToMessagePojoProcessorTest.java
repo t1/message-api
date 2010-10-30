@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.oneandone.consumer.messageapi.MessageApi;
 import com.oneandone.consumer.messageapi.processor.mock.*;

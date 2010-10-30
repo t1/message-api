@@ -37,7 +37,7 @@ class PojoAnnotations {
         }
     }
 
-    private String indentOf(int indent) throws IOException {
+    private String indentOf(int indent) {
         return "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t".substring(0, indent);
     }
 

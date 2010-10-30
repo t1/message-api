@@ -2,7 +2,8 @@ package com.oneandone.consumer.messageapi.processor;
 
 import static org.junit.Assert.*;
 
-import java.io.*;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,20 +32,20 @@ public class JaxbIndexGeneratorTest {
 
     @Test
     public void shouldCreateListOfClassNames() throws Exception {
-        generate(AnnotationProcessorTestApi.class);
+        generate();
         List<String> jaxbIndexList = readJaxbIndex();
         assertTrue(jaxbIndexList.contains(AnnotationProcessorTestMethod1.class.getSimpleName()));
         assertTrue(jaxbIndexList.contains(AnnotationProcessorTestMethod2.class.getSimpleName()));
         assertTrue(jaxbIndexList.contains(AnnotationProcessorTestMethod3.class.getSimpleName()));
     }
 
-    private void generate(Class<AnnotationProcessorTestApi> api) {
+    private void generate() {
         new ProcessingEnvironmentDummy(messager, filer).process(processor,
                 AnnotationProcessorTestMethod1.class, AnnotationProcessorTestMethod2.class,
                 AnnotationProcessorTestMethod3.class);
     }
 
-    private List<String> readJaxbIndex() throws IOException {
+    private List<String> readJaxbIndex() {
         String jaxbIndexContents = stringWriter.toString();
         return Arrays.asList(jaxbIndexContents.split("\n"));
     }
