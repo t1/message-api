@@ -1,20 +1,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <h3>Quickstart</h3>
-<p>This is a step-by-step guide to create a simple chat application. It has a sender that posts messages you type to a JMS Topic and a receiver that listens and displays all messages coming in from that topic. Both are implemented as simplistic web applications.</p>
+<p>This is a step-by-step guide to create a simple chat application. It has a sender that posts messages you type to a JMS Topic and a receiver that listens and displays all messages coming in from that topic. Both are implemented as simple servlets.</p>
 
 <p>Most of the things in here could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/trunk/demo/">here</a>.</p>
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
-<p>We have tested this with maven and JBoss 4.2.3. But it should be easy to adapt it to run on any container supporting JMS and to use any build tool.</p>
+<p>This demo is done with maven and Glassfish 3.0.1. But it should be easy to adapt it to run on any container supporting JMS and to use any build tool.</p>
 
 <h3>Build the MessageApi</h3>
 <ol>
 <li><tt>svn co https://messageapi.dev.java.net/svn/messageapi/trunk messageapi</tt></li>
 <li><tt>cd messageapi</tt></li>
 <li><tt>mvn clean install</tt>
-<br/><small style="color:green">we are working on getting the messageapi into a maven repository</small></li>
+<br/><small style="color:green">we are working on getting the messageapi into a maven repository, so you could skip this step.</small></li>
 </ol>
 
 <h3>Create the Chat-API</h3>
@@ -46,63 +46,75 @@ Now the POJO sources are generated (and errors displayed) directly in Eclipse
 <h3>Create the Sender</h3>
 <ol>
 <li>create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-send -Dpackage=net.java.dev.messageapi.chat</tt></li>
-<li>add dependencies to the <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
-<li>replace the file <tt>src/main/webapp/index.jsp</tt> with this <tt>index.xhtml</tt>:<pre>
-&lt;?xml version='1.0' encoding='UTF-8' ?&gt;
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
-&lt;html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"&gt;
-    &lt;h:head&gt;
-        &lt;title&gt;Chat&lt;/title&gt;
-    &lt;/h:head&gt;
-    &lt;h:body&gt;
-        &lt;h:form&gt;
-            &lt;h2&gt;Please enter your message&lt;/h2&gt;
-            &lt;h:inputText id="message" 
-                         required="true"
-                         value="#{chatSendControl.message}"
-                         requiredMessage="A message is required."
-                         maxlength="250"/&gt;
-            &lt;h:commandButton id="submit" value="Submit" action="index"/&gt;
-        &lt;/h:form&gt;
-    &lt;/h:body&gt;
-&lt;/html&gt;
+<li>add dependencies to your <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
+<li>remove the file <tt>src/main/webapp/index.jsp</tt></li>
+<li>create the folder <tt>src/main/webapp/WEB-INF</tt></li>
+<li>create the file <tt>web.xml</tt> in that folder with this contents:<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;ChatSend&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;net.java.dev.messageapi.chat.ChatSend&lt;/servlet-class&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;ChatSend&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/chat-send&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+	&lt;welcome-file-list&gt;
+		&lt;welcome-file&gt;chat-send&lt;/welcome-file&gt;
+	&lt;/welcome-file-list&gt;
+&lt;/web-app&gt;
 </pre></li>
-<li>create a folder <tt>src/main/webapp/WEB-INF</tt></li>
-<li>create an <i>empty</i> file <tt>beans.xml</tt> in the <tt>WEB-INF</tt> folder</li>
-<li>put the default JSF <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/demo/chat-send/src/main/webapp/WEB-INF/web.xml"><tt>web.xml</tt></a> into the <tt>WEB-INF</tt> folder</li>
-<li>create a control class for the JSF page (we leave the imports out for brevity):
+<li>create the <tt>net.java.dev.messageapi.chat.ChatSend.java</tt> (the imports and stuff are left out for brevity):
 <pre>
-@Named
-@Stateless
-public class ChatSendControl {
+public class ChatSend extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private ChatApi chat;
+    // params are factory, destination, user, password
+    private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig(
+            "ConnectionFactory", "ChatTopic", "guest", "guest");
 
-	public String getMessage() {
-		return "enter your message here";
-	}
+    private final ChatApi chat = JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
 
-	public void setMessage(String message) {
-		chat.send(message);
-	}
-}
-</pre></li>
-<li>create a producer:
-<pre>
-public class ChatFactory {
-    private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig("java:/JmsXA",
-            "Chat", "admin", "admin");
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        // we're not expecting any GET parameters!
+        response(response);
+    }
 
-    @Produces
-    ChatApi create() {
-        return JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        request(request);
+        response(response);
+    }
+
+    private void request(HttpServletRequest request) {
+        String message = request.getParameter("message");
+        if (message != null && message.length() &gt; 0) {
+            chat.send(message);
+        }
+    }
+
+    private void response(HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        out.println("&lt;html&gt;");
+        out.println("  &lt;head&gt;&lt;title&gt;Chat Send&lt;/title&gt;&lt;/head&gt;");
+        out.println("  &lt;body&gt;");
+        out.println("    &lt;h2&gt;Please enter your message&lt;/h2&gt;");
+        out.println("    &lt;form method=\"post\" action=\"chat-send\"&gt;&lt;p/&gt;");
+        out.println("      &lt;input type=\"text\" name=\"message\" size=\"50\"/&gt;&lt;br/&gt;");
+        out.println("      &lt;input type=\"submit\" value=\"Send\" /&gt;");
+        out.println("    &lt;/form&gt;");
+        out.println("  &lt;/body&gt;");
+        out.println("&lt;/html&gt;");
     }
 }
-</pre>
-<small style="color:green">we are working on either a generic producer or generating one; so you would only have to configure the Queue somehow.</small></li>
+</pre></li>
+<small style="color:green">we are working on either a generic producer or generating one; so you would only have to configure the Queue somehow and inject it instead of calling <tt>JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);</tt>.</small></li>
 <li>build the war: <tt>mvn clean verify</tt></li>
 </ol>
 
