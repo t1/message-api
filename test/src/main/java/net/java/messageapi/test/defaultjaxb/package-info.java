@@ -1,7 +1,7 @@
 @XmlJavaTypeAdapters( {
         @XmlJavaTypeAdapter(value = JodaInstantConverter.class, type = Instant.class),
         @XmlJavaTypeAdapter(value = JodaLocalDateConverter.class, type = LocalDate.class) })
-@XmlSchema(namespace = "http://www.oneandone.com/consumer/tools/messaging")
+@XmlSchema(namespace = "http://messageapi.java.net")
 package net.java.messageapi.test.defaultjaxb;
 
 import javax.xml.bind.annotation.XmlSchema;

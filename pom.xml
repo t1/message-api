@@ -20,7 +20,6 @@
 			<id>rdohna</id>
 			<name>Rüdiger zu Dohna</name>
 			<email>ruediger.dohna@1und1.de</email>
-			<url>http://people.intranet.1and1.com/xml/people/view?21238759</url>
 			<roles>
 				<role>Contact</role>
 			</roles>
@@ -29,14 +28,13 @@
 			<id>mleim</id>
 			<name>Martin Leim</name>
 			<email>martin.leim@1und1.de</email>
-			<url>http://people.intranet.1and1.com/xml/people/view?21249700</url>
 		</developer>
 	</developers>
 
 	<scm>
-		<connection>scm:svn:https://svn.schlund.de/svn/consumer_development/java/com/oneandone/consumer/tools/messaging/trunk</connection>
-		<developerConnection>scm:svn:https://svn.schlund.de/svn/consumer_development/java/com/oneandone/consumer/tools/messaging/trunk</developerConnection>
-		<url>https://svn.schlund.de/viewcvs/consumer_development/java/com/oneandone/consumer/tools/messaging/trunk</url>
+		<connection>scm:svn:https://messageapi.dev.java.net/svn/messageapi/trunk</connection>
+		<developerConnection>scm:svn:https://messageapi.dev.java.net/svn/messageapi/trunk</developerConnection>
+		<url>https://messageapi.dev.java.net/source/browse/messageapi/trunk/</url>
 	</scm>
 
 	<properties>

@@ -43,7 +43,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private String instantCallXml(Instant now) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<ns2:instantCall xmlns:ns2=\"http://www.oneandone.com/consumer/tools/messaging\">\n"
+                + "<ns2:instantCall xmlns:ns2=\"http://messageapi.java.net\">\n"
                 + "    <instantName>" + now + "</instantName>\n" //
                 + "</ns2:instantCall>\n";
     }
