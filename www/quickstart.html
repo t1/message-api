@@ -121,36 +121,52 @@ public class ChatSend extends HttpServlet {
 <h3>Create the Receiver</h3>
 <ol>
 <li>create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-<b>receive</b> -Dpackage=net.java.dev.messageapi.chat</tt></li>
-<li>add dependencies to the <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
-<li>replace the file <tt>src/main/webapp/index.jsp</tt> with this <tt>index.xhtml</tt>:<pre>
-&lt;?xml version='1.0' encoding='UTF-8' ?&gt;
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
-&lt;html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"&gt;
-    &lt;h:head&gt;
-        &lt;title&gt;Chat-History&lt;/title&gt;
-    &lt;/h:head&gt;
-    &lt;h:body&gt;
-        &lt;h2&gt;Messages Received&lt;/h2&gt;
-        ${chatReceiver.messages}
-        &lt;br/&gt;
-        &lt;small&gt;Please refresh manually&lt;/small&gt;
-    &lt;/h:body&gt;
-&lt;/html&gt;
+<li>change the <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
+<li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api:adapter</tt></li>
+<li>remove the file <tt>src/main/webapp/index.jsp</tt></li>
+<li>create the folder <tt>src/main/webapp/WEB-INF</tt></li>
+<li>create the file <tt>web.xml</tt> in that folder with this contents:<pre>
+&lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;ChatReceive&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;net.java.dev.messageapi.chat.ChatReceiveServlet&lt;/servlet-class&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;ChatReceive&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/chat-receive&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+	&lt;welcome-file-list&gt;
+		&lt;welcome-file&gt;chat-receive&lt;/welcome-file&gt;
+	&lt;/welcome-file-list&gt;
+&lt;/web-app&gt;
 </pre></li>
-<li>create a folder <tt>src/main/webapp/WEB-INF</tt></li>
-<li>create an <i>empty</i> file <tt>beans.xml</tt> in the <tt>WEB-INF</tt> folder</li>
-<li>put the same default JSF <tt>web.xml</tt></a> into the <tt>WEB-INF</tt> folder</li>
-<li>create the MDB:
+<li>create the <tt>net.java.dev.messageapi.chat.ChatReceiver</tt>:
 <pre>
-@MessageDriven(activationConfig = { //
-@ActivationConfigProperty(propertyName = "destination", propertyValue = "Chat") //
-})
+public class ChatReceiver implements ChatApi {
+
+    static List&lt;String&gt; messages = new ArrayList&lt;String&gt;();
+
+    @Override
+    public void send(String message) {
+        ChatReceiver.messages.add(message);
+    }
+
+    public List&lt;String&gt; getMessages() {
+        return ChatReceiver.messages;
+    }
+
+    public void setMessages(List&lt;String&gt; messages) {
+        ChatReceiver.messages = messages;
+    }
+}
+</pre></li>
+<li>create the <tt>net.java.dev.messageapi.chat.ChatMDB</tt>:<pre>
+@MessageDriven(mappedName = "ChatTopic")
 public class ChatMDB implements MessageListener {
 
-	@EJB
-	ChatApi receiver;
+	private final ChatApi receiver = new ChatReceiver();
 
 	@Override
 	public void onMessage(Message message) {
@@ -168,46 +184,55 @@ public class ChatMDB implements MessageListener {
 }
 </pre>
 <br/><small style="color:green">we are working on a generic MDB, so you only have to configure the connection between a destination and your business bean</small></li>
-<li>create the receiver:
+<li>create the <tt>net.java.dev.messageapi.chat.ChatReceiveServlet</tt>:
 <pre>
-@Named
-@Singleton
-public class ChatReceiver implements ChatApi {
+public class ChatReceiveServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-	private List<String> messages = new ArrayList<String>();
-
-	@Override
-	public void send(String message) {
-		messages.add(message);
-	}
-
-	public List<String> getMessages() {
-		return messages;
-	}
-
-	public void setMessages(List<String> messages) {
-		this.messages = messages;
-	}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        PrintWriter out = response.getWriter();
+        out.println("&lt;html&gt;");
+        out.println("  &lt;head&gt;&lt;title&gt;Chat Receive&lt;/title&gt;&lt;/head&gt;");
+        out.println("  &lt;body&gt;");
+        out.println("    &lt;h2&gt;Messages Received&lt;/h2&gt;");
+        out.println("    &lt;ul&gt;");
+        if (ChatReceiver.messages.isEmpty()) {
+            out.append("      &lt;li&gt;&lt;i&gt;no messages received, yet&lt;/i&gt;&lt;/li&gt;\n");
+        }
+        for (String message : ChatReceiver.messages) {
+            out.append("      &lt;li&gt;").append(message).append("&lt;/li&gt;\n");
+        }
+        out.println("    &lt;/ul&gt;");
+        out.println("    &lt;small&gt;Please refresh manually&lt;/small&gt;");
+        out.println("  &lt;/body&gt;");
+        out.println("&lt;/html&gt;");
+    }
 }
 </pre></li>
 <li>build the war: <tt>mvn clean verify</tt></li>
 </ol>
 
-<h3>Deploy on your JBoss</h3>
+<h3>Deploy on your glassfish</h3>
 <ol>
-<li>open the <a href="http://localhost:8080/admin-console">admin console</a></li>
-<li>create the <tt>Chat</tt> topic<ol>
-    <li>go to <tt>JMS Topics</tt></li>
-    <li>add a new resource</li>
-    <li>select the template <tt>default (JMS Topic)</tt></li>
-    <li>set the <tt>Name</tt> and <tt>JNDI Name</tt> to <tt>Chat</tt></li>
-    <li>hit return, so you get to add a new subscriber</li>
-    <li>set the name to <tt>guest</tt> and allow everything</li>
-    <li>hit return, then save</li>
+<li>open the <a href="http://localhost:4848">admin console</a></li>
+<li>create the connection factory <tt>jms/ConnectionFactory</tt><ol>
+    <li>go to <tt>Resources/JMS Resources/Connection Factories</tt></li>
+    <li>click <tt>New...</tt></li>
+    <li>set the <tt>Pool Name</tt> <tt>jms/ConnectionFactory</tt></li>
+    <li>set the <tt>Resource Type</tt> <tt>javax.jms.ConnectionFactory</tt></li>
+    <li>hit return</li>
+</ol></li>
+<li>create the topic <tt>ChatTopic</tt><ol>
+    <li>go to <tt>Resources/JMS Resources/Destination Resources</tt></li>
+    <li>click <tt>New...</tt></li>
+    <li>set the <tt>JNDI Name</tt> and the <tt>Physical Destination Name</tt> to <tt>Chat</tt></li>
+    <li>hit return</li>
 </ol></li>
 <li>deploy the apps<ol>
-    <li>go to <tt>Web Application (WAR)s</tt></li>
-    <li>add a new resource</li>
+    <li>go to <tt>Applications</tt></li>
+    <li>click <tt>Deploy...</tt></li>
     <li>browse for your <tt>chat-send.war</tt></li>
     <li>hit <tt>continue</tt></li>
     <li>wait until the deploy is finished</li>
