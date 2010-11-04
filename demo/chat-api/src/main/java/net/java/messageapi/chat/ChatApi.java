@@ -1,4 +1,4 @@
-package net.java.dev.messageapi;
+package net.java.messageapi.chat;
 
 import com.oneandone.consumer.messageapi.MessageApi;
 

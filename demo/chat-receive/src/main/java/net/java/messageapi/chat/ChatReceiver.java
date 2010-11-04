@@ -1,9 +1,9 @@
-package net.java.dev.messageapi.chat;
+package net.java.messageapi.chat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.java.dev.messageapi.ChatApi;
+import net.java.messageapi.chat.ChatApi;
 
 public class ChatReceiver implements ChatApi {
 

@@ -1,4 +1,4 @@
-package net.java.dev.messageapi.chat;
+package net.java.messageapi.chat;
 
 import java.io.IOException;
 import java.io.PrintWriter;

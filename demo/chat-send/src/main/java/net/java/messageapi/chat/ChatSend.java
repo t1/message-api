@@ -1,11 +1,11 @@
-package net.java.dev.messageapi.chat;
+package net.java.messageapi.chat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.*;
 
-import net.java.dev.messageapi.ChatApi;
+import net.java.messageapi.chat.ChatApi;
 
 import com.oneandone.consumer.messageapi.adapter.DefaultJmsConfigFactory;
 import com.oneandone.consumer.messageapi.adapter.JmsConfig;
