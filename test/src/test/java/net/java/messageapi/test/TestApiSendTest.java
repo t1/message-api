@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 @RunWith(TwiP.class)
 public class TestApiSendTest {
 
-    private static final String NS = "http://www.oneandone.com/consumer/tools/messaging";
+    private static final String NS = "http://messageapi.java.net";
 
     private final MessageSenderRegistry registry = new MessageSenderRegistry();
     private final StringWriter writer = new StringWriter();
