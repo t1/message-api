@@ -5,11 +5,10 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.*;
 
+import net.java.messageapi.adapter.*;
+import net.java.messageapi.adapter.xml.JmsXmlSenderFactory;
 import net.java.messageapi.chat.ChatApi;
 
-import com.oneandone.consumer.messageapi.adapter.DefaultJmsConfigFactory;
-import com.oneandone.consumer.messageapi.adapter.JmsConfig;
-import com.oneandone.consumer.messageapi.adapter.xml.JmsXmlSenderFactory;
 
 public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;

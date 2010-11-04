@@ -1,6 +1,6 @@
 package net.java.messageapi.chat;
 
-import com.oneandone.consumer.messageapi.MessageApi;
+import net.java.messageapi.MessageApi;
 
 @MessageApi
 public interface ChatApi {

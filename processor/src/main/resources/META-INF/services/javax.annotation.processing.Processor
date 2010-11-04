@@ -1,2 +1,2 @@
-com.oneandone.consumer.messageapi.processor.MessageApiAnnotationProcessor
-com.oneandone.consumer.messageapi.processor.XmlRootElementAnnotationProcessor
+net.java.messageapi.processor.MessageApiAnnotationProcessor
+net.java.messageapi.processor.XmlRootElementAnnotationProcessor
