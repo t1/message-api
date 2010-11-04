@@ -194,7 +194,10 @@ public class ChatReceiveServlet extends HttpServlet {
             throws IOException {
         PrintWriter out = response.getWriter();
         out.println("&lt;html&gt;");
-        out.println("  &lt;head&gt;&lt;title&gt;Chat Receive&lt;/title&gt;&lt;/head&gt;");
+		out.println("  &lt;head&gt;");
+		out.println("    &lt;meta http-equiv=\"refresh\" content=\"1\" &gt;");
+		out.println("    &lt;title&gt;Chat Receive&lt;/title&gt;");
+		out.println("  &lt;/head&gt;");
         out.println("  &lt;body&gt;");
         out.println("    &lt;h2&gt;Messages Received&lt;/h2&gt;");
         out.println("    &lt;ul&gt;");
@@ -239,7 +242,6 @@ public class ChatReceiveServlet extends HttpServlet {
     <li>repeat for the <tt>chat-receive.war</tt></li>
 </ol></li>
 <li>open the <a href="http://localhost:8080/chat-send">sender</a></li>
-<li>open the <a href="http://localhost:8080/chat-receive">receiver</a>
-<br/><small>Note that the received messages list is not updated asynchronously.</small></li>
+<li>open the <a href="http://localhost:8080/chat-receive">receiver</a></li>
 </ol>
 
