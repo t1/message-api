@@ -3,9 +3,9 @@ package net.java.messageapi.chat;
 import javax.ejb.*;
 import javax.jms.*;
 
+import net.java.messageapi.adapter.xml.XmlStringDecoder;
 import net.java.messageapi.chat.ChatApi;
 
-import com.oneandone.consumer.messageapi.adapter.xml.XmlStringDecoder;
 
 @MessageDriven(mappedName = "ChatTopic")
 public class ChatMDB implements MessageListener {

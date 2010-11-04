@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <registry>
-    <sender api="com.oneandone.consumer.message.MessageSenderRegistryTest$TestApi">
+    <sender api="net.java.messageapi.adapter.MessageSenderRegistryTest$TestApi">
         <config>
             <factoryName>java:/JmsXA</factoryName>
             <queueName>queue/ResenderQueue</queueName>
