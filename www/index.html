@@ -23,10 +23,12 @@
 
 <p>On the receiver side, an MDB receives the message, unmarshalls the POJO, and calls the corresponding method in your business code that implements the messaging interface. Also the assumptions the business code can make are mirrored: The message was asynchronous (i.e. the calling business code has probably long finished) and the call is transactional (i.e. if the whole transaction fails for any reason, the message is not consumed).</p>
 
-<h3>Status and Future</h3>
-<p>The MessageApi is reality: Version 1.0 is in production use internally at 1&amp;1 since August 2010; in November 2010 we have already used it to send or receive over 250.000 messages. The work required to release it open source on <tt>java.net</tt> will result in version 1.1. New features will then be added to versions starting with 1.2. We'll publish more detailed plans as soon as <tt>java.net</tt> was migrated to the Kenai infrastructure.</p>
+<p>In order to communicate with 'legacy' JMS participants, you can configure the MessageApi adapter to send or receive mapped messages, and if you will, how to map the message fields.</p>
 
-<p>One of the most important features we want to add is the automatic configuration with a registry: When you deploy an implementation of an interface annotated as <tt>MessageApi</tt>, the container creates a queue and registers it in a registry using two coordinates: The fully qualified name of the interface and the version of the jar that contains the interface. When you deploy a client for those coordinates, the container finds the correct queue to send these messages to and connects it with your business code... leaving not much left for you to do ;-)</p>
+<h3>Status and Future</h3>
+<p>The MessageApi is already reality: Version 1.0 is in production use internally at 1&amp;1 since August 2010; in November 2010 we have already used it to send or receive over 250.000 messages. The work required to release it open source on <tt>java.net</tt> will result in version 1.1. New features will then be added to versions starting with 1.2. We'll publish more detailed plans as soon as <tt>java.net</tt> was migrated to the Kenai infrastructure.</p>
+
+<p>One of the most important features we want to add is the automatic configuration with a registry: When you deploy an implementation of an interface annotated as <tt>MessageApi</tt>, the container creates a queue and registers it in a registry using two coordinates: The fully qualified name of the interface and the version of the jar that contains the interface. When you deploy a client for those coordinates, the container finds the correct queue to send these messages to and connects it with your business code... leaving not much left for you to do, but to write business code ;-)</p>
 
 <h3>Participation</h3>
 <p>You can participate in a variety of ways:</p>
