@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.*;
 
 @RunWith(Parameterized.class)
 public class ComplexCollectionsApiTest {
@@ -45,31 +45,31 @@ public class ComplexCollectionsApiTest {
         verify(service).stringStringMapCall(map);
     }
 
-    // @Test
-    // public void shouldCallWithNestedSetList() throws Exception {
-    // // given
-    // List<String> en = ImmutableList.of("one", "two", "three");
-    // List<String> de = ImmutableList.of("eins", "zwei", "drei");
-    // Set<List<String>> setList = ImmutableSet.of(en, de);
-    //
-    // // when
-    // sender.nestedSetListCall(setList);
-    //
-    // // then
-    // verify(service).nestedSetListCall(setList);
-    // }
+    @Test
+    public void shouldCallWithNestedSetList() throws Exception {
+        // given
+        List<String> en = ImmutableList.of("one", "two", "three");
+        List<String> de = ImmutableList.of("eins", "zwei", "drei");
+        Set<List<String>> setList = ImmutableSet.of(en, de);
 
-    // @Test
-    // public void shouldCallWithNestedMapList() throws Exception {
-    // // given
-    // List<String> en = ImmutableList.of("one", "two", "three");
-    // List<String> de = ImmutableList.of("eins", "zwei", "drei");
-    // Map<String, List<String>> mapList = ImmutableMap.of("en", en, "de", de);
-    //
-    // // when
-    // sender.nestedMapListCall(mapList);
-    //
-    // // then
-    // verify(service).nestedMapListCall(mapList);
-    // }
+        // when
+        sender.stringListSetCall(setList);
+
+        // then
+        verify(service).stringListSetCall(setList);
+    }
+
+    @Test
+    public void shouldCallWithNestedMapList() throws Exception {
+        // given
+        List<String> en = ImmutableList.of("one", "two", "three");
+        List<String> de = ImmutableList.of("eins", "zwei", "drei");
+        Map<String, List<String>> mapList = ImmutableMap.of("en", en, "de", de);
+
+        // when
+        sender.stringListToStringMapCall(mapList);
+
+        // then
+        verify(service).stringListToStringMapCall(mapList);
+    }
 }

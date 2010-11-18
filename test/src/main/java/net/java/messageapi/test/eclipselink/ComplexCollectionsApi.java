@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.java.messageapi.MessageApi;
 
-
 /**
  * This api is in a separate package, so the Sun JAXB provider doesn't complain... only EclipseLink
  * can handle Maps and other complex types properly.

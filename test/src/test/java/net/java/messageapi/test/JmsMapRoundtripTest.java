@@ -12,7 +12,6 @@ import javax.jms.*;
 import net.java.messageapi.adapter.mapped.*;
 import net.java.messageapi.converter.JodaLocalDateConverter;
 import net.java.messageapi.converter.StringToBooleanConverter;
-import net.java.messageapi.test.*;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
 import net.sf.twip.TwiP;
 import net.sf.twip.Values;

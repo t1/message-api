@@ -1,11 +1,9 @@
 package net.java.messageapi.adapter;
 
-import net.java.messageapi.adapter.*;
 import net.java.messageapi.adapter.xml.JmsXmlSenderFactory;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 
 @Ignore
 public class MessageSenderRegistryTest {

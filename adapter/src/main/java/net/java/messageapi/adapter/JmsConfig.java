@@ -23,6 +23,7 @@ public final class JmsConfig {
     private final String pass;
     private final boolean transacted;
 
+    // FIXME these should not be transient
     @XmlTransient
     private final Supplier<Properties> contextPropertiesSupplier;
     @XmlTransient
@@ -79,5 +80,4 @@ public final class JmsConfig {
     public Map<String, Object> getAdditionalProperties() {
         return headerSupplier.get();
     }
-
 }
