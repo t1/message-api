@@ -13,7 +13,6 @@ import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.MessageApi;
-import net.java.messageapi.processor.MessageApiAnnotationProcessor;
 import net.java.messageapi.processor.mock.*;
 import net.java.messageapi.processor.pojo.Pojo;
 import net.sf.twip.TwiP;
@@ -24,8 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 @RunWith(TwiP.class)
 public class ApiToMessagePojoProcessorTest {
@@ -58,18 +58,15 @@ public class ApiToMessagePojoProcessorTest {
         return processor.getGeneratedPojos().remove(0);
     }
 
-    private void assertPojoGenerated(String pojoName) {
-        Function<Pojo, String> simpleNameConverter = new Function<Pojo, String>() {
-
+    private void assertPojoGenerated(final String pojoName) {
+        Pojo generated = Iterables.find(processor.getGeneratedPojos(), new Predicate<Pojo>() {
             @Override
-            public String apply(Pojo from) {
-                return from.getSimpleName();
+            public boolean apply(Pojo input) {
+                return input.getSimpleName().equals(pojoName);
             }
-        };
-// FIXME        Pojo generated = Iterables2.findFirst(processor.getGeneratedPojos(), simpleNameConverter,
-//                Predicates.equalTo(pojoName));
-//        assertNotNull(generated);
-//        processor.getGeneratedPojos().remove(generated);
+        });
+        assertNotNull(generated);
+        processor.getGeneratedPojos().remove(generated);
     }
 
     @MessageApi
@@ -289,7 +286,7 @@ public class ApiToMessagePojoProcessorTest {
         public void methodB();
     }
 
-// FIXME    @Test
+    @Test
     public void shouldAcceptTwoMethodNames() throws Exception {
         convert(TwoMethodNamesApi.class);
 
