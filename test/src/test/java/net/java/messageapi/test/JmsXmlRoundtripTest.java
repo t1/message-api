@@ -9,24 +9,23 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import net.java.messageapi.adapter.JmsSenderFactoryType;
 import net.java.messageapi.adapter.xml.*;
-import net.java.messageapi.test.TestApi;
+import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
 
 import org.joda.time.Instant;
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockejb.jms.TextMessageImpl;
 
-
 @RunWith(Parameterized.class)
-@Ignore
 public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
-    private final JaxbProvider jaxbProvider;
+    private final JaxbProviderMemento memento;
 
     @Parameters
     public static List<Object[]> data() {
@@ -38,7 +37,17 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     public JmsXmlRoundtripTest(JaxbProvider jaxbProvider) {
-        this.jaxbProvider = jaxbProvider;
+        this.memento = jaxbProvider.setUp();
+    }
+
+    @After
+    public void after() {
+        memento.restore();
+    }
+
+    @Override
+    protected JmsSenderFactoryType getType() {
+        return JmsSenderFactoryType.XML;
     }
 
     private String instantCallXml(Instant now) {
@@ -56,7 +65,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldCallServiceWhenSendingAsXmlMessage() throws JMSException {
         // TODO split into send and receive using MockEJB
         // Given
-        TestApi service = JmsXmlSenderFactory.createFactory(TestApi.class, CONFIG, jaxbProvider).get();
+        TestApi service = CONFIG.createProxy(TestApi.class);
 
         // When
         service.multiCall("a", "b");
@@ -72,7 +81,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldSendUsingImplicitConversion() throws Exception {
         // Given
         Instant now = new Instant();
-        JodaTimeApi service = JmsXmlSenderFactory.createFactory(JodaTimeApi.class, CONFIG, jaxbProvider).get();
+        JodaTimeApi service = CONFIG.createProxy(JodaTimeApi.class);
 
         // When
         service.instantCall(now);
@@ -88,7 +97,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
         TextMessage textMessage = new TextMessageImpl(xml);
         JodaTimeApi serviceImpl = mock(JodaTimeApi.class);
         XmlMessageDecoder<JodaTimeApi> decoder = XmlMessageDecoder.create(JodaTimeApi.class,
-                serviceImpl, jaxbProvider);
+                serviceImpl);
 
         // When
         decoder.onMessage(textMessage);

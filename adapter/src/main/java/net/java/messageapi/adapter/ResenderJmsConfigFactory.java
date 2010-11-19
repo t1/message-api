@@ -37,22 +37,24 @@ public final class ResenderJmsConfigFactory {
     }
 
     public JmsConfig getDelayedJmsConfig(String queueName, String user, String pass,
-            Duration delayAtLeast) {
+            Duration delayAtLeast, JmsSenderFactoryType type) {
         return new JmsConfig(FACTORY, resenderQueueName, resenderQueueUser, resenderQueuePass,
                 true, Suppliers.ofInstance(new Properties()),
-                Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)));
+                Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)),
+                type);
     }
 
     public JmsConfig getRemoteJmsConfig(String providerUrl, String queueName, String user,
-            String pass) {
-        return getRemoteJmsConfig(providerUrl, queueName, user, pass, Duration.ZERO);
+            String pass, JmsSenderFactoryType type) {
+        return getRemoteJmsConfig(providerUrl, queueName, user, pass, Duration.ZERO, type);
     }
 
     public JmsConfig getRemoteJmsConfig(String providerUrl, String queueName, String user,
-            String pass, Duration delayAtLeast) {
+            String pass, Duration delayAtLeast, JmsSenderFactoryType type) {
         return new JmsConfig(FACTORY, resenderQueueName, resenderQueueUser, resenderQueuePass,
                 true, Suppliers.ofInstance(createContextProperties(providerUrl)),
-                Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)));
+                Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)),
+                type);
     }
 
     private static Map<String, Object> createMessageProperties(String queueName, String user,

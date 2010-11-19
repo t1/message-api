@@ -1,16 +1,15 @@
 package net.java.messageapi.adapter.xml;
 
-import java.io.*;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.jms.JMSException;
 import javax.jms.Session;
-import javax.xml.bind.*;
 
 import net.java.messageapi.MessageApi;
 import net.java.messageapi.adapter.*;
-
 
 /**
  * A {@link MessageSenderFactory} that sends the message to a local JMS queue, with the call
@@ -20,43 +19,11 @@ import net.java.messageapi.adapter.*;
  */
 public class JmsXmlSenderFactory<T> extends AbstractJmsSenderFactory<T, String> {
 
-    public static <T> T createProxy(Class<T> api) {
-        JmsConfig config = getConfigFor(api);
-        return createProxy(api, config, JaxbProvider.UNCHANGED);
-    }
-
-    public static JmsConfig getConfigFor(Class<?> api) {
-        try {
-            JAXBContext context = JAXBContext.newInstance(JmsConfig.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            String fileName = api.getName() + "-jmsconfig.xml";
-            System.out.println("load config from " + fileName);
-            InputStream stream = api.getResourceAsStream(fileName);
-            System.out.println("opened stream");
-            return (JmsConfig) unmarshaller.unmarshal(stream);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static <T> T createProxy(Class<T> api, JmsConfig config) {
-        return createProxy(api, config, JaxbProvider.UNCHANGED);
-    }
-
-    public static <T> T createProxy(Class<T> api, JmsConfig config, JaxbProvider jaxbProvider) {
-        return createFactory(api, config, jaxbProvider).get();
-    }
-
-    public static <T> JmsXmlSenderFactory<T> createFactory(Class<T> api, JmsConfig config) {
-        return createFactory(api, config, JaxbProvider.UNCHANGED);
-    }
-
-    public static <T> JmsXmlSenderFactory<T> createFactory(Class<T> api, JmsConfig config,
-            JaxbProvider jaxbProvider) {
-        return new JmsXmlSenderFactory<T>(api, config, jaxbProvider);
-    }
-
     private final JaxbProvider jaxbProvider;
+
+    public JmsXmlSenderFactory(Class<T> api, JmsConfig config) {
+        this(api, config, JaxbProvider.UNCHANGED);
+    }
 
     public JmsXmlSenderFactory(Class<T> api, JmsConfig config, JaxbProvider jaxbProvider) {
         super(api, config);

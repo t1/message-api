@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.jms.*;
 
+import net.java.messageapi.adapter.JmsSenderFactoryType;
 import net.java.messageapi.adapter.mapped.*;
 import net.java.messageapi.converter.JodaLocalDateConverter;
 import net.java.messageapi.converter.StringToBooleanConverter;
@@ -17,7 +18,6 @@ import net.sf.twip.TwiP;
 import net.sf.twip.Values;
 
 import org.joda.time.LocalDate;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockejb.jms.MapMessageImpl;
@@ -27,7 +27,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 @RunWith(TwiP.class)
-@Ignore
 public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private static final String OPERATION_FIELD_NAME = "event";
@@ -79,6 +78,11 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     @Mock
     private BoxedPrimitivesTestApi boxedPrimitivesServiceMock;
+
+    @Override
+    protected JmsSenderFactoryType getType() {
+        return JmsSenderFactoryType.MAP;
+    }
 
     @Test
     public void shouldCallServiceWhenSendingAsMapMessage() {

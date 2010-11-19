@@ -25,6 +25,10 @@ public class JmsMapSenderFactory<T> extends AbstractJmsSenderFactory<T, Map<Stri
 
     private final Mapping mapping;
 
+    public JmsMapSenderFactory(Class<T> api, JmsConfig config) {
+        this(api, config, MappingBuilder.DEFAULT);
+    }
+
     public JmsMapSenderFactory(Class<T> api, JmsConfig config, Mapping mapping) {
         super(api, config);
         this.mapping = mapping;

@@ -29,15 +29,28 @@ public enum JaxbProvider {
     /** An adapter for http://xstream.codehaus.org/ */
     XSTREAM("net.java.messageapi.xstream.XStreamJaxbContextFactory");
 
-    private static final String PROPERTY = javax.xml.bind.JAXBContext.class.getName();
+    public static class JaxbProviderMemento {
+        private final String oldFactoryName;
 
-    private static void setFactory(String name) {
-        if (name == null) {
-            System.clearProperty(PROPERTY);
-        } else {
-            System.setProperty(PROPERTY, name);
+        public JaxbProviderMemento(JaxbProvider jaxbProvider) {
+            this.oldFactoryName = System.getProperty(PROPERTY);
+            setFactory(jaxbProvider.factoryName);
+        }
+
+        private static void setFactory(String name) {
+            if (name == null) {
+                System.clearProperty(PROPERTY);
+            } else {
+                System.setProperty(PROPERTY, name);
+            }
+        }
+
+        public void restore() {
+            setFactory(oldFactoryName);
         }
     }
+
+    private static final String PROPERTY = javax.xml.bind.JAXBContext.class.getName();
 
     private final String factoryName;
 
@@ -52,14 +65,22 @@ public enum JaxbProvider {
      * newInstance with a package-path}; maybe others have to be supported later.
      */
     public JAXBContext createJaxbContextFor(Package pkg) {
-        final String oldFactoryName = System.getProperty(PROPERTY);
+        JaxbProviderMemento memento = setUp();
         try {
-            setFactory(factoryName);
             return JAXBContext.newInstance(pkg.getName());
         } catch (JAXBException e) {
             throw new RuntimeException("can't create JAXB context for " + pkg, e);
         } finally {
-            setFactory(oldFactoryName);
+            memento.restore();
         }
+    }
+
+    /**
+     * Activate this JaxbProvider
+     * 
+     * @return a memento to {@link JaxbProviderMemento#restore() restore} the previous state
+     */
+    public JaxbProviderMemento setUp() {
+        return new JaxbProviderMemento(this);
     }
 }

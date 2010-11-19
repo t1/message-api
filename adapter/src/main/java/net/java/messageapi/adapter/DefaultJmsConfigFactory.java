@@ -20,9 +20,9 @@ public final class DefaultJmsConfigFactory {
     }
 
     public static JmsConfig getJmsConfig(String factoryName, String queueName, String user,
-            String pass) {
+            String pass, JmsSenderFactoryType type) {
         return new JmsConfig(factoryName, queueName, user, pass, true,
                 Suppliers.ofInstance(new Properties()),
-                Suppliers.ofInstance(Collections.<String, Object> emptyMap()));
+                Suppliers.ofInstance(Collections.<String, Object> emptyMap()), type);
     }
 }

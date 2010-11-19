@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
 
 public class MappingBuilder {
 
+    public static final Mapping DEFAULT = new MappingBuilder("METHOD").build();
+
     private Mapping mapping;
     private ImmutableMap.Builder<String, FieldMapping<?>> fieldMap;
     private ImmutableBiMap.Builder<String, String> opMap;
