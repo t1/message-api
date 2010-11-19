@@ -25,14 +25,15 @@ public final class JbossJmsConfigFactory {
     private final static String FACTORY_TRANSACTED = "java:/JmsXA";
     private final static String FACTORY_NON_TRANSACTED = "ConnectionFactory";
 
-    public static JmsConfig getTransactedJmsConfig(String queueName, String user, String pass) {
+    public static JmsConfig getTransactedJmsConfig(String queueName, String user, String pass,
+            JmsSenderFactoryType type) {
         return new JmsConfig(FACTORY_TRANSACTED, queueName, user, pass, true, DEFAULT_CONTEXT,
-                DEFAULT_PROPERTIES);
+                DEFAULT_PROPERTIES, type);
     }
 
-    public static JmsConfig getNonTransactedJmsConfig(String queueName, String user, String pass) {
+    public static JmsConfig getNonTransactedJmsConfig(String queueName, String user, String pass,
+            JmsSenderFactoryType type) {
         return new JmsConfig(FACTORY_NON_TRANSACTED, queueName, user, pass, false, DEFAULT_CONTEXT,
-                DEFAULT_PROPERTIES);
+                DEFAULT_PROPERTIES, type);
     }
-
 }

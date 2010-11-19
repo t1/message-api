@@ -39,7 +39,7 @@ class XStreamJaxbContext extends JAXBContext {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public Validator createValidator() throws JAXBException {
         throw new UnsupportedOperationException("it's deprecated anyway");
     }
