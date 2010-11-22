@@ -7,10 +7,9 @@ import javax.xml.bind.*;
 
 import net.java.messageapi.adapter.MessageCallFactory;
 
-
 /**
  * Creates instances for an interface that serialize the parameters to an XML written to some
- * {@link Writer}.
+ * {@link Writer}; very handy for testing.
  */
 public class ToXmlEncoder<T> {
 

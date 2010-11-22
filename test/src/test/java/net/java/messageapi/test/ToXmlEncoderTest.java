@@ -8,21 +8,19 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.ToXmlSenderFactory;
-import net.java.messageapi.test.TestApi;
+import net.java.messageapi.adapter.xml.ToXmlEncoder;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 @RunWith(TwiP.class)
-public class ToXmlSenderFactoryTest {
+public class ToXmlEncoderTest {
     @Test
     public void shouldUseAllProviders(JaxbProvider jaxbProvider) throws Exception {
         // Given
         Writer writer = new StringWriter();
-        TestApi impl = ToXmlSenderFactory.create(TestApi.class, jaxbProvider, writer).get();
+        TestApi impl = ToXmlEncoder.create(TestApi.class, writer, jaxbProvider);
 
         // When
         impl.noArgCall();
@@ -38,7 +36,7 @@ public class ToXmlSenderFactoryTest {
     public void shouldUseDefaultProvider() throws Exception {
         // Given
         Writer writer = new StringWriter();
-        TestApi impl = ToXmlSenderFactory.create(TestApi.class, writer).get();
+        TestApi impl = ToXmlEncoder.create(TestApi.class, writer);
 
         // When
         impl.noArgCall();

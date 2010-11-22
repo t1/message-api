@@ -6,13 +6,11 @@ import static org.junit.Assert.*;
 import java.io.StringWriter;
 
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.ToXmlSenderFactory;
-import net.java.messageapi.test.PrimitivesTestApi;
+import net.java.messageapi.adapter.xml.ToXmlEncoder;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 
 @RunWith(TwiP.class)
 public class PrimitiveTestApiTest {
@@ -24,7 +22,7 @@ public class PrimitiveTestApiTest {
     private final PrimitivesTestApi testApi;
 
     public PrimitiveTestApiTest(JaxbProvider jaxbProvider) {
-        testApi = ToXmlSenderFactory.create(PrimitivesTestApi.class, jaxbProvider, writer).get();
+        testApi = ToXmlEncoder.create(PrimitivesTestApi.class, writer, jaxbProvider);
     }
 
     private String getLine(StringWriter writer, int lineNumber) {

@@ -5,30 +5,24 @@ import static org.junit.Assert.*;
 
 import java.io.StringWriter;
 
-import net.java.messageapi.adapter.MessageSenderRegistry;
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.ToXmlSenderFactory;
-import net.java.messageapi.test.BoxedPrimitivesTestApi;
+import net.java.messageapi.adapter.xml.ToXmlEncoder;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 
 @RunWith(TwiP.class)
 public class BoxedPrimitiveTestApiTest {
 
     private static final String NS = "http://messageapi.java.net";
 
-    private final MessageSenderRegistry registry = new MessageSenderRegistry();
     private final BoxedPrimitivesTestApi testApi;
 
     private final StringWriter writer = new StringWriter();
 
     public BoxedPrimitiveTestApiTest(JaxbProvider jaxbProvider) {
-        this.registry.add(BoxedPrimitivesTestApi.class, ToXmlSenderFactory.create(
-                BoxedPrimitivesTestApi.class, jaxbProvider, writer));
-        this.testApi = registry.get(BoxedPrimitivesTestApi.class);
+        this.testApi = ToXmlEncoder.create(BoxedPrimitivesTestApi.class, writer, jaxbProvider);
     }
 
     private String getLine(StringWriter writer, int lineNumber) {
