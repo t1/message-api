@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 
 import javax.jms.JMSException;
 import javax.jms.Session;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import net.java.messageapi.MessageApi;
 import net.java.messageapi.adapter.*;
@@ -17,9 +18,15 @@ import net.java.messageapi.adapter.*;
  * 
  * @see MessageApi
  */
+@XmlRootElement
 public class JmsXmlSenderFactory<T> extends AbstractJmsSenderFactory<T, String> {
 
     private final JaxbProvider jaxbProvider;
+
+    // just to satisfy JAXB
+    protected JmsXmlSenderFactory() {
+        this.jaxbProvider = null;
+    }
 
     public JmsXmlSenderFactory(Class<T> api, JmsConfig config) {
         this(api, config, JaxbProvider.UNCHANGED);

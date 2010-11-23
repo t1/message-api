@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableMap;
  * is used.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso( { XmlJmsConfig.class, MapJmsConfig.class })
 public abstract class JmsConfig {
 
     /**
@@ -50,7 +51,7 @@ public abstract class JmsConfig {
 
     public static JmsConfig readConfigFrom(Reader reader) {
         try {
-            JAXBContext context = getJaxbContext();
+            JAXBContext context = JAXBContext.newInstance(JmsConfig.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (JmsConfig) unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
@@ -59,18 +60,7 @@ public abstract class JmsConfig {
     }
 
     public void writeConfigTo(Writer writer) {
-        try {
-            JAXBContext context = getJaxbContext();
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(this, writer);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static JAXBContext getJaxbContext() throws JAXBException {
-        return JAXBContext.newInstance(XmlJmsConfig.class, MapJmsConfig.class);
+        JAXB.marshal(this, writer);
     }
 
     public static JmsConfig getJmsConfig(String factoryName, String queueName, String user,
