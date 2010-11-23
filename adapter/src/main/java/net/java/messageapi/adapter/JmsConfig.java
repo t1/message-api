@@ -1,6 +1,7 @@
 package net.java.messageapi.adapter;
 
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,33 +17,62 @@ import com.google.common.collect.ImmutableMap;
  * <b>can</b> be instantiated directly, most commonly a factory like {@link DefaultJmsConfigFactory}
  * is used.
  */
-@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class JmsConfig {
+public abstract class JmsConfig {
 
     /**
      * Load a {@link JmsConfig} from a file named like that interface plus "-jmsconfig.xml"
      */
     public static JmsConfig getConfigFor(Class<?> api) {
-        InputStream stream = getStreamFor(api);
-        return readConfigFrom(stream);
+        Reader reader = getReaderFor(api);
+        return readConfigFrom(reader);
     }
 
-    private static InputStream getStreamFor(Class<?> api) {
+    private static Reader getReaderFor(Class<?> api) {
         String fileName = api.getSimpleName() + "-jmsconfig.xml";
         InputStream stream = api.getResourceAsStream(fileName);
         if (stream == null)
             throw new RuntimeException("file not found: " + fileName);
-        return stream;
+        return new InputStreamReader(stream, Charset.forName("utf-8"));
     }
 
-    public static JmsConfig readConfigFrom(InputStream stream) {
+    public static JmsConfig readConfigFrom(Reader reader) {
         try {
-            JAXBContext context = JAXBContext.newInstance(JmsConfig.class);
+            JAXBContext context = getJaxbContext();
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (JmsConfig) unmarshaller.unmarshal(stream);
+            return (JmsConfig) unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void writeConfigTo(Writer writer) {
+        try {
+            JAXBContext context = getJaxbContext();
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(this, writer);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static JAXBContext getJaxbContext() throws JAXBException {
+        return JAXBContext.newInstance(XmlJmsConfig.class, MapJmsConfig.class);
+    }
+
+    public static JmsConfig getJmsConfig(String factoryName, String queueName, String user,
+            String pass, boolean transacted, Supplier<Properties> contextPropertiesSupplier,
+            Supplier<Map<String, Object>> headerSupplier, JmsSenderFactoryType type) {
+        // FIXME
+        if (type == JmsSenderFactoryType.XML) {
+            return new XmlJmsConfig(factoryName, queueName, user, pass, transacted,
+                    contextPropertiesSupplier, headerSupplier);
+        } else if (type == JmsSenderFactoryType.MAP) {
+            return new MapJmsConfig(factoryName, queueName, user, pass, transacted,
+                    contextPropertiesSupplier, headerSupplier);
+        } else {
+            throw new UnsupportedOperationException("unknown type: " + type);
         }
     }
 
@@ -53,7 +83,6 @@ public final class JmsConfig {
     private final String user;
     private final String pass;
     private final boolean transacted;
-    private final JmsSenderFactoryType senderType;
 
     // FIXME these should not be transient
     @XmlTransient
@@ -62,8 +91,7 @@ public final class JmsConfig {
     private final Supplier<Map<String, Object>> headerSupplier;
 
     // just to satisfy JAXB
-    @SuppressWarnings("unused")
-    private JmsConfig() {
+    protected JmsConfig() {
         this.factoryName = null;
         this.destinationName = null;
         this.user = null;
@@ -71,12 +99,11 @@ public final class JmsConfig {
         this.transacted = true;
         this.contextPropertiesSupplier = null;
         this.headerSupplier = null;
-        this.senderType = null;
     }
 
     public JmsConfig(String factoryName, String destinationName, String user, String pass,
             boolean transacted, Supplier<Properties> contextPropertiesSupplier,
-            Supplier<Map<String, Object>> headerSupplier, JmsSenderFactoryType senderType) {
+            Supplier<Map<String, Object>> headerSupplier) {
         this.factoryName = factoryName;
         this.destinationName = destinationName;
         this.user = user;
@@ -84,7 +111,6 @@ public final class JmsConfig {
         this.transacted = transacted;
         this.contextPropertiesSupplier = contextPropertiesSupplier;
         this.headerSupplier = headerSupplier;
-        this.senderType = senderType;
     }
 
     public String getFactoryName() {
@@ -119,15 +145,96 @@ public final class JmsConfig {
         return headerSupplier.get();
     }
 
-    public JmsSenderFactoryType getSenderType() {
-        return senderType;
-    }
-
-    public <T> AbstractJmsSenderFactory<T, ?> createFactory(Class<T> api) {
-        return senderType.createFactory(api, this);
-    }
-
     public <T> T createProxy(Class<T> api) {
         return createFactory(api).get();
+    }
+
+    public abstract <T> AbstractJmsSenderFactory<T, ?> createFactory(Class<T> api);
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((contextPropertiesSupplier == null) ? 0 : contextPropertiesSupplier.hashCode());
+        result = prime * result + ((destinationName == null) ? 0 : destinationName.hashCode());
+        result = prime * result + ((factoryName == null) ? 0 : factoryName.hashCode());
+        result = prime * result + ((headerSupplier == null) ? 0 : headerSupplier.hashCode());
+        result = prime * result + ((pass == null) ? 0 : pass.hashCode());
+        result = prime * result + (transacted ? 1231 : 1237);
+        result = prime * result + ((user == null) ? 0 : user.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        JmsConfig other = (JmsConfig) obj;
+        if (contextPropertiesSupplier == null) {
+            if (other.contextPropertiesSupplier != null) {
+                return false;
+            }
+        } else if (!contextPropertiesSupplier.equals(other.contextPropertiesSupplier)) {
+            return false;
+        }
+        if (destinationName == null) {
+            if (other.destinationName != null) {
+                return false;
+            }
+        } else if (!destinationName.equals(other.destinationName)) {
+            return false;
+        }
+        if (factoryName == null) {
+            if (other.factoryName != null) {
+                return false;
+            }
+        } else if (!factoryName.equals(other.factoryName)) {
+            return false;
+        }
+        if (headerSupplier == null) {
+            if (other.headerSupplier != null) {
+                return false;
+            }
+        } else if (!headerSupplier.equals(other.headerSupplier)) {
+            return false;
+        }
+        if (pass == null) {
+            if (other.pass != null) {
+                return false;
+            }
+        } else if (!pass.equals(other.pass)) {
+            return false;
+        }
+        if (transacted != other.transacted) {
+            return false;
+        }
+        if (user == null) {
+            if (other.user != null) {
+                return false;
+            }
+        } else if (!user.equals(other.user)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "JmsConfig ["
+                + (contextPropertiesSupplier != null ? "contextPropertiesSupplier="
+                        + contextPropertiesSupplier + ", " : "")
+                + (destinationName != null ? "destinationName=" + destinationName + ", " : "")
+                + (factoryName != null ? "factoryName=" + factoryName + ", " : "")
+                + (headerSupplier != null ? "headerSupplier=" + headerSupplier + ", " : "")
+                + (pass != null ? "pass=" + pass + ", " : "") + "transacted=" + transacted + ", "
+                + (user != null ? "user=" + user : "") + "]";
     }
 }

@@ -1,5 +1,7 @@
 package net.java.messageapi.adapter.xml;
 
+import java.util.Arrays;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -61,8 +63,8 @@ public enum JaxbProvider {
     /**
      * Creates a {@link JAXBContext} using this JAXB provider.
      * <p>
-     * Note that we currently require only support for {@link JAXBContext#newInstance(String)
-     * newInstance with a package-path}; maybe others have to be supported later.
+     * Note that we currently require only support for newInstance with a package-path and an array
+     * of classes; maybe others have to be supported later.
      */
     public JAXBContext createJaxbContextFor(Package pkg) {
         JaxbProviderMemento memento = setUp();
@@ -70,6 +72,24 @@ public enum JaxbProvider {
             return JAXBContext.newInstance(pkg.getName());
         } catch (JAXBException e) {
             throw new RuntimeException("can't create JAXB context for " + pkg, e);
+        } finally {
+            memento.restore();
+        }
+    }
+
+    /**
+     * Creates a {@link JAXBContext} using this JAXB provider.
+     * <p>
+     * Note that we currently require only support for newInstance with a package-path and an array
+     * of classes; maybe others have to be supported later.
+     */
+    public JAXBContext createJaxbContextFor(Class<?>... classesToBeBound) {
+        JaxbProviderMemento memento = setUp();
+        try {
+            return JAXBContext.newInstance(classesToBeBound);
+        } catch (JAXBException e) {
+            throw new RuntimeException("can't create JAXB context for "
+                    + Arrays.asList(classesToBeBound), e);
         } finally {
             memento.restore();
         }

@@ -4,12 +4,12 @@ import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 import javax.jms.*;
 
-import net.java.messageapi.adapter.JmsSenderFactoryType;
+import net.java.messageapi.adapter.JmsConfig;
+import net.java.messageapi.adapter.MapJmsConfig;
 import net.java.messageapi.adapter.mapped.*;
 import net.java.messageapi.converter.JodaLocalDateConverter;
 import net.java.messageapi.converter.StringToBooleanConverter;
@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockejb.jms.MapMessageImpl;
 import org.mockito.Mock;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -80,8 +81,10 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     private BoxedPrimitivesTestApi boxedPrimitivesServiceMock;
 
     @Override
-    protected JmsSenderFactoryType getType() {
-        return JmsSenderFactoryType.MAP;
+    protected JmsConfig createConfig() {
+        return new MapJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true,
+                Suppliers.ofInstance(new Properties()),
+                Suppliers.ofInstance(Collections.<String, Object> emptyMap()));
     }
 
     @Test

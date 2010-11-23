@@ -38,8 +38,8 @@ public final class ResenderJmsConfigFactory {
 
     public JmsConfig getDelayedJmsConfig(String queueName, String user, String pass,
             Duration delayAtLeast, JmsSenderFactoryType type) {
-        return new JmsConfig(FACTORY, resenderQueueName, resenderQueueUser, resenderQueuePass,
-                true, Suppliers.ofInstance(new Properties()),
+        return JmsConfig.getJmsConfig(FACTORY, resenderQueueName, resenderQueueUser,
+                resenderQueuePass, true, Suppliers.ofInstance(new Properties()),
                 Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)),
                 type);
     }
@@ -51,8 +51,9 @@ public final class ResenderJmsConfigFactory {
 
     public JmsConfig getRemoteJmsConfig(String providerUrl, String queueName, String user,
             String pass, Duration delayAtLeast, JmsSenderFactoryType type) {
-        return new JmsConfig(FACTORY, resenderQueueName, resenderQueueUser, resenderQueuePass,
-                true, Suppliers.ofInstance(createContextProperties(providerUrl)),
+        return JmsConfig.getJmsConfig(FACTORY, resenderQueueName, resenderQueueUser,
+                resenderQueuePass, true,
+                Suppliers.ofInstance(createContextProperties(providerUrl)),
                 Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)),
                 type);
     }

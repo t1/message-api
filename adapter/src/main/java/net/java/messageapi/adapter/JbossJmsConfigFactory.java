@@ -27,13 +27,13 @@ public final class JbossJmsConfigFactory {
 
     public static JmsConfig getTransactedJmsConfig(String queueName, String user, String pass,
             JmsSenderFactoryType type) {
-        return new JmsConfig(FACTORY_TRANSACTED, queueName, user, pass, true, DEFAULT_CONTEXT,
-                DEFAULT_PROPERTIES, type);
+        return JmsConfig.getJmsConfig(FACTORY_TRANSACTED, queueName, user, pass,
+                true, DEFAULT_CONTEXT, DEFAULT_PROPERTIES, type);
     }
 
     public static JmsConfig getNonTransactedJmsConfig(String queueName, String user, String pass,
             JmsSenderFactoryType type) {
-        return new JmsConfig(FACTORY_NON_TRANSACTED, queueName, user, pass, false, DEFAULT_CONTEXT,
-                DEFAULT_PROPERTIES, type);
+        return JmsConfig.getJmsConfig(FACTORY_NON_TRANSACTED, queueName, user, pass,
+                false, DEFAULT_CONTEXT, DEFAULT_PROPERTIES, type);
     }
 }
