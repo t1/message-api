@@ -3,13 +3,13 @@ package net.java.messageapi.test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import net.java.messageapi.adapter.JmsSenderFactoryType;
+import net.java.messageapi.adapter.JmsConfig;
+import net.java.messageapi.adapter.XmlJmsConfig;
 import net.java.messageapi.adapter.xml.*;
 import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
@@ -21,6 +21,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockejb.jms.TextMessageImpl;
+
+import com.google.common.base.Suppliers;
 
 @RunWith(Parameterized.class)
 public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
@@ -46,8 +48,10 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Override
-    protected JmsSenderFactoryType getType() {
-        return JmsSenderFactoryType.XML;
+    protected JmsConfig createConfig() {
+        return new XmlJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true,
+                Suppliers.ofInstance(new Properties()),
+                Suppliers.ofInstance(Collections.<String, Object> emptyMap()));
     }
 
     private String instantCallXml(Instant now) {

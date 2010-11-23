@@ -15,8 +15,8 @@ public final class RemoteJmsConfigFactory {
 
     public static JmsConfig getRemoteJmsConfig(String providerUrl, String queueName,
             String queueUser, String queuePass, JmsSenderFactoryType type) {
-        return new JmsConfig(FACTORY, queueName, queueUser, queuePass, false,
-                Suppliers.ofInstance(createContextProperties(providerUrl)),
+        return JmsConfig.getJmsConfig(FACTORY, queueName, queueUser, queuePass,
+                false, Suppliers.ofInstance(createContextProperties(providerUrl)),
                 Suppliers.ofInstance(Collections.<String, Object> emptyMap()), type);
     }
 

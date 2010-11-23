@@ -6,7 +6,7 @@ import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import net.java.messageapi.adapter.*;
+import net.java.messageapi.adapter.JmsConfig;
 
 import org.junit.After;
 import org.junit.Before;
@@ -37,14 +37,7 @@ public abstract class AbstractJmsSenderFactoryTest {
                 CONFIG.getDestinationName(), targetMDB));
     }
 
-    protected JmsSenderFactoryType getType() {
-        return JmsSenderFactoryType.DEFAULT;
-    }
-
-    protected JmsConfig createConfig() {
-        return DefaultJmsConfigFactory.getJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS,
-                getType());
-    }
+    protected abstract JmsConfig createConfig();
 
     protected Message captureMessage() {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);

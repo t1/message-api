@@ -14,8 +14,6 @@ public enum JmsSenderFactoryType {
 
     MAP(JmsMapSenderFactory.class);
 
-    public static final JmsSenderFactoryType DEFAULT = XML;
-
     private final Constructor<?> constructor;
 
     private JmsSenderFactoryType(Class<?> factory) {

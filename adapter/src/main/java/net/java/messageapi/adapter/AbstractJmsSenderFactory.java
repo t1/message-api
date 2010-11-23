@@ -28,6 +28,7 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
 
     protected final Class<T> api;
     protected final JmsConfig config;
+
     private final Logger log;
     private Context jndiContext = null;
     private ConnectionFactory connectionFactory = null;
