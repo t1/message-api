@@ -135,10 +135,13 @@ public abstract class JmsConfig {
         return transacted;
     }
 
-    public Context getContext() throws NamingException {
-        Properties context = (contextPropertiesSupplier == null) ? new Properties()
+    public Properties getContextProperties() {
+        return (contextPropertiesSupplier == null) ? new Properties()
                 : contextPropertiesSupplier.get();
-        return new InitialContext(context);
+    }
+
+    public Context getContext() throws NamingException {
+        return new InitialContext(getContextProperties());
     }
 
     public Map<String, Object> getAdditionalProperties() {

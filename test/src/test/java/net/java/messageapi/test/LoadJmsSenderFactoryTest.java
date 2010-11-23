@@ -1,7 +1,5 @@
 package net.java.messageapi.test;
 
-import java.io.StringWriter;
-
 import javax.xml.bind.JAXB;
 
 import net.java.messageapi.adapter.AbstractJmsSenderFactory;
@@ -22,10 +20,8 @@ public class LoadJmsSenderFactoryTest {
         JmsConfig config = JmsConfig.getConfigFor(api);
         AbstractJmsSenderFactory<TestApi, ?> factory = config.createFactory(TestApi.class);
 
-        StringWriter writer = new StringWriter();
-        JAXB.marshal(factory, writer);
+        JAXB.marshal(factory, System.out);
 
         // FIXME
-        System.out.println(writer);
     }
 }
