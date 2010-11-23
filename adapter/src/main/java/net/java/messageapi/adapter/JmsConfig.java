@@ -1,9 +1,9 @@
 package net.java.messageapi.adapter;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.naming.*;
 import javax.xml.bind.*;
@@ -29,11 +29,23 @@ public abstract class JmsConfig {
     }
 
     private static Reader getReaderFor(Class<?> api) {
-        String fileName = api.getSimpleName() + "-jmsconfig.xml";
-        InputStream stream = api.getResourceAsStream(fileName);
-        if (stream == null)
-            throw new RuntimeException("file not found: " + fileName);
+        String fileName = api.getName() + "-jmsconfig.xml";
+        InputStream stream = getSingleUrlFor(fileName);
         return new InputStreamReader(stream, Charset.forName("utf-8"));
+    }
+
+    private static InputStream getSingleUrlFor(String fileName) {
+        try {
+            Enumeration<URL> resources = ClassLoader.getSystemResources(fileName);
+            if (!resources.hasMoreElements())
+                throw new RuntimeException("found no config file [" + fileName + "]");
+            URL result = resources.nextElement();
+            if (resources.hasMoreElements())
+                throw new RuntimeException("found multiple configs files [" + fileName + "]");
+            return result.openStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static JmsConfig readConfigFrom(Reader reader) {
