@@ -6,9 +6,6 @@ import net.java.messageapi.adapter.*;
 
 import org.junit.Test;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-
 public class MessageSenderRegistryTest {
 
     public interface TestApi1 {
@@ -19,9 +16,9 @@ public class MessageSenderRegistryTest {
         public void call2();
     }
 
-    private static final Supplier<Properties> EMPTY_PROPERTIES = Suppliers.ofInstance(new Properties());
+    private static final Properties EMPTY_PROPERTIES = new Properties();
 
-    private static final Supplier<Map<String, Object>> EMPTY_MAP = Suppliers.ofInstance(Collections.<String, Object> emptyMap());
+    private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
 
     private final MessageSenderRegistry registry = new MessageSenderRegistry();
 

@@ -4,9 +4,6 @@ import java.util.*;
 
 import net.java.messageapi.MessageApi;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-
 /**
  * Factory to create {@link JmsConfig JMS endpoint configurations} that can be used within a JBoss
  * environment. The factory name is set to @code{java:/JmsXA} for transactional sending and {@code
@@ -15,8 +12,8 @@ import com.google.common.base.Suppliers;
  */
 public final class JbossJmsConfigFactory {
 
-    private static final Supplier<Map<String, Object>> DEFAULT_PROPERTIES = Suppliers.ofInstance(Collections.<String, Object> emptyMap());
-    private static final Supplier<Properties> DEFAULT_CONTEXT = Suppliers.ofInstance(new Properties());
+    private static final Map<String, Object> DEFAULT_PROPERTIES = Collections.<String, Object> emptyMap();
+    private static final Properties DEFAULT_CONTEXT = new Properties();
 
     private JbossJmsConfigFactory() {
         // just hide the constructor
@@ -27,13 +24,13 @@ public final class JbossJmsConfigFactory {
 
     public static JmsConfig getTransactedJmsConfig(String queueName, String user, String pass,
             JmsSenderFactoryType type) {
-        return JmsConfig.getJmsConfig(FACTORY_TRANSACTED, queueName, user, pass,
-                true, DEFAULT_CONTEXT, DEFAULT_PROPERTIES, type);
+        return JmsConfig.getJmsConfig(FACTORY_TRANSACTED, queueName, user, pass, true,
+                DEFAULT_CONTEXT, DEFAULT_PROPERTIES, type);
     }
 
     public static JmsConfig getNonTransactedJmsConfig(String queueName, String user, String pass,
             JmsSenderFactoryType type) {
-        return JmsConfig.getJmsConfig(FACTORY_NON_TRANSACTED, queueName, user, pass,
-                false, DEFAULT_CONTEXT, DEFAULT_PROPERTIES, type);
+        return JmsConfig.getJmsConfig(FACTORY_NON_TRANSACTED, queueName, user, pass, false,
+                DEFAULT_CONTEXT, DEFAULT_PROPERTIES, type);
     }
 }
