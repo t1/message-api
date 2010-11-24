@@ -7,8 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import net.java.messageapi.adapter.mapped.JmsMapSenderFactory;
 
-import com.google.common.base.Supplier;
-
 @XmlRootElement
 public class MapJmsConfig extends JmsConfig {
 
@@ -18,10 +16,8 @@ public class MapJmsConfig extends JmsConfig {
     }
 
     public MapJmsConfig(String factoryName, String destinationName, String user, String pass,
-            boolean transacted, Supplier<Properties> contextPropertiesSupplier,
-            Supplier<Map<String, Object>> headerSupplier) {
-        super(factoryName, destinationName, user, pass, transacted, contextPropertiesSupplier,
-                headerSupplier);
+            boolean transacted, Properties contextProperties, Map<String, Object> header) {
+        super(factoryName, destinationName, user, pass, transacted, contextProperties, header);
     }
 
     @Override

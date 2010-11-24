@@ -22,8 +22,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockejb.jms.TextMessageImpl;
 
-import com.google.common.base.Suppliers;
-
 @RunWith(Parameterized.class)
 public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
@@ -49,9 +47,8 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     @Override
     protected JmsConfig createConfig() {
-        return new XmlJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true,
-                Suppliers.ofInstance(new Properties()),
-                Suppliers.ofInstance(Collections.<String, Object> emptyMap()));
+        return new XmlJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true, new Properties(),
+                Collections.<String, Object> emptyMap());
     }
 
     private String instantCallXml(Instant now) {

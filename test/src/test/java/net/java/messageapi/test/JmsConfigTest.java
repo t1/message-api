@@ -20,7 +20,7 @@ public class JmsConfigTest {
 
     private final JaxbProviderMemento memento;
 
-    public JmsConfigTest(@NotNull @Assume("!= XSTREAM") JaxbProvider jaxb) {
+    public JmsConfigTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxb) {
         memento = jaxb.setUp();
     }
 

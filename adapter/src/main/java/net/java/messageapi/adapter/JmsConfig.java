@@ -9,7 +9,6 @@ import javax.naming.*;
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -64,15 +63,15 @@ public abstract class JmsConfig {
     }
 
     public static JmsConfig getJmsConfig(String factoryName, String queueName, String user,
-            String pass, boolean transacted, Supplier<Properties> contextPropertiesSupplier,
-            Supplier<Map<String, Object>> headerSupplier, JmsSenderFactoryType type) {
+            String pass, boolean transacted, Properties contextProperties,
+            Map<String, Object> header, JmsSenderFactoryType type) {
         // FIXME
         if (type == JmsSenderFactoryType.XML) {
             return new XmlJmsConfig(factoryName, queueName, user, pass, transacted,
-                    contextPropertiesSupplier, headerSupplier);
+                    contextProperties, header);
         } else if (type == JmsSenderFactoryType.MAP) {
             return new MapJmsConfig(factoryName, queueName, user, pass, transacted,
-                    contextPropertiesSupplier, headerSupplier);
+                    contextProperties, header);
         } else {
             throw new UnsupportedOperationException("unknown type: " + type);
         }
@@ -86,11 +85,8 @@ public abstract class JmsConfig {
     private final String pass;
     private final boolean transacted;
 
-    // FIXME these should not be transient
-    @XmlTransient
-    private final Supplier<Properties> contextPropertiesSupplier;
-    @XmlTransient
-    private final Supplier<Map<String, Object>> headerSupplier;
+    private final Properties contextProperties;
+    private final Map<String, Object> header;
 
     // just to satisfy JAXB
     protected JmsConfig() {
@@ -99,20 +95,19 @@ public abstract class JmsConfig {
         this.user = null;
         this.pass = null;
         this.transacted = true;
-        this.contextPropertiesSupplier = null;
-        this.headerSupplier = null;
+        this.contextProperties = null;
+        this.header = null;
     }
 
     public JmsConfig(String factoryName, String destinationName, String user, String pass,
-            boolean transacted, Supplier<Properties> contextPropertiesSupplier,
-            Supplier<Map<String, Object>> headerSupplier) {
+            boolean transacted, Properties contextProperties, Map<String, Object> header) {
         this.factoryName = factoryName;
         this.destinationName = destinationName;
         this.user = user;
         this.pass = pass;
         this.transacted = transacted;
-        this.contextPropertiesSupplier = contextPropertiesSupplier;
-        this.headerSupplier = headerSupplier;
+        this.contextProperties = contextProperties;
+        this.header = header;
     }
 
     public String getFactoryName() {
@@ -136,8 +131,7 @@ public abstract class JmsConfig {
     }
 
     public Properties getContextProperties() {
-        return (contextPropertiesSupplier == null) ? new Properties()
-                : contextPropertiesSupplier.get();
+        return (contextProperties == null) ? new Properties() : contextProperties;
     }
 
     public Context getContext() throws NamingException {
@@ -145,9 +139,9 @@ public abstract class JmsConfig {
     }
 
     public Map<String, Object> getAdditionalProperties() {
-        if (headerSupplier == null)
+        if (header == null)
             return ImmutableMap.of();
-        return headerSupplier.get();
+        return header;
     }
 
     public <T> T createProxy(Class<T> api) {
@@ -160,11 +154,10 @@ public abstract class JmsConfig {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((contextPropertiesSupplier == null) ? 0 : contextPropertiesSupplier.hashCode());
+        result = prime * result + ((contextProperties == null) ? 0 : contextProperties.hashCode());
         result = prime * result + ((destinationName == null) ? 0 : destinationName.hashCode());
         result = prime * result + ((factoryName == null) ? 0 : factoryName.hashCode());
-        result = prime * result + ((headerSupplier == null) ? 0 : headerSupplier.hashCode());
+        result = prime * result + ((header == null) ? 0 : header.hashCode());
         result = prime * result + ((pass == null) ? 0 : pass.hashCode());
         result = prime * result + (transacted ? 1231 : 1237);
         result = prime * result + ((user == null) ? 0 : user.hashCode());
@@ -183,11 +176,11 @@ public abstract class JmsConfig {
             return false;
         }
         JmsConfig other = (JmsConfig) obj;
-        if (contextPropertiesSupplier == null) {
-            if (other.contextPropertiesSupplier != null) {
+        if (contextProperties == null) {
+            if (other.contextProperties != null) {
                 return false;
             }
-        } else if (!contextPropertiesSupplier.equals(other.contextPropertiesSupplier)) {
+        } else if (!contextProperties.equals(other.contextProperties)) {
             return false;
         }
         if (destinationName == null) {
@@ -204,11 +197,11 @@ public abstract class JmsConfig {
         } else if (!factoryName.equals(other.factoryName)) {
             return false;
         }
-        if (headerSupplier == null) {
-            if (other.headerSupplier != null) {
+        if (header == null) {
+            if (other.header != null) {
                 return false;
             }
-        } else if (!headerSupplier.equals(other.headerSupplier)) {
+        } else if (!header.equals(other.header)) {
             return false;
         }
         if (pass == null) {
@@ -234,11 +227,10 @@ public abstract class JmsConfig {
     @Override
     public String toString() {
         return "JmsConfig ["
-                + (contextPropertiesSupplier != null ? "contextPropertiesSupplier="
-                        + contextPropertiesSupplier + ", " : "")
+                + (contextProperties != null ? "contextProperties=" + contextProperties + ", " : "")
                 + (destinationName != null ? "destinationName=" + destinationName + ", " : "")
                 + (factoryName != null ? "factoryName=" + factoryName + ", " : "")
-                + (headerSupplier != null ? "headerSupplier=" + headerSupplier + ", " : "")
+                + (header != null ? "header=" + header + ", " : "")
                 + (pass != null ? "pass=" + pass + ", " : "") + "transacted=" + transacted + ", "
                 + (user != null ? "user=" + user : "") + "]";
     }

@@ -8,7 +8,6 @@ import net.java.messageapi.MessageApi;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 
-import com.google.common.base.Suppliers;
 import com.google.common.collect.Maps;
 
 /**
@@ -39,9 +38,8 @@ public final class ResenderJmsConfigFactory {
     public JmsConfig getDelayedJmsConfig(String queueName, String user, String pass,
             Duration delayAtLeast, JmsSenderFactoryType type) {
         return JmsConfig.getJmsConfig(FACTORY, resenderQueueName, resenderQueueUser,
-                resenderQueuePass, true, Suppliers.ofInstance(new Properties()),
-                Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)),
-                type);
+                resenderQueuePass, true, new Properties(), createMessageProperties(queueName, user,
+                        pass, delayAtLeast), type);
     }
 
     public JmsConfig getRemoteJmsConfig(String providerUrl, String queueName, String user,
@@ -52,10 +50,8 @@ public final class ResenderJmsConfigFactory {
     public JmsConfig getRemoteJmsConfig(String providerUrl, String queueName, String user,
             String pass, Duration delayAtLeast, JmsSenderFactoryType type) {
         return JmsConfig.getJmsConfig(FACTORY, resenderQueueName, resenderQueueUser,
-                resenderQueuePass, true,
-                Suppliers.ofInstance(createContextProperties(providerUrl)),
-                Suppliers.ofInstance(createMessageProperties(queueName, user, pass, delayAtLeast)),
-                type);
+                resenderQueuePass, true, createContextProperties(providerUrl),
+                createMessageProperties(queueName, user, pass, delayAtLeast), type);
     }
 
     private static Map<String, Object> createMessageProperties(String queueName, String user,

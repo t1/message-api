@@ -3,8 +3,6 @@ package net.java.messageapi.adapter;
 import java.util.Collections;
 import java.util.Properties;
 
-import com.google.common.base.Suppliers;
-
 public final class RemoteJmsConfigFactory {
 
     private static final String FACTORY = "ConnectionFactory";
@@ -15,9 +13,8 @@ public final class RemoteJmsConfigFactory {
 
     public static JmsConfig getRemoteJmsConfig(String providerUrl, String queueName,
             String queueUser, String queuePass, JmsSenderFactoryType type) {
-        return JmsConfig.getJmsConfig(FACTORY, queueName, queueUser, queuePass,
-                false, Suppliers.ofInstance(createContextProperties(providerUrl)),
-                Suppliers.ofInstance(Collections.<String, Object> emptyMap()), type);
+        return JmsConfig.getJmsConfig(FACTORY, queueName, queueUser, queuePass, false,
+                createContextProperties(providerUrl), Collections.<String, Object> emptyMap(), type);
     }
 
     private static Properties createContextProperties(String providerUrl) {
