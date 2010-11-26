@@ -5,19 +5,50 @@ import static org.junit.Assert.*;
 import java.util.Properties;
 
 import net.java.messageapi.adapter.*;
-import net.sf.twip.TwiP;
+import net.java.messageapi.adapter.xml.JaxbProvider;
+import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
+import net.sf.twip.*;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(TwiP.class)
 public class RemoteJmsConfigFactoryTest {
 
-    @Test
-    public void load(JmsSenderFactoryType type) throws Exception {
-        JmsConfig config = RemoteJmsConfigFactory.getRemoteJmsConfig("provider", "queue", "user",
-                "pass", type);
+    private final JaxbProviderMemento memento;
 
+    public RemoteJmsConfigFactoryTest(@NotNull @Assume("!= XSTREAM") JaxbProvider jaxb) {
+        memento = jaxb.setUp();
+    }
+
+    @After
+    public void cleanup() {
+        memento.restore();
+    }
+
+    @Test
+    public void loadRemoteConfig() throws Exception {
+        JmsConfig config = JmsConfig.getConfigFor(RemoteConfigApi.class);
+        verify(config);
+    }
+
+    @Test
+    public void loadXmlConfig() throws Exception {
+        JmsConfig config = RemoteJmsConfigFactory.getRemoteJmsConfig("provider", "queue", "user",
+                "pass", JmsSenderFactoryType.XML);
+        // JAXB.marshal(config, System.out);
+        verify(config);
+    }
+
+    @Test
+    public void loadMapConfig() throws Exception {
+        JmsConfig config = RemoteJmsConfigFactory.getRemoteJmsConfig("provider", "queue", "user",
+                "pass", JmsSenderFactoryType.MAP);
+        verify(config);
+    }
+
+    private void verify(JmsConfig config) {
         assertEquals("ConnectionFactory", config.getFactoryName());
         assertEquals("queue", config.getDestinationName());
         assertEquals("user", config.getUser());
