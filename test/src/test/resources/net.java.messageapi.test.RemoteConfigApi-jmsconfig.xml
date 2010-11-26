@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xmlJmsConfig>
+	<factory>ConnectionFactory</factory>
+	<destination>queue</destination>
+	<user>user</user>
+	<pass>pass</pass>
+	<transacted>false</transacted>
+	<contextProperties>
+		<entries key="java.naming.factory.initial">org.jnp.interfaces.NamingContextFactory</entries>
+		<entries key="java.naming.provider.url">provider</entries>
+		<entries key="java.naming.factory.url.pkgs">org.jboss.naming:org.jnp.interface</entries>
+	</contextProperties>
+	<header />
+</xmlJmsConfig>

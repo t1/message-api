@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xmlJmsConfig>
-    <factory>ConnectionFactory</factory>
-    <destination>ChatTopic</destination>
-    <user>guest</user>
-    <pass>guest</pass>
+    <factory>java:/JmsXA</factory>
+    <destination>MyQueueName</destination>
+    <user>MyQueueUser</user>
+    <pass>MyQueuePass</pass>
     <transacted>true</transacted>
 </xmlJmsConfig>

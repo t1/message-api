@@ -8,6 +8,7 @@ import java.util.*;
 import javax.naming.*;
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -85,6 +86,7 @@ public abstract class JmsConfig {
     private final String pass;
     private final boolean transacted;
 
+    @XmlJavaTypeAdapter(PropertiesMapAdapter.class)
     private final Properties contextProperties;
     private final Map<String, Object> header;
 
