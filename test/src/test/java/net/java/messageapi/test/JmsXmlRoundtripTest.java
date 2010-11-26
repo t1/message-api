@@ -3,7 +3,8 @@ package net.java.messageapi.test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Properties;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -13,30 +14,22 @@ import net.java.messageapi.adapter.XmlJmsConfig;
 import net.java.messageapi.adapter.xml.*;
 import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
+import net.sf.twip.*;
 
 import org.joda.time.Instant;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.mockejb.jms.TextMessageImpl;
 
-@RunWith(Parameterized.class)
+@RunWith(TwiP.class)
 public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private final JaxbProviderMemento memento;
 
-    @Parameters
-    public static List<Object[]> data() {
-        return Arrays.asList(new Object[][] { //
-        { JaxbProvider.SUN_JDK },
-        // TODO support: { JaxbProvider.ECLIPSE_LINK },
-        // TODO support: { JaxbProvider.XSTREAM }
-        });
-    }
-
-    public JmsXmlRoundtripTest(JaxbProvider jaxbProvider) {
+    // TODO support: ECLIPSE_LINK
+    public JmsXmlRoundtripTest(
+            @NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
         this.memento = jaxbProvider.setUp();
     }
 

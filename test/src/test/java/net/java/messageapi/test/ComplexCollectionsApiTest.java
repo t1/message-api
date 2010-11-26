@@ -7,29 +7,22 @@ import java.util.*;
 import net.java.messageapi.adapter.xml.ForwardingSenderFactory;
 import net.java.messageapi.adapter.xml.JaxbProvider;
 import net.java.messageapi.test.eclipselink.ComplexCollectionsApi;
+import net.sf.twip.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.*;
 
-@RunWith(Parameterized.class)
+@RunWith(TwiP.class)
 public class ComplexCollectionsApiTest {
-
-    @Parameters
-    public static List<Object[]> data() {
-        return Arrays.asList(new Object[][] { //
-        // { JaxbProvider.DEFAULT },
-        { JaxbProvider.ECLIPSE_LINK } //
-        });
-    }
 
     private final ComplexCollectionsApi service = mock(ComplexCollectionsApi.class);
     private final ComplexCollectionsApi sender;
 
-    public ComplexCollectionsApiTest(JaxbProvider provider) {
+    // TODO support: SUN_JDK
+    public ComplexCollectionsApiTest(
+            @NotNull @Assume("!= XSTREAM & != UNCHANGED & != SUN_JDK") JaxbProvider provider) {
         sender = ForwardingSenderFactory.create(ComplexCollectionsApi.class, service, provider).get();
     }
 
