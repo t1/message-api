@@ -20,6 +20,7 @@ public class JmsConfigTest {
 
     private final JaxbProviderMemento memento;
 
+    // FIXME support ECLIPSE_LINK
     public JmsConfigTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxb) {
         memento = jaxb.setUp();
     }
