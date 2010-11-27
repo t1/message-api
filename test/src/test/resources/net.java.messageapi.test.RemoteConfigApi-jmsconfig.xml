@@ -6,9 +6,9 @@
 	<pass>pass</pass>
 	<transacted>false</transacted>
 	<contextProperties>
-		<entries key="java.naming.factory.initial">org.jnp.interfaces.NamingContextFactory</entries>
-		<entries key="java.naming.provider.url">provider</entries>
-		<entries key="java.naming.factory.url.pkgs">org.jboss.naming:org.jnp.interface</entries>
+		<entry key="java.naming.factory.initial">org.jnp.interfaces.NamingContextFactory</entry>
+		<entry key="java.naming.provider.url">provider</entry>
+		<entry key="java.naming.factory.url.pkgs">org.jboss.naming:org.jnp.interface</entry>
 	</contextProperties>
 	<header />
 </xmlJmsConfig>

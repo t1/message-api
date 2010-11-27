@@ -21,6 +21,9 @@ import com.google.common.collect.ImmutableMap;
 @XmlSeeAlso( { XmlJmsConfig.class, MapJmsConfig.class })
 public abstract class JmsConfig {
 
+    private static final String CONFIG_FILE_SUFFIX = "-jmsconfig.xml";
+    private static final String DEFAULT_FILE_NAME = "default" + CONFIG_FILE_SUFFIX;
+
     /**
      * Load a {@link JmsConfig} from a file named like that interface plus "-jmsconfig.xml"
      */
@@ -30,8 +33,12 @@ public abstract class JmsConfig {
     }
 
     private static Reader getReaderFor(Class<?> api) {
-        String fileName = api.getName() + "-jmsconfig.xml";
+        String fileName = api.getName() + CONFIG_FILE_SUFFIX;
         InputStream stream = getSingleUrlFor(fileName);
+        if (stream == null)
+            stream = getSingleUrlFor(DEFAULT_FILE_NAME);
+        if (stream == null)
+            throw new RuntimeException("found no config file [" + fileName + "]");
         return new InputStreamReader(stream, Charset.forName("utf-8"));
     }
 
@@ -39,7 +46,7 @@ public abstract class JmsConfig {
         try {
             Enumeration<URL> resources = ClassLoader.getSystemResources(fileName);
             if (!resources.hasMoreElements())
-                throw new RuntimeException("found no config file [" + fileName + "]");
+                return null;
             URL result = resources.nextElement();
             if (resources.hasMoreElements())
                 throw new RuntimeException("found multiple configs files [" + fileName + "]");

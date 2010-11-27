@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xmlJmsConfig>
+    <factory>defaultFactory</factory>
+    <destination>defaultQueue</destination>
+    <user>defaultUser</user>
+    <pass>defaultPassword</pass>
+    <transacted>true</transacted>
+</xmlJmsConfig>
