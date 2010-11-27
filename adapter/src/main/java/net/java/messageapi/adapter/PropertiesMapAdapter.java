@@ -2,17 +2,17 @@ package net.java.messageapi.adapter;
 
 import java.util.*;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class PropertiesMapAdapter extends XmlAdapter<PropertiesMapAdapter.MyMap, Properties> {
 
-    public static class MyMap {
+    static class MyMap {
+        @XmlElement(name = "entry")
         public final List<MyMapEntry> entries = new ArrayList<MyMapEntry>();
     }
 
-    public static class MyMapEntry {
+    static class MyMapEntry {
         @XmlAttribute
         public final String key;
 

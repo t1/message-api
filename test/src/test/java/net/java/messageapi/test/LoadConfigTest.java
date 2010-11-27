@@ -1,6 +1,5 @@
 package net.java.messageapi.test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import javax.jms.JMSException;
@@ -10,7 +9,6 @@ import net.java.messageapi.adapter.JmsConfig;
 import net.java.messageapi.adapter.xml.XmlStringDecoder;
 import net.sf.twip.TwiP;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,30 +38,5 @@ public class LoadConfigTest extends AbstractJmsSenderFactoryTest {
 
         // Then
         verify(serviceImpl).multiCall("a", "b");
-    }
-
-    @Test
-    public void failWithoutConfigFile() {
-        try {
-            JmsConfig.getConfigFor(NoConfigApi.class);
-            fail("RuntimeException expected");
-        } catch (RuntimeException e) {
-            assertEquals(
-                    "found no config file [net.java.messageapi.test.NoConfigApi-jmsconfig.xml]",
-                    e.getMessage());
-        }
-    }
-
-    @Test
-    @Ignore("how do I get the same resource twice? maybe a sub-module?")
-    public void failWithDoubleConfigFile() {
-        try {
-            JmsConfig.getConfigFor(DoubleConfigApi.class);
-            fail("RuntimeException expected");
-        } catch (RuntimeException e) {
-            assertEquals(
-                    "found multiple config files [net.java.messageapi.test.DoubleConfigApi-jmsconfig.xml]",
-                    e.getMessage());
-        }
     }
 }
