@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableMap;
 @XmlSeeAlso( { XmlJmsConfig.class, MapJmsConfig.class })
 public abstract class JmsConfig {
 
-    private static final String CONFIG_FILE_SUFFIX = "-jmsconfig.xml";
+    private static final String CONFIG_FILE_SUFFIX = ".config";
     private static final String DEFAULT_FILE_NAME = "default" + CONFIG_FILE_SUFFIX;
 
     /**

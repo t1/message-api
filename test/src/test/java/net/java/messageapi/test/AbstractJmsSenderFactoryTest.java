@@ -8,12 +8,15 @@ import javax.naming.NamingException;
 
 import net.java.messageapi.adapter.JmsConfig;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.*;
 import org.mockejb.MDBDescriptor;
 import org.mockejb.MockContainer;
 import org.mockejb.jndi.MockContextFactory;
 import org.mockito.ArgumentCaptor;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 public abstract class AbstractJmsSenderFactoryTest {
 
@@ -25,6 +28,15 @@ public abstract class AbstractJmsSenderFactoryTest {
     protected final JmsConfig CONFIG = createConfig();
 
     protected final MessageListener targetMDB = mock(MessageListener.class);
+
+    @BeforeClass
+    public static void disableTests() throws NamingException, JMSException {
+        Logger mockEjb = (Logger) LoggerFactory.getLogger("org.mockejb");
+        mockEjb.setLevel(Level.WARN);
+
+        Logger messageTest = (Logger) LoggerFactory.getLogger("net.java.messageapi.test");
+        messageTest.setLevel(Level.WARN);
+    }
 
     @Before
     public void setAsInitialAndDeployMDB() throws NamingException, JMSException {

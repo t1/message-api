@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ public abstract class AbstractJmsSenderFactory<T, M> implements MessageSenderFac
     private static final String VERSION = "VERSION";
 
     protected final Class<T> api;
-    @XmlElement
     protected final JmsConfig config;
 
     private final Logger log;
