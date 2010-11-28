@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.jms.*;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import net.java.messageapi.MessageApi;
 import net.java.messageapi.adapter.*;
@@ -18,7 +17,6 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @see MessageApi
  */
-@XmlRootElement
 public class JmsMapSenderFactory<T> extends AbstractJmsSenderFactory<T, Map<String, Object>> {
 
     public static <T> JmsMapSenderFactory<T> create(Class<T> api, JmsConfig config, Mapping mapping) {
