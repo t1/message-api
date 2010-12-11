@@ -1,0 +1,6 @@
+<archetype>
+  <id>api</id>
+  <sources>
+    <source>src/main/java/MyMessageApi.java</source>
+  </sources>
+</archetype>
