@@ -5,14 +5,15 @@ import java.util.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class PropertiesMapAdapter extends XmlAdapter<PropertiesMapAdapter.MyMap, Properties> {
+public class PropertiesMapAdapter extends
+        XmlAdapter<PropertiesMapAdapter.MyPropertiesMap, Properties> {
 
-    static class MyMap {
+    static class MyPropertiesMap {
         @XmlElement(name = "entry")
-        public final List<MyMapEntry> entries = new ArrayList<MyMapEntry>();
+        public final List<MyPropertiesMapEntry> entries = new ArrayList<MyPropertiesMapEntry>();
     }
 
-    static class MyMapEntry {
+    static class MyPropertiesMapEntry {
         @XmlAttribute
         public final String key;
 
@@ -21,35 +22,35 @@ public class PropertiesMapAdapter extends XmlAdapter<PropertiesMapAdapter.MyMap,
 
         // just to satisfy JAXB
         @SuppressWarnings("unused")
-        private MyMapEntry() {
+        private MyPropertiesMapEntry() {
             this.key = null;
             this.value = null;
         }
 
-        public MyMapEntry(String key, String value) {
+        public MyPropertiesMapEntry(String key, String value) {
             this.key = key;
             this.value = value;
         }
     }
 
     @Override
-    public MyMap marshal(Properties in) throws Exception {
+    public MyPropertiesMap marshal(Properties in) throws Exception {
         if (in == null)
             return null;
-        MyMap out = new MyMap();
+        MyPropertiesMap out = new MyPropertiesMap();
         for (String key : in.stringPropertyNames()) {
             String value = in.getProperty(key);
-            out.entries.add(new MyMapEntry(key, value));
+            out.entries.add(new MyPropertiesMapEntry(key, value));
         }
         return out;
     }
 
     @Override
-    public Properties unmarshal(MyMap in) throws Exception {
+    public Properties unmarshal(MyPropertiesMap in) throws Exception {
         if (in == null)
             return null;
         Properties out = new Properties();
-        for (MyMapEntry entry : in.entries) {
+        for (MyPropertiesMapEntry entry : in.entries) {
             out.setProperty(entry.key, entry.value);
         }
         return out;

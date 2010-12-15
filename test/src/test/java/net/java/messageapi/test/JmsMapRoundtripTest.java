@@ -4,12 +4,12 @@ import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 import javax.jms.*;
 
-import net.java.messageapi.adapter.JmsConfig;
-import net.java.messageapi.adapter.MapJmsConfig;
+import net.java.messageapi.adapter.JmsSenderFactory;
 import net.java.messageapi.adapter.mapped.*;
 import net.java.messageapi.converter.JodaLocalDateConverter;
 import net.java.messageapi.converter.StringToBooleanConverter;
@@ -78,12 +78,6 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     @Mock
     private BoxedPrimitivesTestApi boxedPrimitivesServiceMock;
-
-    @Override
-    protected JmsConfig createConfig() {
-        return new MapJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true, new Properties(),
-                Collections.<String, Object> emptyMap());
-    }
 
     @Test
     public void shouldCallServiceWhenSendingAsMapMessage() {
@@ -196,7 +190,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
         .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("0", "1"))) //
         .build();
-        JodaTimeApi service = JmsMapSenderFactory.create(JodaTimeApi.class, CONFIG, mapping).get();
+        MapJmsPayloadHandler payloadHandler = new MapJmsPayloadHandler(mapping);
+        JodaTimeApi service = JmsSenderFactory.create(JodaTimeApi.class, CONFIG, payloadHandler).get();
 
         // When
         service.localDateCall(today, flag);
@@ -416,7 +411,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     private MappedApi service(Mapping mapping) {
-        return JmsMapSenderFactory.create(MappedApi.class, CONFIG, mapping).get();
+        return JmsSenderFactory.create(MappedApi.class, CONFIG, new MapJmsPayloadHandler(mapping)).get();
     }
 
     private void receive(Message message, Mapping mapping) {

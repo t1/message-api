@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.adapter;
 
 import javax.xml.bind.annotation.XmlRootElement;

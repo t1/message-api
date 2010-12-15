@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.adapter.mapped;
 
 class DefaultMapping implements Mapping {

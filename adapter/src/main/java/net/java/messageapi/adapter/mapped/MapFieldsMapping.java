@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.adapter.mapped;
 
 import com.google.common.collect.ImmutableMap;

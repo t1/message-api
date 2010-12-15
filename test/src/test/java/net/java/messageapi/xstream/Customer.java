@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.xstream;
 
 import javax.xml.bind.annotation.*;

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.xstream;
 
 import java.util.Map;

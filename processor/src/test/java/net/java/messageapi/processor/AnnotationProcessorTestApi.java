@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.processor;
 
 import net.java.messageapi.MessageApi;

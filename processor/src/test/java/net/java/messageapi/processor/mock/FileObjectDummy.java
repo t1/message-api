@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.processor.mock;
 
 import java.io.*;

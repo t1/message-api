@@ -5,50 +5,49 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.jms.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import net.java.messageapi.MessageApi;
-import net.java.messageapi.adapter.*;
+import net.java.messageapi.adapter.JmsPayloadHandler;
+import net.java.messageapi.adapter.MessageCallFactory;
 
 import com.google.common.collect.ImmutableMap;
 
 /**
- * A {@link MessageSenderFactory} that sends the message to a local JMS queue, with the call
- * serialized as the body of a map message.
- * 
- * @see MessageApi
+ * A {@link JmsPayloadHandler} that serializes the payload
+ * as map message.
  */
-public class JmsMapSenderFactory<T> extends AbstractJmsSenderFactory<T, Map<String, Object>> {
+@XmlRootElement
+public class MapJmsPayloadHandler extends JmsPayloadHandler {
 
-    public static <T> JmsMapSenderFactory<T> create(Class<T> api, JmsConfig config, Mapping mapping) {
-        return new JmsMapSenderFactory<T>(api, config, mapping);
-    }
-
+    @XmlTransient
+    // FIXME not transient!
     private final Mapping mapping;
 
-    // just to satisfy JAXB
-    protected JmsMapSenderFactory() {
-        this.mapping = null;
+    public MapJmsPayloadHandler() {
+        this(MappingBuilder.DEFAULT);
     }
 
-    public JmsMapSenderFactory(Class<T> api, JmsConfig config) {
-        this(api, config, MappingBuilder.DEFAULT);
-    }
-
-    public JmsMapSenderFactory(Class<T> api, JmsConfig config, Mapping mapping) {
-        super(api, config);
+    public MapJmsPayloadHandler(Mapping mapping) {
         this.mapping = mapping;
     }
 
     @Override
-    protected Message createJmsMessage(Map<String, Object> payload, Session session)
-            throws JMSException {
+    @SuppressWarnings("unchecked")
+    public Message createJmsMessage(Object payload, Session session) throws JMSException {
         MapMessage message = session.createMapMessage();
-        populateBody(message, payload);
+        populateBody(message, (Map<String, Object>) payload);
         return message;
     }
 
+    private void populateBody(MapMessage message, Map<String, Object> body) throws JMSException {
+        for (Map.Entry<String, Object> e : body.entrySet()) {
+            message.setObject(e.getKey(), e.getValue());
+        }
+    }
+
     @Override
-    protected Map<String, Object> toPayload(Method method, Object[] args) {
+    public Object toPayload(Class<?> api, Method method, Object[] args) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
         String operationName = mapping.getOperationForMethod(method.getName());
@@ -59,12 +58,6 @@ public class JmsMapSenderFactory<T> extends AbstractJmsSenderFactory<T, Map<Stri
         builder.putAll(readFields(pojo));
 
         return builder.build();
-    }
-
-    private void populateBody(MapMessage message, Map<String, Object> body) throws JMSException {
-        for (Map.Entry<String, Object> e : body.entrySet()) {
-            message.setObject(e.getKey(), e.getValue());
-        }
     }
 
     private Map<String, Object> readFields(Object pojo) {

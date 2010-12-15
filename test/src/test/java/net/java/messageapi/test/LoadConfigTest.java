@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import net.java.messageapi.adapter.JmsConfig;
+import net.java.messageapi.adapter.MessageSender;
 import net.java.messageapi.adapter.xml.XmlStringDecoder;
 import net.sf.twip.TwiP;
 
@@ -15,11 +15,6 @@ import org.junit.runner.RunWith;
 @RunWith(TwiP.class)
 public class LoadConfigTest extends AbstractJmsSenderFactoryTest {
 
-    @Override
-    protected JmsConfig createConfig() {
-        return JmsConfig.getConfigFor(TestApi.class);
-    }
-
     private String getMessagePayload() throws JMSException {
         return ((TextMessage) captureMessage()).getText();
     }
@@ -27,7 +22,7 @@ public class LoadConfigTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void messageRoundtrip() throws JMSException {
         // Given
-        TestApi serviceProxy = CONFIG.createProxy(TestApi.class);
+        TestApi serviceProxy = MessageSender.of(TestApi.class);
         TestApi serviceImpl = mock(TestApi.class);
 
         // When

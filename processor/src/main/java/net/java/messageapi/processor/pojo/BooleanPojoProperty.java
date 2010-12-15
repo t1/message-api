@@ -3,9 +3,6 @@ package net.java.messageapi.processor.pojo;
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * @see PojoProperty
- */
 class BooleanPojoProperty extends AbstractPrimitivePojoProperty {
 
     public BooleanPojoProperty(String type, String name) {
