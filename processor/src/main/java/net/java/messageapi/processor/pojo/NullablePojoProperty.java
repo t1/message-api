@@ -3,9 +3,6 @@ package net.java.messageapi.processor.pojo;
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * @see PojoProperty
- */
 abstract class NullablePojoProperty extends PojoProperty {
 
     public NullablePojoProperty(String type, String name) {

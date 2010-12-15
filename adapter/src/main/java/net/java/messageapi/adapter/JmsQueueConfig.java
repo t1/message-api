@@ -1,93 +1,20 @@
 package net.java.messageapi.adapter;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.naming.*;
-import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.common.collect.ImmutableMap;
 
-/**
- * The configuration container for the {@link AbstractJmsSenderFactory}. Although this class
- * <b>can</b> be instantiated directly, most commonly a factory like {@link DefaultJmsConfigFactory}
- * is used.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso( { XmlJmsConfig.class, MapJmsConfig.class })
-public abstract class JmsConfig {
-
-    private static final String CONFIG_FILE_SUFFIX = ".config";
-    private static final String DEFAULT_FILE_NAME = "default" + CONFIG_FILE_SUFFIX;
-
-    /**
-     * Load a {@link JmsConfig} from a file named like that interface plus "-jmsconfig.xml"
-     */
-    public static JmsConfig getConfigFor(Class<?> api) {
-        Reader reader = getReaderFor(api);
-        return readConfigFrom(reader);
-    }
-
-    private static Reader getReaderFor(Class<?> api) {
-        String fileName = api.getName() + CONFIG_FILE_SUFFIX;
-        InputStream stream = getSingleUrlFor(fileName);
-        if (stream == null)
-            stream = getSingleUrlFor(DEFAULT_FILE_NAME);
-        if (stream == null)
-            throw new RuntimeException("found no config file [" + fileName + "]");
-        return new InputStreamReader(stream, Charset.forName("utf-8"));
-    }
-
-    private static InputStream getSingleUrlFor(String fileName) {
-        try {
-            Enumeration<URL> resources = ClassLoader.getSystemResources(fileName);
-            if (!resources.hasMoreElements())
-                return null;
-            URL result = resources.nextElement();
-            if (resources.hasMoreElements())
-                throw new RuntimeException("found multiple configs files [" + fileName + "]");
-            return result.openStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static JmsConfig readConfigFrom(Reader reader) {
-        try {
-            JAXBContext context = JAXBContext.newInstance(JmsConfig.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (JmsConfig) unmarshaller.unmarshal(reader);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void writeConfigTo(Writer writer) {
-        JAXB.marshal(this, writer);
-    }
-
-    public static JmsConfig getJmsConfig(String factoryName, String queueName, String user,
-            String pass, boolean transacted, Properties contextProperties,
-            Map<String, Object> header, JmsSenderFactoryType type) {
-        // FIXME
-        if (type == JmsSenderFactoryType.XML) {
-            return new XmlJmsConfig(factoryName, queueName, user, pass, transacted,
-                    contextProperties, header);
-        } else if (type == JmsSenderFactoryType.MAP) {
-            return new MapJmsConfig(factoryName, queueName, user, pass, transacted,
-                    contextProperties, header);
-        } else {
-            throw new UnsupportedOperationException("unknown type: " + type);
-        }
-    }
+public class JmsQueueConfig {
 
     @XmlElement(name = "factory")
     private final String factoryName;
-    @XmlElement(name = "destination")
+    @XmlAttribute(name = "name")
     private final String destinationName;
     private final String user;
     private final String pass;
@@ -95,10 +22,11 @@ public abstract class JmsConfig {
 
     @XmlJavaTypeAdapter(PropertiesMapAdapter.class)
     private final Properties contextProperties;
+    @XmlJavaTypeAdapter(MapAdapter.class)
     private final Map<String, Object> header;
 
     // just to satisfy JAXB
-    protected JmsConfig() {
+    protected JmsQueueConfig() {
         this.factoryName = null;
         this.destinationName = null;
         this.user = null;
@@ -108,7 +36,7 @@ public abstract class JmsConfig {
         this.header = null;
     }
 
-    public JmsConfig(String factoryName, String destinationName, String user, String pass,
+    public JmsQueueConfig(String factoryName, String destinationName, String user, String pass,
             boolean transacted, Properties contextProperties, Map<String, Object> header) {
         this.factoryName = factoryName;
         this.destinationName = destinationName;
@@ -153,12 +81,6 @@ public abstract class JmsConfig {
         return header;
     }
 
-    public <T> T createProxy(Class<T> api) {
-        return createFactory(api).get();
-    }
-
-    public abstract <T> AbstractJmsSenderFactory<T, ?> createFactory(Class<T> api);
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -184,7 +106,7 @@ public abstract class JmsConfig {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        JmsConfig other = (JmsConfig) obj;
+        JmsQueueConfig other = (JmsQueueConfig) obj;
         if (contextProperties == null) {
             if (other.contextProperties != null) {
                 return false;
@@ -235,12 +157,13 @@ public abstract class JmsConfig {
 
     @Override
     public String toString() {
-        return "JmsConfig ["
-                + (contextProperties != null ? "contextProperties=" + contextProperties + ", " : "")
-                + (destinationName != null ? "destinationName=" + destinationName + ", " : "")
-                + (factoryName != null ? "factoryName=" + factoryName + ", " : "")
-                + (header != null ? "header=" + header + ", " : "")
-                + (pass != null ? "pass=" + pass + ", " : "") + "transacted=" + transacted + ", "
-                + (user != null ? "user=" + user : "") + "]";
+        return "JmsConfig [" //
+                + ("factoryName=" + factoryName + ", ")
+                + ("destinationName=" + destinationName + ", ")
+                + ("user=" + user + ", ")
+                + ("pass=" + pass + ", ")
+                + ("transacted=" + transacted + ", ")
+                + (contextProperties != null ? "context=" + contextProperties : "")
+                + (header != null ? "header=" + header : "") + "]";
     }
 }

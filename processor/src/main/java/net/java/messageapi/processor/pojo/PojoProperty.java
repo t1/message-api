@@ -10,9 +10,6 @@ import net.java.messageapi.reflection.TypeMatcher;
 
 import com.google.common.annotations.VisibleForTesting;
 
-/**
- * @see Pojo
- */
 @VisibleForTesting
 public abstract class PojoProperty {
 

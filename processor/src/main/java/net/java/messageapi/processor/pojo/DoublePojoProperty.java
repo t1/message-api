@@ -3,9 +3,6 @@ package net.java.messageapi.processor.pojo;
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * @see PojoProperty
- */
 class DoublePojoProperty extends AbstractPrimitivePojoProperty {
 
     public DoublePojoProperty(String type, String name) {

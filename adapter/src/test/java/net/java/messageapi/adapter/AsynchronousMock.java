@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.adapter;
 
 public class AsynchronousMock implements Runnable {

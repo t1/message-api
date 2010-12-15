@@ -10,7 +10,9 @@ import javax.xml.bind.JAXBException;
  * this enum for convenience; the main purpose of this enum is to ease testing.
  * <p>
  * NOTE: {@link #createJaxbContextFor(Package)} restores the previous configuration. This is very
- * important to keep tests independent of each another.
+ * important to keep tests independent of each another. But most commonly you'd use the {@link #setUp}
+ *  method and restore the previous state with the {@link JaxbProviderMemento memento} that method
+ *  returns.
  */
 public enum JaxbProvider {
 

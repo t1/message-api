@@ -3,14 +3,10 @@ package net.java.messageapi.test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Collections;
-import java.util.Properties;
-
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import net.java.messageapi.adapter.JmsConfig;
-import net.java.messageapi.adapter.XmlJmsConfig;
+import net.java.messageapi.adapter.MessageSender;
 import net.java.messageapi.adapter.xml.*;
 import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
@@ -27,7 +23,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private final JaxbProviderMemento memento;
 
-    // TODO support: ECLIPSE_LINK
+    // TODO support ECLIPSE_LINK
     public JmsXmlRoundtripTest(
             @NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
         this.memento = jaxbProvider.setUp();
@@ -36,12 +32,6 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     @After
     public void after() {
         memento.restore();
-    }
-
-    @Override
-    protected JmsConfig createConfig() {
-        return new XmlJmsConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true, new Properties(),
-                Collections.<String, Object> emptyMap());
     }
 
     private String instantCallXml(Instant now) {
@@ -59,7 +49,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldCallServiceWhenSendingAsXmlMessage() throws JMSException {
         // TODO split into send and receive using MockEJB
         // Given
-        TestApi service = CONFIG.createProxy(TestApi.class);
+        TestApi service = MessageSender.of(TestApi.class);
 
         // When
         service.multiCall("a", "b");
@@ -75,7 +65,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldSendUsingImplicitConversion() throws Exception {
         // Given
         Instant now = new Instant();
-        JodaTimeApi service = CONFIG.createProxy(JodaTimeApi.class);
+        JodaTimeApi service = MessageSender.of(JodaTimeApi.class);
 
         // When
         service.instantCall(now);

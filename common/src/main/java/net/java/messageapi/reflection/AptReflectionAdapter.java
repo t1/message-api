@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.java.messageapi.reflection;
 
 import static com.google.common.base.Predicates.*;

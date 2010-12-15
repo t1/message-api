@@ -2,11 +2,14 @@ package net.java.messageapi.test;
 
 import static org.mockito.Mockito.*;
 
+import java.util.Collections;
+import java.util.Properties;
+
 import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import net.java.messageapi.adapter.JmsConfig;
+import net.java.messageapi.adapter.JmsQueueConfig;
 
 import org.junit.*;
 import org.mockejb.MDBDescriptor;
@@ -22,10 +25,11 @@ public abstract class AbstractJmsSenderFactoryTest {
 
     protected static final String FACTORY = "java:/JmsXA";
     protected static final String QUEUE = "MyQueueName";
-    protected static final String QUEUE_PASS = "MyQueuePass";
     protected static final String QUEUE_USER = "MyQueueUser";
+    protected static final String QUEUE_PASS = "MyQueuePass";
 
-    protected final JmsConfig CONFIG = createConfig();
+    protected final JmsQueueConfig CONFIG = new JmsQueueConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true,
+            new Properties(), Collections.<String, Object> emptyMap());
 
     protected final MessageListener targetMDB = mock(MessageListener.class);
 
@@ -48,8 +52,6 @@ public abstract class AbstractJmsSenderFactoryTest {
         mockContainer.deploy(new MDBDescriptor(CONFIG.getFactoryName(),
                 CONFIG.getDestinationName(), targetMDB));
     }
-
-    protected abstract JmsConfig createConfig();
 
     protected Message captureMessage() {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
