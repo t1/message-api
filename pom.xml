@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.java.messageapi</groupId>
-	<artifactId>message-api</artifactId>
+	<artifactId>root-container</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>MessageAPI</name>
+	<name>MessageAPI root container pom</name>
 	<description>
 		Root POM from the MessagingApi;
 		see the javadoc of the MessageApi annotation for details
@@ -245,86 +245,9 @@
 	</profiles>
 
 	<modules>
-		<module>common</module>
-		<module>processor</module>
-		<module>adapter</module>
+		<module>archetype</module>
+		<module>demo</module>
+		<module>main</module>
 		<module>test</module>
 	</modules>
-
-	<dependencies>
-		<!-- provided -->
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<!-- actually we'd only need 5.0 -->
-			<!-- but that's not available -->
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- optional -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>1.6.2</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.twip</groupId>
-			<artifactId>twip</artifactId>
-			<version>3.3alpha4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.8.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockejb</groupId>
-			<artifactId>mockejb</artifactId>
-			<version>0.6-beta2</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.6.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>0.9.26</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 </project>

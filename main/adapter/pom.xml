@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.java.messageapi</groupId>
-		<artifactId>message-api</artifactId>
+		<artifactId>main-container</artifactId>
 		<version>1.1-SNAPSHOT</version>
 	</parent>
 
