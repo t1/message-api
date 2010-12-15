@@ -1,14 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>net.java.messageapi</groupId>
-		<artifactId>archetype-container</artifactId>
+		<artifactId>root-container</artifactId>
 		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>net.java.messageapi</groupId>
-	<artifactId>api-archetype</artifactId>
-	<name>Archetype for Message-API jars</name>
+	<artifactId>demo-container</artifactId>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>chat-api</module>
+		<module>chat-receive</module>
+		<module>chat-send</module>
+	</modules>
 </project>
