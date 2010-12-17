@@ -3,7 +3,7 @@
 <h3>Quickstart</h3>
 <p>This is a step-by-step guide to create a simple chat application. It has a sender that posts messages you type to a JMS Topic and a receiver that listens and displays all messages coming in from that topic. Both are implemented as simple servlets.</p>
 
-<p>Most of the things in here could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/trunk/demo/">here</a>.</p>
+<p>Most of the things in here could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/trunk/demo/">here</a>. To make the interesting things more visible, the stuff that's not specific to the MessageApi but just to make the servlets work, is set in <span style="color:grey">grey</span>. You can skip that, if you just want to get an impression of how to work with the MessageApi.</p>
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
@@ -19,35 +19,23 @@
 
 <h3>Create the Chat-API</h3>
 <ol>
-<li><tt>mvn archetype:create -DgroupId=chat -DartifactId=api -DarchetypeGroupId=net.java.messageapi -DarchetypeArtifactId=api-archetype -DarchetypeVersion=1.1-SNAPSHOT -DremoteRepositories=http://download.java.net/maven/2</tt></li>
+<li><tt>mvn archetype:create -DgroupId=chat -DartifactId=chat-api -DarchetypeGroupId=net.java.messageapi -DarchetypeArtifactId=api-archetype -DarchetypeVersion=1.1-SNAPSHOT -DremoteRepositories=http://download.java.net/maven/2</tt></li>
 <li>replace the sample <tt>MyMessageApi.java</tt> with your own <tt>ChatApi.java</tt>:
 <pre>@MessageApi
 public interface ChatApi {
 	public void send(String message);
 }</pre>
 </li>
-<li>if you use Eclipse, you can:
-<ul>
-<li>edit the project properties</li>
-<li>go to <tt>Java Compiler/Annotation Processing/Factory Path</tt></li>
-<li>enable project specific settings</li>
-<li>add the variable path <tt>M2_REPO/net/java/messageapi/processor/1.1-SNAPSHOT/processor-1.1-SNAPSHOT.jar</tt></li>
-<li>go to <tt>Java Compiler/Annotation Processing</tt></li>
-<li>enable project specific settings</li>
-<li>set the generated source directory to <tt>target/generated-sources/annotations</tt></li>
-</ul>
-Now the POJO sources are generated (and errors displayed) directly in Eclipse
-</li>
 <li><tt>mvn clean install</tt></li>
 </ol>
 
 <h3>Create the Sender</h3>
 <ol>
-<li>create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-send -Dpackage=net.java.dev.messageapi.chat</tt></li>
+<li style="color:grey">create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-send -Dpackage=net.java.dev.messageapi.chat</tt></li>
 <li>add dependencies to your <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
-<li>remove the file <tt>src/main/webapp/index.jsp</tt></li>
-<li>create the folder <tt>src/main/webapp/WEB-INF</tt></li>
-<li>create the file <tt>web.xml</tt> in that folder with this contents:<pre>
+<li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
+<li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
+<li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -67,16 +55,16 @@ Now the POJO sources are generated (and errors displayed) directly in Eclipse
 </pre></li>
 <li>create the <tt>net.java.dev.messageapi.chat.ChatSend.java</tt> (the imports and stuff are left out for brevity):
 <pre>
-public class ChatSend extends HttpServlet {
+<span style="color:grey">public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
+</span>
     // params are factory, destination, user, password
     private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig(
             "ConnectionFactory", "ChatTopic", "guest", "guest");
 
     private final ChatApi chat = JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
 
-    @Override
+<span style="color:grey">    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         // we're not expecting any GET parameters!
@@ -92,9 +80,9 @@ public class ChatSend extends HttpServlet {
 
     private void request(HttpServletRequest request) {
         String message = request.getParameter("message");
-        if (message != null && message.length() &gt; 0) {
+        if (message != null && message.length() &gt; 0) {</span>
             chat.send(message);
-        }
+<span style="color:grey">        }
     }
 
     private void response(HttpServletResponse response) throws IOException {
@@ -110,20 +98,20 @@ public class ChatSend extends HttpServlet {
         out.println("  &lt;/body&gt;");
         out.println("&lt;/html&gt;");
     }
-}
+}</span>
 </pre></li>
 <small style="color:green">we are working on either a generic producer or generating one; so you would only have to configure the Queue somehow and inject it instead of calling <tt>JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);</tt>.</small></li>
-<li>build the war: <tt>mvn clean verify</tt></li>
+<li style="color:grey">build the war: <tt>mvn clean verify</tt></li>
 </ol>
 
 <h3>Create the Receiver</h3>
 <ol>
-<li>create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-<b>receive</b> -Dpackage=net.java.dev.messageapi.chat</tt></li>
-<li>change the <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
-<li>add dependencies to the <tt>chat-api</tt> and the <tt>message-api:adapter</tt></li>
-<li>remove the file <tt>src/main/webapp/index.jsp</tt></li>
-<li>create the folder <tt>src/main/webapp/WEB-INF</tt></li>
-<li>create the file <tt>web.xml</tt> in that folder with this contents:<pre>
+<li style="color:grey">create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-<b>receive</b> -Dpackage=net.java.dev.messageapi.chat</tt></li>
+<li style="color:grey">change the <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
+<li style="color:grey">add dependencies to the <tt>chat-api</tt> and the <tt>message-api:adapter</tt></li>
+<li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
+<li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
+<li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
 &lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
@@ -143,14 +131,14 @@ public class ChatSend extends HttpServlet {
 <li>create the <tt>net.java.dev.messageapi.chat.ChatReceiver</tt>:
 <pre>
 public class ChatReceiver implements ChatApi {
-
+<span style="color:grey">
     static List&lt;String&gt; messages = new ArrayList&lt;String&gt;();
-
+</span>
     @Override
-    public void send(String message) {
-        ChatReceiver.messages.add(message);
+    public void send(String message) {<span style="color:grey">
+        ChatReceiver.messages.add(message);</span>
     }
-
+<span style="color:grey">
     public List&lt;String&gt; getMessages() {
         return ChatReceiver.messages;
     }
@@ -158,7 +146,7 @@ public class ChatReceiver implements ChatApi {
     public void setMessages(List&lt;String&gt; messages) {
         ChatReceiver.messages = messages;
     }
-}
+}</span>
 </pre></li>
 <li>create the <tt>net.java.dev.messageapi.chat.ChatMDB</tt>:<pre>
 @MessageDriven(mappedName = "ChatTopic")
@@ -181,8 +169,8 @@ public class ChatMDB implements MessageListener {
 	}
 }
 </pre>
-<br/><small style="color:green">we are working on a generic MDB, so you only have to configure the connection between a destination and your business bean</small></li>
-<li>create the <tt>net.java.dev.messageapi.chat.ChatReceiveServlet</tt>:
+<small style="color:green">we are working on a generic MDB, so you only have to configure the connection between a destination and your business bean</small></li>
+<li style="color:grey">create the <tt>net.java.dev.messageapi.chat.ChatReceiveServlet</tt>:
 <pre>
 public class ChatReceiveServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -212,11 +200,11 @@ public class ChatReceiveServlet extends HttpServlet {
     }
 }
 </pre></li>
-<li>build the war: <tt>mvn clean verify</tt></li>
+<li style="color:grey">build the war: <tt>mvn clean verify</tt></li>
 </ol>
 
 <h3>Deploy on your glassfish</h3>
-<ol>
+<ol style="color:grey">
 <li>open the <a href="http://localhost:4848">admin console</a></li>
 <li>create the connection factory <tt>jms/ConnectionFactory</tt><ol>
     <li>go to <tt>Resources/JMS Resources/Connection Factories</tt></li>
