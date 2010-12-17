@@ -7,7 +7,7 @@
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
-<p>This demo is done with maven and Glassfish 3.0.1. But it should be easy to adapt it to run on any container supporting JMS and to use any build tool.</p>
+<p>This demo is done with maven 3.0 and Glassfish 3.0.1. But it should be easy to adapt it to run on any container supporting JMS and to use any build tool.</p>
 
 <h3>Build the MessageApi</h3>
 <ol>
@@ -19,10 +19,8 @@
 
 <h3>Create the Chat-API</h3>
 <ol>
-<li><tt>mkdir chat-api</tt></li>
-<li>copy <a href="https://messageapi.dev.java.net/source/browse/*checkout*/messageapi/trunk/demo/chat-api/pom.xml">pom.xml</a> into the chat-api folder
-<br/><small style="color:green">we are working on publishing a maven archetype for this</small></li>
-<li>create the API:
+<li><tt>mvn archetype:create -DgroupId=chat -DartifactId=api -DarchetypeGroupId=net.java.messageapi -DarchetypeArtifactId=api-archetype -DarchetypeVersion=1.1-SNAPSHOT -DremoteRepositories=http://download.java.net/maven/2</tt></li>
+<li>replace the sample <tt>MyMessageApi.java</tt> with your own <tt>ChatApi.java</tt>:
 <pre>@MessageApi
 public interface ChatApi {
 	public void send(String message);
