@@ -58,11 +58,7 @@ public interface ChatApi {
 <span style="color:grey">public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;
 </span>
-    // params are factory, destination, user, password
-    private static final JmsConfig CONFIG = DefaultJmsConfigFactory.getJmsConfig(
-            "ConnectionFactory", "ChatTopic", "guest", "guest");
-
-    private final ChatApi chat = JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);
+    private final ChatApi chat = MessageSender.of(ChatApi.class);
 
 <span style="color:grey">    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -100,7 +96,20 @@ public interface ChatApi {
     }
 }</span>
 </pre></li>
-<small style="color:green">we are working on either a generic producer or generating one; so you would only have to configure the Queue somehow and inject it instead of calling <tt>JmsXmlSenderFactory.createProxy(ChatApi.class, CONFIG);</tt>.</small></li>
+<li>Create the configuration file <tt>chat.ChatApi.config</tt>:
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;jmsSenderFactory api="net.java.messageapi.test.TestApi"&gt;
+    &lt;destination name="ChatTopic"&gt;
+        &lt;factory&gt;ConnectionFactory&lt;/factory&gt;
+        &lt;user&gt;guest&lt;/user&gt;
+        &lt;pass&gt;guest&lt;/pass&gt;
+        &lt;transacted&gt;true&lt;/transacted&gt;
+    &lt;/destination&gt;
+    &lt;xmlJmsPayloadHandler/&gt;
+&lt;/jmsSenderFactory&gt;
+</pre>
+<small style="color:green">we are working on a automatic registry for services, so this config would be unnecessary.</small></li>
 <li style="color:grey">build the war: <tt>mvn clean verify</tt></li>
 </ol>
 
