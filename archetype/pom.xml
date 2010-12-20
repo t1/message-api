@@ -12,6 +12,7 @@
 	<groupId>net.java.messageapi</groupId>
 	<artifactId>archetype-container</artifactId>
 	<packaging>pom</packaging>
+	<name>archetype container</name>
 
 	<modules>
 		<module>parent</module>
