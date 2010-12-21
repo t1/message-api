@@ -11,37 +11,27 @@ import net.java.messageapi.adapter.MessageSenderFactory;
  * to xml, deserializes it again and calls the receiver implementation of the same api. Quite handy
  * to test the complete serialization round trip.
  */
-public class ForwardingSenderFactory<T> implements MessageSenderFactory {
+public class ForwardingSenderFactory implements MessageSenderFactory {
 
-    public static <T> ForwardingSenderFactory<T> create(Class<T> api, T impl) {
-        return create(api, impl, JaxbProvider.UNCHANGED);
-    }
-
-    public static <T> ForwardingSenderFactory<T> create(Class<T> api, T impl,
-            JaxbProvider jaxbProvider) {
-        return new ForwardingSenderFactory<T>(api, impl, jaxbProvider);
-    }
-
-    private final Class<T> api;
-    private final XmlStringDecoder<T> decoder;
+    private final Object impl;
     private final JaxbProvider jaxbProvider;
 
-    public ForwardingSenderFactory(Class<T> api, T impl, JaxbProvider jaxbProvider) {
-        this.api = api;
-        this.decoder = XmlStringDecoder.create(api, impl, jaxbProvider);
+    public ForwardingSenderFactory(Object impl) {
+        this(impl, JaxbProvider.UNCHANGED);
+    }
+
+    public ForwardingSenderFactory(Object impl, JaxbProvider jaxbProvider) {
+        this.impl = impl;
         this.jaxbProvider = jaxbProvider;
     }
 
     @Override
-    public <S> S create(final Class<S> api) {
-        if (this.api != api)
-            throw new RuntimeException("can't forward " + api + " to " + this.api);
-
+    public <T> T create(final Class<T> api) {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
                 try {
-                    forward(method, args);
+                    forward(api, method, args);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 } catch (InvocationTargetException e) {
@@ -58,12 +48,13 @@ public class ForwardingSenderFactory<T> implements MessageSenderFactory {
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    private void forward(Method method, Object[] args) throws IllegalAccessException,
-            InvocationTargetException {
+    private <T> void forward(Class<T> api, Method method, Object[] args)
+            throws IllegalAccessException, InvocationTargetException {
         Writer writer = new StringWriter();
         T xmlSender = ToXmlEncoder.create(api, writer, jaxbProvider);
         method.invoke(xmlSender, args);
 
+        XmlStringDecoder<T> decoder = XmlStringDecoder.create(api, api.cast(impl), jaxbProvider);
         decoder.decode(writer.toString());
     }
 }
