@@ -191,7 +191,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("0", "1"))) //
         .build();
         MapJmsPayloadHandler payloadHandler = new MapJmsPayloadHandler(mapping);
-        JodaTimeApi service = JmsSenderFactory.create(JodaTimeApi.class, CONFIG, payloadHandler).get();
+        JodaTimeApi service = JmsSenderFactory.create(CONFIG, payloadHandler).create(
+                JodaTimeApi.class);
 
         // When
         service.localDateCall(today, flag);
@@ -411,7 +412,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     private MappedApi service(Mapping mapping) {
-        return JmsSenderFactory.create(MappedApi.class, CONFIG, new MapJmsPayloadHandler(mapping)).get();
+        return JmsSenderFactory.create(CONFIG, new MapJmsPayloadHandler(mapping)).create(
+                MappedApi.class);
     }
 
     private void receive(Message message, Mapping mapping) {

@@ -21,11 +21,10 @@ import org.slf4j.LoggerFactory;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
+public class JmsSenderFactory implements MessageSenderFactory {
 
-    public static <T> JmsSenderFactory<T> create(Class<T> api, JmsQueueConfig config,
-            JmsPayloadHandler payloadHandler) {
-        return new JmsSenderFactory<T>(api, config, payloadHandler);
+    public static JmsSenderFactory create(JmsQueueConfig config, JmsPayloadHandler payloadHandler) {
+        return new JmsSenderFactory(config, payloadHandler);
     }
 
     /**
@@ -33,16 +32,11 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
      */
     private static final String VERSION = "VERSION";
 
-    // TODO is this redundant?!?
-    @XmlTransient
-    private Class<T> api;
     @XmlElement(name = "destination", required = true)
     private final JmsQueueConfig config;
     @XmlElementRef(name = "payload")
     private JmsPayloadHandler payloadHandler;
 
-    @XmlTransient
-    private Logger log;
     @XmlTransient
     private Context jndiContext = null;
     @XmlTransient
@@ -52,29 +46,16 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
 
     // just to satisfy JAXB
     protected JmsSenderFactory() {
-        this.api = null;
         this.config = null;
     }
 
-    public JmsSenderFactory(Class<T> api, JmsQueueConfig config, JmsPayloadHandler payloadHandler) {
-        if (api == null)
-            throw new NullPointerException();
-        this.api = api;
+    public JmsSenderFactory(JmsQueueConfig config, JmsPayloadHandler payloadHandler) {
         if (config == null)
             throw new NullPointerException();
         this.config = config;
         if (payloadHandler == null)
             throw new NullPointerException();
         this.payloadHandler = payloadHandler;
-    }
-
-    public void initApi(Class<T> api) {
-        if (api == null)
-            throw new NullPointerException("api must not be null");
-        if (this.api != null)
-            throw new java.lang.IllegalStateException("api already set to " + this.api
-                    + "; can't set to " + api);
-        this.api = api;
     }
 
     protected void close(MessageProducer messageProducer) {
@@ -140,12 +121,12 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
     }
 
     @Override
-    public T get() {
+    public <T> T create(final Class<T> api) {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
                 Object payload = payloadHandler.toPayload(api, method, args);
-                sendJms(payload);
+                sendJms(api, payload);
                 return null;
             }
         };
@@ -154,14 +135,14 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    protected void sendJms(Object payload) {
+    protected void sendJms(Class<?> api, Object payload) {
         try {
             Connection connection = null;
             Session session = null;
             MessageProducer messageProducer = null;
             boolean sent = false;
 
-            log().debug("sending to {} payload: {}", config.getFactoryName(), payload);
+            log(api).debug("sending to {} payload: {}", config.getFactoryName(), payload);
 
             try {
                 ConnectionFactory factory = getConnectionFactory(config);
@@ -174,7 +155,7 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
                 javax.jms.Message msg = payloadHandler.createJmsMessage(payload, session);
 
                 // TODO refactor this into a HeaderSupplier plugin mechanism
-                String version = getApiVersion();
+                String version = getApiVersion(api);
                 if (version != null)
                     msg.setStringProperty(VERSION, version);
 
@@ -185,7 +166,7 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
 
                 messageProducer.send(msg);
 
-                log().info("sent message id {} to {}", msg.getJMSMessageID(),
+                log(api).info("sent message id {} to {}", msg.getJMSMessageID(),
                         msg.getJMSDestination());
                 sent = true;
             } finally {
@@ -203,14 +184,11 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
         }
     }
 
-    /** Lazy, as JAXB does not set the api in the constructor */
-    private Logger log() {
-        if (log == null)
-            log = LoggerFactory.getLogger(api);
-        return log;
+    private Logger log(Class<?> api) {
+        return LoggerFactory.getLogger(api);
     }
 
-    private String getApiVersion() {
+    private String getApiVersion(Class<?> api) {
         String version = api.getPackage().getSpecificationVersion();
         if (version == null)
             version = api.getPackage().getImplementationVersion();
@@ -219,16 +197,15 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[api=" + (api == null ? "?" : api.getName())
-                + ", config=" + config + "]";
+        return "JmsSenderFactory [config=" + config + ", payloadHandler=" + payloadHandler + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((api == null) ? 0 : api.hashCode());
         result = prime * result + ((config == null) ? 0 : config.hashCode());
+        result = prime * result + ((payloadHandler == null) ? 0 : payloadHandler.hashCode());
         return result;
     }
 
@@ -243,14 +220,7 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        JmsSenderFactory<?> other = (JmsSenderFactory<?>) obj;
-        if (api == null) {
-            if (other.api != null) {
-                return false;
-            }
-        } else if (!api.equals(other.api)) {
-            return false;
-        }
+        JmsSenderFactory other = (JmsSenderFactory) obj;
         if (config == null) {
             if (other.config != null) {
                 return false;
@@ -258,6 +228,14 @@ public class JmsSenderFactory<T> implements MessageSenderFactory<T> {
         } else if (!config.equals(other.config)) {
             return false;
         }
+        if (payloadHandler == null) {
+            if (other.payloadHandler != null) {
+                return false;
+            }
+        } else if (!payloadHandler.equals(other.payloadHandler)) {
+            return false;
+        }
         return true;
     }
+
 }

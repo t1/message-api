@@ -14,8 +14,7 @@ import net.java.messageapi.adapter.MessageCallFactory;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * A {@link JmsPayloadHandler} that serializes the payload
- * as map message.
+ * A {@link JmsPayloadHandler} that serializes the payload as map message.
  */
 @XmlRootElement
 public class MapJmsPayloadHandler extends JmsPayloadHandler {
@@ -81,5 +80,40 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((mapping == null) ? 0 : mapping.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MapJmsPayloadHandler other = (MapJmsPayloadHandler) obj;
+        if (mapping == null) {
+            if (other.mapping != null) {
+                return false;
+            }
+        } else if (!mapping.equals(other.mapping)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "MapJmsPayloadHandler [" + mapping + "]";
     }
 }
