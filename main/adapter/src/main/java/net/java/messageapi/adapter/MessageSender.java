@@ -16,7 +16,11 @@ public class MessageSender {
     private static final String CONFIG_FILE_SUFFIX = ".config";
     private static final String DEFAULT_FILE_NAME = "default" + CONFIG_FILE_SUFFIX;
 
-    public static <T> JmsSenderFactory<T> getConfigFor(Class<T> api) {
+    public static <T> T of(Class<T> api) {
+        return getConfigFor(api).create(api);
+    }
+
+    public static MessageSenderFactory getConfigFor(Class<?> api) {
         Reader reader = getReaderFor(api);
         return readConfigFrom(reader, api);
     }
@@ -45,28 +49,18 @@ public class MessageSender {
         }
     }
 
-    public static <T> JmsSenderFactory<T> readConfigFrom(Reader reader, Class<T> api) {
+    public static MessageSenderFactory readConfigFrom(Reader reader, Class<?> api) {
         try {
             JAXBContext context = JAXBContext.newInstance(JmsSenderFactory.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            @SuppressWarnings("unchecked")
-            JmsSenderFactory<T> factory = (JmsSenderFactory<T>) unmarshaller.unmarshal(reader);
-            factory.initApi(api);
+            MessageSenderFactory factory = (MessageSenderFactory) unmarshaller.unmarshal(reader);
             return factory;
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void writeConfigTo(Writer writer) {
-        JAXB.marshal(this, writer);
-    }
-
     private MessageSender() {
         // this is just a singleton
-    }
-
-    public static <T> T of(Class<T> api) {
-        return getConfigFor(api).get();
     }
 }

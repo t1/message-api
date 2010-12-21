@@ -6,13 +6,12 @@ import java.lang.reflect.*;
 
 import net.java.messageapi.adapter.MessageSenderFactory;
 
-
 /**
  * A {@link MessageSenderFactory} that produces a sender that -- when called -- serializes the call
  * to xml, deserializes it again and calls the receiver implementation of the same api. Quite handy
  * to test the complete serialization round trip.
  */
-public class ForwardingSenderFactory<T> implements MessageSenderFactory<T> {
+public class ForwardingSenderFactory<T> implements MessageSenderFactory {
 
     public static <T> ForwardingSenderFactory<T> create(Class<T> api, T impl) {
         return create(api, impl, JaxbProvider.UNCHANGED);
@@ -34,12 +33,15 @@ public class ForwardingSenderFactory<T> implements MessageSenderFactory<T> {
     }
 
     @Override
-    public T get() {
+    public <S> S create(final Class<S> api) {
+        if (this.api != api)
+            throw new RuntimeException("can't forward " + api + " to " + this.api);
+
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
                 try {
-                    forward(api, method, args);
+                    forward(method, args);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 } catch (InvocationTargetException e) {
@@ -56,7 +58,7 @@ public class ForwardingSenderFactory<T> implements MessageSenderFactory<T> {
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    private void forward(Class<T> api, Method method, Object[] args) throws IllegalAccessException,
+    private void forward(Method method, Object[] args) throws IllegalAccessException,
             InvocationTargetException {
         Writer writer = new StringWriter();
         T xmlSender = ToXmlEncoder.create(api, writer, jaxbProvider);

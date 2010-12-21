@@ -66,7 +66,7 @@ public class XmlSenderFactoryTest {
     }
 
     private final JmsQueueConfig config;
-    private final JmsSenderFactory<TestApi> factory;
+    private final JmsSenderFactory factory;
 
     public XmlSenderFactoryTest(Params params,
             @NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) {
@@ -75,7 +75,7 @@ public class XmlSenderFactoryTest {
         this.config = new JmsQueueConfig(params.factory, params.destination, params.user,
                 params.password, params.transacted, params.contextProperties, headerMap);
         XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler(jaxbProvider);
-        this.factory = JmsSenderFactory.create(TestApi.class, config, payloadHandler);
+        this.factory = JmsSenderFactory.create(config, payloadHandler);
     }
 
     private String xml() {
@@ -136,9 +136,7 @@ public class XmlSenderFactoryTest {
     @Test
     public void shouldUnmarshal() throws Exception {
         StringReader reader = new StringReader(xml());
-        @SuppressWarnings("unchecked")
-        JmsSenderFactory<TestApi> senderFactory = JAXB.unmarshal(reader, JmsSenderFactory.class);
-        senderFactory.initApi(TestApi.class);
+        JmsSenderFactory senderFactory = JAXB.unmarshal(reader, JmsSenderFactory.class);
 
         assertEquals(factory, senderFactory);
     }
