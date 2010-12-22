@@ -18,6 +18,7 @@ public class JmsQueueConfig {
     private final String destinationName;
     private final String user;
     private final String pass;
+    @XmlElement(defaultValue = "true")
     private final boolean transacted;
 
     @XmlJavaTypeAdapter(PropertiesMapAdapter.class)
