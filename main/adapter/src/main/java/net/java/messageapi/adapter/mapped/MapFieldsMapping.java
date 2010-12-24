@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 
 class MapFieldsMapping extends MappingDecorator {
 
-    private final ImmutableMap<String, FieldMapping<?>> map;
+    final ImmutableMap<String, FieldMapping<?>> map;
 
     public MapFieldsMapping(Mapping target, ImmutableMap<String, FieldMapping<?>> map) {
         super(target);

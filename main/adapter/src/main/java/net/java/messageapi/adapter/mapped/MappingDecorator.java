@@ -2,7 +2,7 @@ package net.java.messageapi.adapter.mapped;
 
 class MappingDecorator implements Mapping {
 
-    private final Mapping target;
+    final Mapping target;
 
     public MappingDecorator(Mapping target) {
         this.target = target;
