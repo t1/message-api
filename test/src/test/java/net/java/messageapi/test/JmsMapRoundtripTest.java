@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.jms.*;
 
 import net.java.messageapi.adapter.JmsSenderFactory;
+import net.java.messageapi.adapter.MessageSender;
 import net.java.messageapi.adapter.mapped.*;
 import net.java.messageapi.converter.JodaLocalDateConverter;
 import net.java.messageapi.converter.StringToBooleanConverter;
@@ -82,12 +83,15 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void shouldCallServiceWhenSendingAsMapMessage() {
         // Given
-        Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).build();
-        MappedApi service = service(mapping);
+        MappedApi sendProxy = MessageSender.of(MappedApi.class);
+        Mapping receiveMapping = new MappingBuilder(OPERATION_FIELD_NAME) //
+        .mapField("s1", FieldMapping.map("A")) //
+        .mapField("s2", FieldMapping.map("B")) //
+        .build();
 
         // When
-        service.mappedCall("a", 0L);
-        receive(captureMessage(), mapping);
+        sendProxy.mappedCall("a", 0L);
+        receive(captureMessage(), receiveMapping);
 
         // Then
         verify(serviceMock).mappedCall("a", 0L);
@@ -148,14 +152,10 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void shouldMapSendAttributes() throws JMSException {
         // Given
-        Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapField("s1", FieldMapping.map("A")) //
-        .mapField("s2", FieldMapping.map("B")) //
-        .build();
-        MappedApi service = service(mapping);
+        MappedApi proxy = MessageSender.of(MappedApi.class);
 
         // When
-        service.mappedCall("a", 0L);
+        proxy.mappedCall("a", 0L);
 
         // Then
         MapMessage message = (MapMessage) captureMessage();
@@ -166,10 +166,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void shouldMapReceiveAttributes() throws JMSException {
         // Given
-        Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapField("s1", FieldMapping.map("A")) //
-        .mapField("s2", FieldMapping.map("B")) //
-        .build();
+        Mapping mapping = MessageSender.getJmsMappingFor(MappedApi.class);
 
         MapMessage message = createPayload(OPERATION_FIELD_NAME, "mappedCall", "A", "value1", "B",
                 0L);

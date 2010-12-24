@@ -7,6 +7,9 @@ import java.util.Enumeration;
 
 import javax.xml.bind.*;
 
+import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
+import net.java.messageapi.adapter.mapped.Mapping;
+
 /**
  * The central provider for the proxies to send messages.
  * 
@@ -18,6 +21,13 @@ public class MessageSender {
 
     public static <T> T of(Class<T> api) {
         return getConfigFor(api).create(api);
+    }
+
+    /** Assumes that the config for that api is a mapped jms config */
+    public static Mapping getJmsMappingFor(Class<?> api) {
+        JmsSenderFactory config = (JmsSenderFactory) getConfigFor(api);
+        MapJmsPayloadHandler payloadHandler = (MapJmsPayloadHandler) config.payloadHandler;
+        return payloadHandler.mapping;
     }
 
     public static MessageSenderFactory getConfigFor(Class<?> api) {

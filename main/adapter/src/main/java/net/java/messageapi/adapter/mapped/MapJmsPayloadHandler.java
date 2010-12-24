@@ -5,8 +5,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.jms.*;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.java.messageapi.adapter.JmsPayloadHandler;
 import net.java.messageapi.adapter.MessageCallFactory;
@@ -19,9 +20,9 @@ import com.google.common.collect.ImmutableMap;
 @XmlRootElement
 public class MapJmsPayloadHandler extends JmsPayloadHandler {
 
-    @XmlTransient
-    // FIXME not transient!
-    private final Mapping mapping;
+    @XmlElement
+    @XmlJavaTypeAdapter(JmsMappingAdapter.class)
+    public final Mapping mapping;
 
     public MapJmsPayloadHandler() {
         this(MappingBuilder.DEFAULT);

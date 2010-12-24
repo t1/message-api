@@ -34,8 +34,8 @@ public class JmsSenderFactory implements MessageSenderFactory {
 
     @XmlElement(name = "destination", required = true)
     private final JmsQueueConfig config;
-    @XmlElementRef(name = "payload")
-    private JmsPayloadHandler payloadHandler;
+    @XmlElementRef
+    JmsPayloadHandler payloadHandler;
 
     @XmlTransient
     private Context jndiContext = null;
