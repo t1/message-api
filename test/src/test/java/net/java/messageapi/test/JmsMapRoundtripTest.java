@@ -185,7 +185,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         String pattern = "dd.MM.YYYY";
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
         .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
-        .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("0", "1"))) //
+        .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
         .build();
         MapJmsPayloadHandler payloadHandler = new MapJmsPayloadHandler(mapping);
         JodaTimeApi service = JmsSenderFactory.create(CONFIG, payloadHandler).create(
@@ -207,7 +207,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         LocalDate today = new LocalDate();
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
         .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
-        .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("0", "1"))) //
+        .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
         .build();
 
         MapMessage message = createPayload(OPERATION_FIELD_NAME, "localDateCall", "date",

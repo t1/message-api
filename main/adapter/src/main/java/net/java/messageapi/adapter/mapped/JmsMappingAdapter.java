@@ -5,36 +5,43 @@ import java.util.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import com.google.common.collect.ImmutableMap;
+import net.java.messageapi.converter.Converter;
 
-/**
- * TODO map converters
- * <p>
- * TODO use visitor instead of instanceof
- */
 public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMapping, Mapping> {
 
     public static class AdaptedMapping {
         @XmlAttribute
-        public String methodName;
+        public final String methodName;
         @XmlAttribute
         public Boolean upperCase;
         @XmlElement(name = "mapField")
-        public List<AdaptedFieldMapping> fieldMappings = new ArrayList<AdaptedFieldMapping>();
+        public final List<AdaptedFieldMapping> fieldMappings = new ArrayList<AdaptedFieldMapping>();
         @XmlElement(name = "mapOperation")
-        public List<AdaptedOperationMapping> operationMappings = new ArrayList<AdaptedOperationMapping>();
+        public final List<AdaptedOperationMapping> operationMappings = new ArrayList<AdaptedOperationMapping>();
 
+        // just to satisfy JAXB
+        @SuppressWarnings("unused")
+        private AdaptedMapping() {
+            this.methodName = null;
+        }
+
+        public AdaptedMapping(Mapping mapping) {
+            this.methodName = mapping.getOperationMessageAttibute();
+            addMappings(mapping);
+        }
+
+        /** TODO use visitor instead of instanceof */
         private void addMappings(Mapping mapping) {
             if (mapping instanceof MapFieldsMapping) {
-                ImmutableMap<String, FieldMapping<?>> map = ((MapFieldsMapping) mapping).map;
+                Map<String, FieldMapping<?>> map = ((MapFieldsMapping) mapping).map;
                 for (Map.Entry<String, FieldMapping<?>> entry : map.entrySet()) {
                     String key = entry.getKey();
-                    String value = entry.getValue().getAttributeName();
-                    fieldMappings.add(new AdaptedFieldMapping(key, value));
+                    FieldMapping<?> fieldMapping = entry.getValue();
+                    fieldMappings.add(new AdaptedFieldMapping(key, fieldMapping));
                 }
             }
             if (mapping instanceof MapOperationsMapping) {
-                ImmutableMap<String, String> map = ((MapOperationsMapping) mapping).map;
+                Map<String, String> map = ((MapOperationsMapping) mapping).map;
                 for (Map.Entry<String, String> entry : map.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
@@ -48,23 +55,53 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
                 addMappings(((MappingDecorator) mapping).target);
             }
         }
+
+        public Mapping toMapping() {
+            MappingBuilder builder = new MappingBuilder(methodName);
+
+            for (AdaptedFieldMapping mapping : fieldMappings) {
+                String property = mapping.from;
+                String attributeName = mapping.to;
+                Converter<?> converter = mapping.converter;
+                builder.mapField(property, FieldMapping.map(attributeName, converter));
+            }
+
+            for (AdaptedOperationMapping mapping : operationMappings) {
+                String method = mapping.from;
+                String operation = mapping.to;
+                builder.mapOperation(method, operation);
+            }
+
+            if (upperCase == Boolean.TRUE) {
+                builder.upperCaseFields();
+            }
+
+            return builder.build();
+        }
     }
 
     public static class AdaptedFieldMapping {
         @XmlAttribute(required = true)
         public final String from;
-        @XmlValue
+        @XmlAttribute(required = true)
         public final String to;
+        @XmlElementRef
+        public final Converter<?> converter;
+
+        // TODO map default
 
         // just to satisfy JAXB
         @SuppressWarnings("unused")
         private AdaptedFieldMapping() {
-            this(null, null);
+            this.from = null;
+            this.to = null;
+            this.converter = null;
         }
 
-        public AdaptedFieldMapping(String from, String to) {
+        public AdaptedFieldMapping(String from, FieldMapping<?> fieldMapping) {
             this.from = from;
-            this.to = to;
+            this.to = fieldMapping.getAttributeName();
+            this.converter = fieldMapping.getConverter();
         }
     }
 
@@ -88,32 +125,21 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
 
     @Override
     public AdaptedMapping marshal(Mapping mapping) throws Exception {
-        AdaptedMapping result = new AdaptedMapping();
-        result.methodName = mapping.getOperationMessageAttibute();
-        result.addMappings(mapping);
-        return result;
+        try {
+            return new AdaptedMapping(mapping);
+        } catch (Exception e) {
+            e.printStackTrace(); // why is this exception not passed up?
+            throw e;
+        }
     }
 
     @Override
     public Mapping unmarshal(AdaptedMapping adapted) throws Exception {
-        MappingBuilder builder = new MappingBuilder(adapted.methodName);
-
-        for (AdaptedFieldMapping mapping : adapted.fieldMappings) {
-            String property = mapping.from;
-            String attribute = mapping.to;
-            builder.mapField(property, attribute);
+        try {
+            return adapted.toMapping();
+        } catch (Exception e) {
+            e.printStackTrace(); // why is this exception not passed up?
+            throw e;
         }
-
-        for (AdaptedOperationMapping mapping : adapted.operationMappings) {
-            String method = mapping.from;
-            String operation = mapping.to;
-            builder.mapOperation(method, operation);
-        }
-
-        if (adapted.upperCase == Boolean.TRUE) {
-            builder.upperCaseFields();
-        }
-
-        return builder.build();
     }
 }

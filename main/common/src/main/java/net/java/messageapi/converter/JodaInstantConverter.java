@@ -1,8 +1,10 @@
 package net.java.messageapi.converter;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.joda.time.Instant;
 
-
+@XmlRootElement
 public class JodaInstantConverter extends Converter<Instant> {
 
     @Override

@@ -1,9 +1,11 @@
 package net.java.messageapi.converter;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.joda.time.LocalDate;
 import org.joda.time.format.*;
 
-
+@XmlRootElement
 public class JodaLocalDateConverter extends Converter<LocalDate> {
 
     private final DateTimeFormatter formatter;

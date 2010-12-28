@@ -1,11 +1,21 @@
 package net.java.messageapi.converter;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class StringToBooleanConverter extends Converter<Boolean> {
 
+    @XmlAttribute(name = "true")
     private final String symbolTrue;
+    @XmlAttribute(name = "false")
     private final String symbolFalse;
 
-    public StringToBooleanConverter(String symbolFalse, String symbolTrue) {
+    public StringToBooleanConverter() {
+        this("false", "true");
+    }
+
+    public StringToBooleanConverter(String symbolTrue, String symbolFalse) {
         this.symbolFalse = symbolFalse;
         this.symbolTrue = symbolTrue;
     }
@@ -25,4 +35,8 @@ public class StringToBooleanConverter extends Converter<Boolean> {
                 + symbolTrue + " to convert to bool");
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "[" + symbolTrue + "|" + symbolFalse + "]";
+    }
 }
