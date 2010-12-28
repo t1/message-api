@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableBiMap;
 
 class MapOperationsMapping extends MappingDecorator {
 
-    private final ImmutableBiMap<String, String> map;
+    final ImmutableBiMap<String, String> map;
 
     public MapOperationsMapping(Mapping target, ImmutableBiMap<String, String> map) {
         super(target);

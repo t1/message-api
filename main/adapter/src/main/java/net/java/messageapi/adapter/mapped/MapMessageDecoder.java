@@ -83,8 +83,8 @@ public class MapMessageDecoder<T> implements MessageListener {
     private String getMethodName(Map<String, String> body) {
         String operationMessageAttibute = mapping.getOperationMessageAttibute();
         if (!body.containsKey(operationMessageAttibute)) {
-            throw new IllegalArgumentException("Body does not contain field "
-                    + operationMessageAttibute + " for operation name!");
+            throw new IllegalArgumentException("Body does not contain field '"
+                    + operationMessageAttibute + "' for operation name!");
         }
         String operationName = body.get(operationMessageAttibute).toString();
         return mapping.getMethodForOperation(operationName);

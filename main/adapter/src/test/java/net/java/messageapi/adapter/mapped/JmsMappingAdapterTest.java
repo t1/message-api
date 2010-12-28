@@ -29,17 +29,22 @@ public class JmsMappingAdapterTest {
 
     private static final String XML = ""//
             + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<container>\n" //
-            + "    <mapping methodName=\"method\">\n"//
-            + "        <map from=\"s1\">A</map>\n"//
-            + "        <map from=\"s2\">B</map>\n"//
+            + "    <mapping upperCase=\"true\" methodName=\"method\">\n"//
+            + "        <mapField from=\"s1\">A</mapField>\n"//
+            + "        <mapField from=\"s2\">B</mapField>\n"//
+            + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
+            + "        <mapOperation from=\"m2\">o2</mapOperation>\n"//
             + "    </mapping>\n"//
             + "</container>\n";
 
     private static final Container CONTAINER = new Container();
     static {
         CONTAINER.mapping = new MappingBuilder("method") //
+        .mapOperation("m1", "o1") //
+        .mapOperation("m2", "o2") //
         .mapField("s1", FieldMapping.map("A")) //
         .mapField("s2", FieldMapping.map("B")) //
+        .upperCaseFields() //
         .build();
     }
 
