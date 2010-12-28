@@ -6,11 +6,11 @@ import net.java.messageapi.converter.IdentityConverter;
 public final class FieldMapping<BoundType> {
 
     public static FieldMapping<String> map(String attributeName) {
-        return map(attributeName, new IdentityConverter<String>());
+        return map(attributeName, null);
     }
 
     public static FieldMapping<String> mapWithDefault(String attributeName, String defaultValue) {
-        return mapWithDefault(attributeName, new IdentityConverter<String>(), defaultValue);
+        return mapWithDefault(attributeName, null, defaultValue);
     }
 
     public static <BoundType> FieldMapping<BoundType> map(String attributeName,
@@ -30,7 +30,7 @@ public final class FieldMapping<BoundType> {
 
     private FieldMapping(String attributeName, Converter<BoundType> converter) {
         this.attributeName = attributeName;
-        this.converter = converter;
+        this.converter = converterOrIdentity(converter);
         hasDefaultValue = false;
         defaultValue = null;
     }
@@ -38,9 +38,13 @@ public final class FieldMapping<BoundType> {
     private FieldMapping(String attributeName, Converter<BoundType> converter,
             BoundType defaultValue) {
         this.attributeName = attributeName;
-        this.converter = converter;
+        this.converter = converterOrIdentity(converter);
         this.hasDefaultValue = true;
         this.defaultValue = defaultValue;
+    }
+
+    private Converter<BoundType> converterOrIdentity(Converter<BoundType> converter) {
+        return (converter == null) ? new IdentityConverter<BoundType>() : converter;
     }
 
     public boolean hasDefaultValue() {
@@ -69,6 +73,10 @@ public final class FieldMapping<BoundType> {
 
     public String getAttributeName() {
         return attributeName;
+    }
+
+    public Converter<BoundType> getConverter() {
+        return (converter instanceof IdentityConverter) ? null : converter;
     }
 
     @Override

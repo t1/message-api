@@ -1,10 +1,16 @@
 package net.java.messageapi.converter;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Just rename {@link XmlAdapter} to <code>Converter</code> with the ValueType bound to String
  */
+@XmlSeeAlso({ JodaInstantConverter.class, JodaLocalDateConverter.class,
+        StringToBooleanConverter.class })
 public abstract class Converter<BoundType> extends XmlAdapter<String, BoundType> {
-    // empty
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }
