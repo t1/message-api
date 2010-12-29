@@ -12,12 +12,34 @@ import net.java.messageapi.adapter.mapped.Mapping;
 
 /**
  * The central provider for the proxies to send messages.
+ * <p>
+ * If you need your own converters or stuff in the {@link JAXBContext}, you can
+ * {@link #setContext(JAXBContext) set} it.
  * 
  * @see net.java.messageapi.MessageApi
  */
 public class MessageSender {
     private static final String CONFIG_FILE_SUFFIX = ".config";
     private static final String DEFAULT_FILE_NAME = "default" + CONFIG_FILE_SUFFIX;
+
+    private static JAXBContext context;
+
+    public static JAXBContext getContext() {
+        if (context == null) {
+            try {
+                context = JAXBContext.newInstance(JmsSenderFactory.class);
+            } catch (JAXBException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return MessageSender.context;
+    }
+
+    public static JAXBContext setContext(JAXBContext context) {
+        JAXBContext old = MessageSender.context;
+        MessageSender.context = context;
+        return old;
+    }
 
     public static <T> T of(Class<T> api) {
         return getConfigFor(api).create(api);
@@ -61,8 +83,7 @@ public class MessageSender {
 
     public static MessageSenderFactory readConfigFrom(Reader reader, Class<?> api) {
         try {
-            JAXBContext context = JAXBContext.newInstance(JmsSenderFactory.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
+            Unmarshaller unmarshaller = getContext().createUnmarshaller();
             MessageSenderFactory factory = (MessageSenderFactory) unmarshaller.unmarshal(reader);
             return factory;
         } catch (JAXBException e) {
