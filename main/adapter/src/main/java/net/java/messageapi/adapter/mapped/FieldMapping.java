@@ -81,7 +81,17 @@ public final class FieldMapping<BoundType> {
 
     @Override
     public String toString() {
-        return "map " + attributeName + " with " + converter;
+        StringBuilder out = new StringBuilder();
+        out.append("map ");
+        out.append(attributeName);
+        out.append(" with ");
+        out.append(converter);
+        if (hasDefaultValue) {
+            out.append(" and default [");
+            out.append(defaultValue);
+            out.append("]");
+        }
+        return out.toString();
     }
 
 }
