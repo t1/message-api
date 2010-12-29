@@ -47,8 +47,13 @@
 	<repositories>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
-			<name>Java.net Repository for Maven</name>
+			<name>Java.net Maven Repository</name>
 			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>EclipseLink Repo</id>
+			<name>Eclipse Maven Repository for EclipseLink</name>
+			<url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
 		</repository>
 	</repositories>
 

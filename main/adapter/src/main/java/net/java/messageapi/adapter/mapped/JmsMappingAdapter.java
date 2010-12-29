@@ -15,7 +15,7 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
         @XmlAttribute
         public Boolean upperCase;
         @XmlElement(name = "mapField")
-        public final List<AdaptedFieldMapping> fieldMappings = new ArrayList<AdaptedFieldMapping>();
+        public final List<AdaptedFieldMapping<?>> fieldMappings = new ArrayList<AdaptedFieldMapping<?>>();
         @XmlElement(name = "mapOperation")
         public final List<AdaptedOperationMapping> operationMappings = new ArrayList<AdaptedOperationMapping>();
 
@@ -37,7 +37,7 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
                 for (Map.Entry<String, FieldMapping<?>> entry : map.entrySet()) {
                     String key = entry.getKey();
                     FieldMapping<?> fieldMapping = entry.getValue();
-                    fieldMappings.add(new AdaptedFieldMapping(key, fieldMapping));
+                    fieldMappings.add(AdaptedFieldMapping.of(key, fieldMapping));
                 }
             }
             if (mapping instanceof MapOperationsMapping) {
@@ -59,17 +59,15 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
         public Mapping toMapping() {
             MappingBuilder builder = new MappingBuilder(methodName);
 
-            for (AdaptedFieldMapping mapping : fieldMappings) {
-                String property = mapping.from;
-                String attributeName = mapping.to;
-                Converter<?> converter = mapping.converter;
-                builder.mapField(property, FieldMapping.map(attributeName, converter));
-            }
-
             for (AdaptedOperationMapping mapping : operationMappings) {
                 String method = mapping.from;
                 String operation = mapping.to;
                 builder.mapOperation(method, operation);
+            }
+
+            for (AdaptedFieldMapping<?> adaptedMapping : fieldMappings) {
+                String property = adaptedMapping.from;
+                builder.mapField(property, adaptedMapping.toFieldMapping());
             }
 
             if (upperCase == Boolean.TRUE) {
@@ -80,15 +78,35 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
         }
     }
 
-    public static class AdaptedFieldMapping {
+    public static class AdaptedFieldMapping<T> {
+
+        public static class Default<T> {
+            @XmlAnyElement(lax = true)
+            public final T value;
+
+            // satisfy JAXB
+            @SuppressWarnings("unused")
+            private Default() {
+                this(null);
+            }
+
+            public Default(T value) {
+                this.value = value;
+            }
+        }
+
+        public static <T> AdaptedFieldMapping<T> of(String key, FieldMapping<T> fieldMapping) {
+            return new AdaptedFieldMapping<T>(key, fieldMapping);
+        }
+
         @XmlAttribute(required = true)
         public final String from;
         @XmlAttribute(required = true)
         public final String to;
         @XmlElementRef
-        public final Converter<?> converter;
-
-        // TODO map default
+        public final Converter<T> converter;
+        @XmlElement(name = "default")
+        public final Default<T> defaultValue;
 
         // just to satisfy JAXB
         @SuppressWarnings("unused")
@@ -96,12 +114,21 @@ public class JmsMappingAdapter extends XmlAdapter<JmsMappingAdapter.AdaptedMappi
             this.from = null;
             this.to = null;
             this.converter = null;
+            this.defaultValue = null;
         }
 
-        public AdaptedFieldMapping(String from, FieldMapping<?> fieldMapping) {
+        public AdaptedFieldMapping(String from, FieldMapping<T> fieldMapping) {
             this.from = from;
             this.to = fieldMapping.getAttributeName();
             this.converter = fieldMapping.getConverter();
+            this.defaultValue = (!fieldMapping.hasDefaultValue()) ? null : //
+                    new Default<T>(fieldMapping.getDefaultValue());
+        }
+
+        public FieldMapping<T> toFieldMapping() {
+            if (defaultValue == null)
+                return FieldMapping.map(to, converter);
+            return FieldMapping.mapWithDefault(to, converter, defaultValue.value);
         }
     }
 

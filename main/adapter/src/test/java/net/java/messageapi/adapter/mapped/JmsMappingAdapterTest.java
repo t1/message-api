@@ -6,17 +6,24 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.bind.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import net.java.messageapi.adapter.xml.JaxbProvider;
+import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.converter.*;
+import net.sf.twip.*;
 
+import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(TwiP.class)
 public class JmsMappingAdapterTest {
 
-    @XmlRootElement
+    @XmlRootElement(name = "test-container")
     private static class Container {
+        @XmlElement
         @XmlJavaTypeAdapter(JmsMappingAdapter.class)
         Mapping mapping;
 
@@ -32,8 +39,43 @@ public class JmsMappingAdapterTest {
         }
     }
 
+    @XmlRootElement
+    public static class SimpleType {
+        @XmlValue
+        public final String value;
+
+        // satisfy JAXB
+        @SuppressWarnings("unused")
+        private SimpleType() {
+            this.value = null;
+        }
+
+        public SimpleType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    @XmlRootElement
+    public static class SimpleTypeConverter extends Converter<SimpleType> {
+        @Override
+        public String marshal(SimpleType v) throws Exception {
+            return v.value;
+        }
+
+        @Override
+        public SimpleType unmarshal(String v) throws Exception {
+            return new SimpleType(v);
+        }
+    }
+
     private static final String XML = ""//
-            + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<container>\n" //
+            + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
+            + "<test-container>\n" //
             + "    <mapping upperCase=\"true\" methodName=\"method\">\n"//
             + "        <mapField to=\"A\" from=\"s1\"/>\n"//
             + "        <mapField to=\"B\" from=\"s2\">\n"//
@@ -48,11 +90,18 @@ public class JmsMappingAdapterTest {
             + "        <mapField to=\"E\" from=\"s5\">\n"//
             + "            <stringToBooleanConverter false=\"no\" true=\"yes\"/>\n"//
             + "        </mapField>\n"//
+            + "        <mapField to=\"F\" from=\"s6\">\n"//
+            + "            <simpleTypeConverter/>\n"//
+            + "            <default>\n"//
+            + "                <simpleType>FFF</simpleType>\n"//
+            + "            </default>\n"//
+            + "        </mapField>\n"//
             + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
             + "        <mapOperation from=\"m2\">o2</mapOperation>\n"//
             + "    </mapping>\n"//
-            + "</container>\n";
+            + "</test-container>\n";
 
+    private static final SimpleType DEFAULT = new SimpleType("FFF");
     private static final Container CONTAINER = new Container();
     static {
         CONTAINER.mapping = new MappingBuilder("method") //
@@ -63,14 +112,27 @@ public class JmsMappingAdapterTest {
         .mapField("s3", FieldMapping.map("C", new JodaLocalDateConverter())) //
         .mapField("s4", FieldMapping.map("D", new JodaLocalDateConverter("yyyy-MM-dd"))) //
         .mapField("s5", FieldMapping.map("E", new StringToBooleanConverter("yes", "no"))) //
+        .mapField("s6", FieldMapping.mapWithDefault("F", new SimpleTypeConverter(), DEFAULT)) //
         .upperCaseFields() //
         .build();
     }
 
+    private final JaxbProviderMemento memento;
     private final JAXBContext context;
 
-    public JmsMappingAdapterTest() throws Exception {
-        this.context = JAXBContext.newInstance(Container.class, Converter.class);
+    // TODO support ECLIPSE_LINK when this bug is fixed:
+    // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
+    public JmsMappingAdapterTest(
+            @NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider)
+            throws Exception {
+        this.memento = jaxbProvider.setUp();
+        this.context = JAXBContext.newInstance(Container.class, Converter.class,
+                SimpleTypeConverter.class, SimpleType.class);
+    }
+
+    @After
+    public void after() {
+        memento.restore();
     }
 
     @Test
@@ -80,7 +142,8 @@ public class JmsMappingAdapterTest {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(CONTAINER, writer);
 
-        assertEquals(XML, writer.toString());
+        String actual = writer.toString().replace(" standalone=\"yes\"", "");
+        assertEquals(XML, actual);
     }
 
     @Test
