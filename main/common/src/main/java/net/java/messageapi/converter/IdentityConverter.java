@@ -12,9 +12,4 @@ public class IdentityConverter<BoundType> extends Converter<BoundType> {
     public BoundType unmarshal(String v) throws Exception {
         return (BoundType) v;
     }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
 }

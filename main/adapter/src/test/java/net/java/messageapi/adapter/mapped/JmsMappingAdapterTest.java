@@ -40,6 +40,12 @@ public class JmsMappingAdapterTest {
             + "            <jodaInstantConverter/>\n"//
             + "        </mapField>\n"//
             + "        <mapField to=\"C\" from=\"s3\">\n"//
+            + "            <jodaLocalDateConverter/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField to=\"D\" from=\"s4\">\n"//
+            + "            <jodaLocalDateConverter pattern=\"yyyy-MM-dd\"/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField to=\"E\" from=\"s5\">\n"//
             + "            <stringToBooleanConverter false=\"no\" true=\"yes\"/>\n"//
             + "        </mapField>\n"//
             + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
@@ -54,7 +60,9 @@ public class JmsMappingAdapterTest {
         .mapOperation("m2", "o2") //
         .mapField("s1", FieldMapping.map("A")) //
         .mapField("s2", FieldMapping.map("B", new JodaInstantConverter())) //
-        .mapField("s3", FieldMapping.map("C", new StringToBooleanConverter("yes", "no"))) //
+        .mapField("s3", FieldMapping.map("C", new JodaLocalDateConverter())) //
+        .mapField("s4", FieldMapping.map("D", new JodaLocalDateConverter("yyyy-MM-dd"))) //
+        .mapField("s5", FieldMapping.map("E", new StringToBooleanConverter("yes", "no"))) //
         .upperCaseFields() //
         .build();
     }

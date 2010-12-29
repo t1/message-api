@@ -1,5 +1,6 @@
 package net.java.messageapi.converter;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.joda.time.LocalDate;
@@ -8,14 +9,29 @@ import org.joda.time.format.*;
 @XmlRootElement
 public class JodaLocalDateConverter extends Converter<LocalDate> {
 
-    private final DateTimeFormatter formatter;
+    private String pattern;
+    private transient DateTimeFormatter formatter;
 
     public JodaLocalDateConverter() {
-        this.formatter = ISODateTimeFormat.date();
+        this(null);
     }
 
     public JodaLocalDateConverter(String pattern) {
-        this.formatter = DateTimeFormat.forPattern(pattern);
+        setPattern(pattern);
+    }
+
+    // required by JAXB
+    @XmlAttribute(required = true)
+    private void setPattern(String pattern) {
+        this.pattern = pattern;
+        this.formatter = (pattern == null) ? ISODateTimeFormat.date()
+                : DateTimeFormat.forPattern(pattern);
+    }
+
+    // just to satisfy JAXB
+    @SuppressWarnings("unused")
+    private String getPattern() {
+        return pattern;
     }
 
     @Override
@@ -28,4 +44,8 @@ public class JodaLocalDateConverter extends Converter<LocalDate> {
         return formatter.parseDateTime(v).toLocalDate();
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "[" + ((pattern == null) ? "ISO" : pattern) + "]";
+    }
 }
