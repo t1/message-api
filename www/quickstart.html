@@ -29,7 +29,7 @@ public interface ChatApi {
 
 <h3>Create the Sender</h3>
 <ol>
-<li style="color:grey">create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-send -Dpackage=net.java.dev.messageapi.chat</tt></li>
+<li style="color:grey">create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-send -Dpackage=chat</tt></li>
 <li>add dependencies to your <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
 <li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
 <li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
@@ -40,7 +40,7 @@ public interface ChatApi {
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
 	&lt;servlet&gt;
 		&lt;servlet-name&gt;ChatSend&lt;/servlet-name&gt;
-		&lt;servlet-class&gt;net.java.dev.messageapi.chat.ChatSend&lt;/servlet-class&gt;
+		&lt;servlet-class&gt;chat.ChatSend&lt;/servlet-class&gt;
 	&lt;/servlet&gt;
 	&lt;servlet-mapping&gt;
 		&lt;servlet-name&gt;ChatSend&lt;/servlet-name&gt;
@@ -51,7 +51,7 @@ public interface ChatApi {
 	&lt;/welcome-file-list&gt;
 &lt;/web-app&gt;
 </pre></li>
-<li>create the <tt>net.java.dev.messageapi.chat.ChatSend.java</tt> (the imports and stuff are left out for brevity):
+<li>create the <tt>chat.ChatSend.java</tt> (the imports and stuff are left out for brevity):
 <pre>
 <span style="color:grey">public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -113,7 +113,7 @@ public interface ChatApi {
 
 <h3>Create the Receiver</h3>
 <ol>
-<li style="color:grey">create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=net.java.dev.messageapi -DartifactId=chat-<b>receive</b> -Dpackage=net.java.dev.messageapi.chat</tt></li>
+<li style="color:grey">create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-<b>receive</b> -Dpackage=chat</tt></li>
 <li style="color:grey">change the <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
 <li style="color:grey">add dependencies to the <tt>chat-api</tt> and the <tt>message-api:adapter</tt></li>
 <li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
@@ -124,7 +124,7 @@ public interface ChatApi {
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
 	&lt;servlet&gt;
 		&lt;servlet-name&gt;ChatReceive&lt;/servlet-name&gt;
-		&lt;servlet-class&gt;net.java.dev.messageapi.chat.ChatReceiveServlet&lt;/servlet-class&gt;
+		&lt;servlet-class&gt;chat.ChatReceiveServlet&lt;/servlet-class&gt;
 	&lt;/servlet&gt;
 	&lt;servlet-mapping&gt;
 		&lt;servlet-name&gt;ChatReceive&lt;/servlet-name&gt;
@@ -135,7 +135,7 @@ public interface ChatApi {
 	&lt;/welcome-file-list&gt;
 &lt;/web-app&gt;
 </pre></li>
-<li>create the <tt>net.java.dev.messageapi.chat.ChatReceiver</tt>:
+<li>create the <tt>chat.ChatReceiver</tt>:
 <pre>
 public class ChatReceiver implements ChatApi {
 <span style="color:grey">
@@ -155,7 +155,7 @@ public class ChatReceiver implements ChatApi {
     }
 }</span>
 </pre></li>
-<li>create the <tt>net.java.dev.messageapi.chat.ChatMDB</tt>:<pre>
+<li>create the <tt>chat.ChatMDB</tt>:<pre>
 @MessageDriven(mappedName = "ChatTopic")
 public class ChatMDB implements MessageListener {
 
@@ -177,7 +177,7 @@ public class ChatMDB implements MessageListener {
 }
 </pre>
 <small style="color:green">we are working on a generic MDB, so you only have to configure the connection between a destination and your business bean</small></li>
-<li style="color:grey">create the <tt>net.java.dev.messageapi.chat.ChatReceiveServlet</tt>:
+<li style="color:grey">create the <tt>chat.ChatReceiveServlet</tt>:
 <pre>
 public class ChatReceiveServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
