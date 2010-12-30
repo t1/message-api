@@ -1,7 +1,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<b style="color:red">We still work on making this work out-of-the-box.</b>
+
 <h3>Quickstart</h3>
-<p>This is a step-by-step guide to create a simple chat application. It consists of a sender to post messages you type to a JMS Topic and a receiver to display all messages coming in from that topic. Both are implemented as simple servlets. Most of the things in it could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/trunk/demo/">here</a>. To make the interesting things more visible, the stuff that's not specific to the MessageApi but just to make the servlets work, is set in <span style="color:grey">grey</span>. You can skip that, if you just want to get an impression of how to work with the MessageApi.</p>
+<p>This is a step-by-step guide to create a simple chat application. It consists of a sender to post messages you type to a JMS Topic and a receiver to display all messages coming in from that topic. Both are implemented as simple servlets. Most of the things in it could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/tags/1.1/demo/">here</a>. To make the interesting things more visible, the stuff that's not specific to the MessageApi but just to make the servlets work, is set in <span style="color:grey">grey</span>. You can skip that, if you just want to get an impression of how to work with the MessageApi.</p>
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
@@ -30,7 +32,7 @@ public interface ChatApi {
 <h3>Create the Sender</h3>
 <ol>
 <li style="color:grey">create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-send -Dpackage=chat</tt></li>
-<li>add dependencies to your <tt>chat-api</tt> and the <tt>messageapi:adapter</tt></li>
+<li>add dependencies to your <tt>chat-api</tt> and the <tt>net.java.messageapi:adapter:1.1</tt></li>
 <li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
 <li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
 <li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
@@ -114,8 +116,8 @@ public interface ChatApi {
 <h3>Create the Receiver</h3>
 <ol>
 <li style="color:grey">create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-<b>receive</b> -Dpackage=chat</tt></li>
-<li style="color:grey">change the <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
-<li style="color:grey">add dependencies to the <tt>chat-api</tt> and the <tt>message-api:adapter</tt></li>
+<li style="color:grey">change the maven dependency on <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
+<li>add dependencies to your <tt>chat-api</tt> and the <tt>net.java.messageapi:adapter:1.1</tt></li>
 <li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
 <li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
 <li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
