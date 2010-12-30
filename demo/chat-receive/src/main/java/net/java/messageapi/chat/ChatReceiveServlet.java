@@ -26,7 +26,6 @@ public class ChatReceiveServlet extends HttpServlet {
 			out.append("      <li>").append(message).append("</li>\n");
 		}
 		out.println("    </ul>");
-		out.println("    <small>Please refresh manually</small>");
 		out.println("  </body>");
 		out.println("</html>");
 	}
