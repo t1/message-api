@@ -58,18 +58,19 @@ public class MessageSender {
     }
 
     private static Reader getReaderFor(Class<?> api) {
+        ClassLoader classLoader = api.getClassLoader();
         String fileName = api.getName() + CONFIG_FILE_SUFFIX;
-        InputStream stream = getSingleUrlFor(fileName);
+        InputStream stream = getSingleUrlFor(classLoader, fileName);
         if (stream == null)
-            stream = getSingleUrlFor(DEFAULT_FILE_NAME);
+            stream = getSingleUrlFor(classLoader, DEFAULT_FILE_NAME);
         if (stream == null)
             throw new RuntimeException("found no config file [" + fileName + "]");
         return new InputStreamReader(stream, Charset.forName("utf-8"));
     }
 
-    private static InputStream getSingleUrlFor(String fileName) {
+    private static InputStream getSingleUrlFor(ClassLoader classLoader, String fileName) {
         try {
-            Enumeration<URL> resources = MessageSender.class.getClassLoader().getResources(fileName);
+            Enumeration<URL> resources = classLoader.getResources(fileName);
             if (!resources.hasMoreElements())
                 return null;
             URL result = resources.nextElement();
