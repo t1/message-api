@@ -69,7 +69,7 @@ public class MessageSender {
 
     private static InputStream getSingleUrlFor(String fileName) {
         try {
-            Enumeration<URL> resources = ClassLoader.getSystemResources(fileName);
+            Enumeration<URL> resources = MessageSender.class.getClassLoader().getResources(fileName);
             if (!resources.hasMoreElements())
                 return null;
             URL result = resources.nextElement();
