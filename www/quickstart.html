@@ -1,13 +1,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<b style="color:red">We still work on making this work out-of-the-box.</b>
-
 <h3>Quickstart</h3>
 <p>This is a step-by-step guide to create a simple chat application. It consists of a sender to post messages you type to a JMS Topic and a receiver to display all messages coming in from that topic. Both are implemented as simple servlets. Most of the things in it could have to be done with plain JMS as well. But if you know JMS, you'll see the big difference in the code you <i>don't</i> have to write. If you prefer to download everything, you can get it <a href="https://messageapi.dev.java.net/source/browse/messageapi/tags/1.1/demo/">here</a>. To make the interesting things more visible, the stuff that's not specific to the MessageApi but just to make the servlets work, is set in <span style="color:grey">grey</span>. You can skip that, if you just want to get an impression of how to work with the MessageApi.</p>
 
 <p><small style="color:green">Things we are working on to make it even easier, are set in green and small.</small></p>
 
-<p>This demo is done with maven 2.2.1 and Glassfish 3.0.1. But it should be easy to adapt to any container supporting JMS and to any build tool.</p>
+<p>This demo is done with maven 2.2.1 and Glassfish 3.0.1. But it should be straight forward to adapt to any container supporting JMS and to any build tool.</p>
 
 <h3>Build the MessageApi</h3>
 <ol>
@@ -32,7 +30,7 @@ public interface ChatApi {
 <h3>Create the Sender</h3>
 <ol>
 <li style="color:grey">create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-send -Dpackage=chat</tt></li>
-<li>add dependencies to your <tt>chat-api</tt> and the <tt>net.java.messageapi:adapter:1.1</tt></li>
+<li>add dependencies to your <tt>chat-api</tt>, to <tt>joda-time:1.6.2</tt>, and the <tt>net.java.messageapi:adapter:1.1</tt></li>
 <li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
 <li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
 <li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
@@ -100,7 +98,7 @@ public interface ChatApi {
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
 &lt;jmsSenderFactory api="net.java.messageapi.test.TestApi"&gt;
-    &lt;destination name="ChatTopic"&gt;
+    &lt;destination name="Chat"&gt;
         &lt;factory&gt;ConnectionFactory&lt;/factory&gt;
         &lt;user&gt;guest&lt;/user&gt;
         &lt;pass&gt;guest&lt;/pass&gt;
@@ -158,7 +156,7 @@ public class ChatReceiver implements ChatApi {
 }</span>
 </pre></li>
 <li>create the <tt>chat.ChatMDB</tt>:<pre>
-@MessageDriven(mappedName = "ChatTopic")
+@MessageDriven(mappedName = "Chat")
 public class ChatMDB implements MessageListener {
 
 	private final ChatApi receiver = new ChatReceiver();
@@ -222,7 +220,7 @@ public class ChatReceiveServlet extends HttpServlet {
     <li>set the <tt>Resource Type</tt> <tt>javax.jms.ConnectionFactory</tt></li>
     <li>hit return</li>
 </ol></li>
-<li>create the topic <tt>ChatTopic</tt><ol>
+<li>create the topic <tt>Chat</tt><ol>
     <li>go to <tt>Resources/JMS Resources/Destination Resources</tt></li>
     <li>click <tt>New...</tt></li>
     <li>set the <tt>JNDI Name</tt> and the <tt>Physical Destination Name</tt> to <tt>Chat</tt></li>
