@@ -28,13 +28,13 @@ public abstract class AbstractJmsSenderFactoryTest {
     protected static final String QUEUE_USER = "MyQueueUser";
     protected static final String QUEUE_PASS = "MyQueuePass";
 
-    protected final JmsQueueConfig CONFIG = new JmsQueueConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, true,
-            new Properties(), Collections.<String, Object> emptyMap());
+    protected final JmsQueueConfig CONFIG = new JmsQueueConfig(FACTORY, QUEUE, QUEUE_USER,
+            QUEUE_PASS, true, new Properties(), Collections.<String, Object> emptyMap());
 
     protected final MessageListener targetMDB = mock(MessageListener.class);
 
     @BeforeClass
-    public static void disableTests() throws NamingException, JMSException {
+    public static void disableTestLogs() throws NamingException, JMSException {
         Logger mockEjb = (Logger) LoggerFactory.getLogger("org.mockejb");
         mockEjb.setLevel(Level.WARN);
 

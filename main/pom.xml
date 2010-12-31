@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>net.sf.twip</groupId>
 			<artifactId>twip</artifactId>
-			<version>3.3alpha4</version>
+			<version>3.3alpha5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

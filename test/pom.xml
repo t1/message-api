@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>net.sf.twip</groupId>
 			<artifactId>twip</artifactId>
-			<version>3.3alpha4</version>
+			<version>3.3alpha5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -118,6 +118,18 @@
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-se</artifactId>
+			<version>1.0.1-Final</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-simple</artifactId>
+					<groupId>org.slf4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
