@@ -12,6 +12,7 @@
 	<groupId>net.java.messageapi</groupId>
 	<artifactId>demo-container</artifactId>
 	<packaging>pom</packaging>
+	<name>Demo Container for MessageApi</name>
 
 	<modules>
 		<module>chat-api</module>

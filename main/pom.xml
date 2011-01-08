@@ -25,16 +25,6 @@
 	</modules>
 
 	<dependencies>
-		<!-- provided -->
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<!-- actually we'd only need 5.0 -->
-			<!-- but that's not available -->
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
-
 		<!-- optional -->
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -46,12 +36,6 @@
 			<groupId>com.google.collections</groupId>
 			<artifactId>google-collections</artifactId>
 			<version>1.0</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -72,19 +56,6 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.8.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.6.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>0.9.26</version>
-			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

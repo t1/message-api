@@ -27,14 +27,17 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<!-- actually we'd only need 5.0 -->
+			<!-- but that's not available -->
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.google.collections</groupId>
 			<artifactId>google-collections</artifactId>
 			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
 		</dependency>
 
 		<dependency>
@@ -49,6 +52,12 @@
 			<artifactId>eclipselink</artifactId>
 			<version>2.1.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.twip</groupId>
+			<artifactId>twip</artifactId>
+			<version>3.3alpha6-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
