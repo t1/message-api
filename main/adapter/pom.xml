@@ -57,7 +57,7 @@
 			<groupId>net.sf.twip</groupId>
 			<artifactId>twip</artifactId>
 			<version>3.3alpha6-SNAPSHOT</version>
-			<scope>compile</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
