@@ -1,13 +1,11 @@
-package net.java.messageapi.chat;
+package chat;
 
-import javax.ejb.*;
+import javax.ejb.MessageDriven;
 import javax.jms.*;
 
 import net.java.messageapi.adapter.xml.XmlStringDecoder;
-import net.java.messageapi.chat.ChatApi;
 
-
-@MessageDriven(mappedName = "ChatTopic")
+@MessageDriven(mappedName = "Chat")
 public class ChatMDB implements MessageListener {
 
 	private final ChatApi receiver = new ChatReceiver();

@@ -1,11 +1,12 @@
-package net.java.messageapi.chat;
+package chat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.*;
+
+import chat.ChatApi;
 import net.java.messageapi.adapter.*;
-import net.java.messageapi.chat.ChatApi;
 
 public class ChatSend extends HttpServlet {
 	private static final long serialVersionUID = 1L;
