@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>net.sf.twip</groupId>
 			<artifactId>twip</artifactId>
-			<version>3.3alpha5</version>
+			<version>3.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
