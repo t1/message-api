@@ -142,7 +142,7 @@ public class JmsSenderFactory implements MessageSenderFactory {
             MessageProducer messageProducer = null;
             boolean sent = false;
 
-            log(api).debug("sending to {} payload: {}", config.getFactoryName(), payload);
+            log(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
 
             try {
                 ConnectionFactory factory = getConnectionFactory(config);
@@ -152,22 +152,22 @@ public class JmsSenderFactory implements MessageSenderFactory {
                 Destination destination = getDestination(config);
                 messageProducer = session.createProducer(destination);
 
-                javax.jms.Message msg = payloadHandler.createJmsMessage(payload, session);
+                Message message = payloadHandler.createJmsMessage(payload, session);
 
                 // TODO refactor this into a HeaderSupplier plugin mechanism
                 String version = getApiVersion(api);
                 if (version != null)
-                    msg.setStringProperty(VERSION, version);
+                    message.setStringProperty(VERSION, version);
 
                 for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {
-                    msg.setObjectProperty(additionalProperty.getKey(),
+                    message.setObjectProperty(additionalProperty.getKey(),
                             additionalProperty.getValue());
                 }
 
-                messageProducer.send(msg);
+                messageProducer.send(message);
 
-                log(api).info("sent message id {} to {}", msg.getJMSMessageID(),
-                        msg.getJMSDestination());
+                log(api).info("sent message id {} to {}", message.getJMSMessageID(),
+                        message.getJMSDestination());
                 sent = true;
             } finally {
                 if (!sent) {
