@@ -58,36 +58,6 @@ public class JmsSenderFactory implements MessageSenderFactory {
         this.payloadHandler = payloadHandler;
     }
 
-    protected void close(MessageProducer messageProducer) {
-        if (messageProducer != null) {
-            try {
-                messageProducer.close();
-            } catch (Exception e) {
-                // do nothing on errors during cleanup
-            }
-        }
-    }
-
-    protected void close(Session session) {
-        if (session != null) {
-            try {
-                session.close();
-            } catch (Exception e) {
-                // do nothing on errors during cleanup
-            }
-        }
-    }
-
-    protected void close(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (Exception e) {
-                // do nothing on errors during cleanup
-            }
-        }
-    }
-
     protected void resetLookupCache() {
         jndiContext = null;
         connectionFactory = null;
@@ -136,51 +106,52 @@ public class JmsSenderFactory implements MessageSenderFactory {
     }
 
     protected void sendJms(Class<?> api, Object payload) {
+        Connection connection = null;
+        boolean sent = false;
+
+        log(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
+
         try {
-            Connection connection = null;
-            Session session = null;
-            MessageProducer messageProducer = null;
-            boolean sent = false;
+            ConnectionFactory factory = getConnectionFactory(config);
+            connection = factory.createConnection(config.getUser(), config.getPass());
+            Session session = connection.createSession(config.isTransacted(),
+                    Session.AUTO_ACKNOWLEDGE);
 
-            log(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
+            Destination destination = getDestination(config);
+            MessageProducer messageProducer = session.createProducer(destination);
 
-            try {
-                ConnectionFactory factory = getConnectionFactory(config);
-                connection = factory.createConnection(config.getUser(), config.getPass());
-                session = connection.createSession(config.isTransacted(), Session.AUTO_ACKNOWLEDGE);
+            Message message = payloadHandler.createJmsMessage(payload, session);
 
-                Destination destination = getDestination(config);
-                messageProducer = session.createProducer(destination);
+            // TODO refactor this into a HeaderSupplier plugin mechanism
+            String version = getApiVersion(api);
+            if (version != null)
+                message.setStringProperty(VERSION, version);
 
-                Message message = payloadHandler.createJmsMessage(payload, session);
-
-                // TODO refactor this into a HeaderSupplier plugin mechanism
-                String version = getApiVersion(api);
-                if (version != null)
-                    message.setStringProperty(VERSION, version);
-
-                for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {
-                    message.setObjectProperty(additionalProperty.getKey(),
-                            additionalProperty.getValue());
-                }
-
-                messageProducer.send(message);
-
-                log(api).info("sent message id {} to {}", message.getJMSMessageID(),
-                        message.getJMSDestination());
-                sent = true;
-            } finally {
-                if (!sent) {
-                    resetLookupCache();
-                }
-                close(messageProducer);
-                close(session);
-                close(connection);
+            for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {
+                message.setObjectProperty(additionalProperty.getKey(),
+                        additionalProperty.getValue());
             }
+
+            messageProducer.send(message);
+
+            log(api).info("sent message id {} to {}", message.getJMSMessageID(),
+                    message.getJMSDestination());
+            sent = true;
         } catch (NamingException e) {
             throw new RuntimeException("can't send JMS", e);
         } catch (JMSException e) {
             throw new RuntimeException("can't send JMS", e);
+        } finally {
+            if (!sent) {
+                resetLookupCache();
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    // do nothing on errors during cleanup
+                }
+            }
         }
     }
 
