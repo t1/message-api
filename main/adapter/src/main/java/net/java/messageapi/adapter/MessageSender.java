@@ -9,6 +9,7 @@ import javax.xml.bind.*;
 
 import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
 import net.java.messageapi.adapter.mapped.Mapping;
+import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 
 /**
  * The central provider for the proxies to send messages.
@@ -54,6 +55,8 @@ public class MessageSender {
 
     public static MessageSenderFactory getConfigFor(Class<?> api) {
         Reader reader = getReaderFor(api);
+        if (reader == null)
+            return newDefaultConfigFor(api);
         return readConfigFrom(reader, api);
     }
 
@@ -64,8 +67,14 @@ public class MessageSender {
         if (stream == null)
             stream = getSingleUrlFor(classLoader, DEFAULT_FILE_NAME);
         if (stream == null)
-            throw new RuntimeException("found no config file [" + fileName + "]");
+            return null;
         return new InputStreamReader(stream, Charset.forName("utf-8"));
+    }
+
+    private static MessageSenderFactory newDefaultConfigFor(Class<?> api) {
+        JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getCanonicalName(),
+                null, null, false, null, null);
+        return new JmsSenderFactory(config, new XmlJmsPayloadHandler());
     }
 
     private static InputStream getSingleUrlFor(ClassLoader classLoader, String fileName) {
