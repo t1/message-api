@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>net.java.messageapi</groupId>
 		<artifactId>root-container</artifactId>
@@ -38,6 +38,17 @@
 			<artifactId>google-collections</artifactId>
 			<version>1.0</version>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.seam.solder</groupId>
+			<artifactId>seam-solder-api</artifactId>
+			<version>3.0.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.seam.solder</groupId>
+			<artifactId>seam-solder-impl</artifactId>
+			<version>3.0.0.Final</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- test -->

@@ -5,6 +5,8 @@ import static java.lang.annotation.RetentionPolicy.*;
 
 import java.lang.annotation.*;
 
+import org.jboss.seam.solder.serviceHandler.ServiceHandlerType;
+
 /**
  * Annotate an interface to declare that it is normally called asynchronously via a messaging
  * system. I.e., all methods within this interface have to return <code>void</code> and declare no
@@ -58,6 +60,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(TYPE)
 @Retention(RUNTIME)
+@ServiceHandlerType(MessageApiSendDelegater.class)
 public @interface MessageApi {
     // empty
 }

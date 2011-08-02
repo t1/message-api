@@ -3,15 +3,16 @@ package chat;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.http.*;
 
 import chat.ChatApi;
-import net.java.messageapi.adapter.*;
 
 public class ChatSend extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private final ChatApi chat = MessageSender.of(ChatApi.class);
+	@Inject
+	ChatApi chat;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
