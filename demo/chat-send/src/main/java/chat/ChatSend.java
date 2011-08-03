@@ -4,24 +4,29 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.inject.Inject;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import chat.ChatApi;
+import net.java.messageapi.DestinationName;
 
 public class ChatSend extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
+	@DestinationName("Chat")
 	ChatApi chat;
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		// we don't expect any GET parameters.
 		response(response);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		request(request);
 		response(response);
 	}

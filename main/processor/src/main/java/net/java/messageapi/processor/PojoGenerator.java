@@ -17,8 +17,6 @@ import net.java.messageapi.Optional;
 import net.java.messageapi.processor.pojo.Pojo;
 import net.java.messageapi.reflection.ReflectionAdapter;
 
-import org.joda.time.Instant;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -167,9 +165,9 @@ public class PojoGenerator extends AbstractGenerator {
     }
 
     private void addAnnotations(MethodAdapter method, Pojo pojo) {
-        pojo.annotate(Generated.class, ImmutableMap.of("value",
-                MessageApiAnnotationProcessor.class.getName(), "date", new Instant(), "comments",
-                "from " + method.getContainingClassName()));
+        pojo.annotate(Generated.class, ImmutableMap.of( //
+                "value", MessageApiAnnotationProcessor.class.getName(), //
+                "comments", "from " + method.getContainingClassName()));
         pojo.annotate(XmlRootElement.class);
         pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", method.getPropOrder()));
     }

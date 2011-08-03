@@ -49,4 +49,23 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     public javax.jms.Message createJmsMessage(Object payload, Session session) throws JMSException {
         return session.createTextMessage((String) payload);
     }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        return true;
+    }
 }

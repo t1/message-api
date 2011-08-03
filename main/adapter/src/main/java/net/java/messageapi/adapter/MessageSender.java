@@ -60,7 +60,7 @@ public class MessageSender {
         return readConfigFrom(reader, api);
     }
 
-    private static Reader getReaderFor(Class<?> api) {
+    static Reader getReaderFor(Class<?> api) {
         ClassLoader classLoader = api.getClassLoader();
         String fileName = api.getName() + CONFIG_FILE_SUFFIX;
         InputStream stream = getSingleUrlFor(classLoader, fileName);
@@ -71,7 +71,7 @@ public class MessageSender {
         return new InputStreamReader(stream, Charset.forName("utf-8"));
     }
 
-    private static MessageSenderFactory newDefaultConfigFor(Class<?> api) {
+    static MessageSenderFactory newDefaultConfigFor(Class<?> api) {
         JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getCanonicalName(),
                 null, null, false, null, null);
         return new JmsSenderFactory(config, new XmlJmsPayloadHandler());
