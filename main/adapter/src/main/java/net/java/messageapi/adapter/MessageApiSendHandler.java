@@ -11,6 +11,9 @@ import net.java.messageapi.MessageApiSendDelegate;
 import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 
 public class MessageApiSendHandler implements MessageApiSendDelegate {
+    /** doesn't work, yet :-(( */
+    private static final boolean ANNOTATION_SCANNING = false;
+
     public void handle(InvocationContext ctx) {
         Class<?> api = ctx.getMethod().getDeclaringClass();
 
@@ -18,9 +21,12 @@ public class MessageApiSendHandler implements MessageApiSendDelegate {
         String destinationName = api.getCanonicalName();
 
         // annotations
-        for (Annotation annotation : getAnnotations(ctx.getTarget().getClass(), api)) {
-            if (annotation instanceof DestinationName) {
-                destinationName = ((DestinationName) annotation).value();
+        if (ANNOTATION_SCANNING) {
+            Class<? extends Object> targetClass = ctx.getTarget().getClass();
+            for (Annotation annotation : getAnnotations(targetClass, targetClass, api)) {
+                if (annotation instanceof DestinationName) {
+                    destinationName = ((DestinationName) annotation).value();
+                }
             }
         }
 
@@ -40,16 +46,16 @@ public class MessageApiSendHandler implements MessageApiSendDelegate {
         factory.sendJms(api, payload);
     }
 
-    Annotation[] getAnnotations(Class<?> targetClass, Class<?> requiredType) {
-        for (Field field : targetClass.getDeclaredFields()) {
+    Annotation[] getAnnotations(Class<?> targetClass, Class<?> currentClass, Class<?> requiredType) {
+        for (Field field : currentClass.getDeclaredFields()) {
             if (field.getType().isAssignableFrom(requiredType)) {
                 return field.getAnnotations();
             }
         }
-        Class<?> superclass = targetClass.getSuperclass();
+        Class<?> superclass = currentClass.getSuperclass();
         if (superclass == Object.class)
             throw new IllegalStateException("no field of type " + requiredType.getCanonicalName()
-                    + " found.");
-        return getAnnotations(superclass, requiredType);
+                    + " found in " + targetClass);
+        return getAnnotations(targetClass, superclass, requiredType);
     }
 }
