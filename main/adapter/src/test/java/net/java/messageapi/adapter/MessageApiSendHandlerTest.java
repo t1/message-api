@@ -27,7 +27,7 @@ public class MessageApiSendHandlerTest {
         MessageApiSendHandler handler = new MessageApiSendHandler();
 
         Annotation[] annotations = handler.getAnnotations(ClassWithMultipleFields.class,
-                ClassWithMultipleFields.class, Instant.class);
+                Instant.class);
 
         assertEquals(1, annotations.length);
         assertEquals(Resource.class, annotations[0].annotationType());
@@ -43,8 +43,7 @@ public class MessageApiSendHandlerTest {
     public void shouldFindInheritedField() throws Exception {
         MessageApiSendHandler handler = new MessageApiSendHandler();
 
-        Annotation[] annotations = handler.getAnnotations(Inherited.class, Inherited.class,
-                Instant.class);
+        Annotation[] annotations = handler.getAnnotations(Inherited.class, Instant.class);
 
         assertEquals(1, annotations.length);
         assertEquals(Resource.class, annotations[0].annotationType());
