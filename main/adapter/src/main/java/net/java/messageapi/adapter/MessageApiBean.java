@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
@@ -59,7 +59,7 @@ final class MessageApiBean<T> implements Bean<T> {
 
     @Override
     public Class<? extends Annotation> getScope() {
-        return RequestScoped.class;
+        return Dependent.class;
     }
 
     @Override
