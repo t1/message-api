@@ -105,7 +105,7 @@ public class JmsSenderFactory implements MessageSenderFactory {
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    public void sendJms(Class<?> api, Object payload) {
+    protected void sendJms(Class<?> api, Object payload) {
         Connection connection = null;
         boolean sent = false;
 
@@ -166,14 +166,6 @@ public class JmsSenderFactory implements MessageSenderFactory {
         return version;
     }
 
-    public JmsPayloadHandler getPayloadHandler() {
-        return payloadHandler;
-    }
-
-    public void setPayloadHandler(JmsPayloadHandler payloadHandler) {
-        this.payloadHandler = payloadHandler;
-    }
-
     @Override
     public String toString() {
         return "JmsSenderFactory [config=" + config + ", payloadHandler=" + payloadHandler + "]";
@@ -217,4 +209,7 @@ public class JmsSenderFactory implements MessageSenderFactory {
         return true;
     }
 
+    public JmsPayloadHandler getPayloadHandler() {
+        return payloadHandler;
+    }
 }
