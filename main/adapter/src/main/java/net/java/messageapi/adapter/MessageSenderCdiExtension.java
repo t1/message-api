@@ -37,7 +37,7 @@ public class MessageSenderCdiExtension implements Extension {
             for (InjectionPoint injectionPoint : injectionPoints) {
                 @SuppressWarnings("unchecked")
                 final Class<X> api = (Class<X>) injectionPoint.getType();
-                log.info("discovered {}@{}", api, injectionPoint.getBean());
+                log.info("##### discovered {}@{}", api, injectionPoint.getBean());
                 messageApis.get(api).add(injectionPoint);
             }
         }
@@ -53,10 +53,10 @@ public class MessageSenderCdiExtension implements Extension {
                 Class<Instance<?>> instance = (Class<Instance<?>>) type;
                 log.info("generic interfaces: {}", (Object) instance.getGenericInterfaces());
             }
-            log.debug("injection point {}@{}", type, injectionPoint.getBean());
             if (messageApis.containsKey(type)) {
                 if (result == null)
                     result = new HashSet<InjectionPoint>();
+                log.debug("injection point {}@{}", type, injectionPoint.getBean());
                 result.add(injectionPoint);
             }
         }
@@ -64,10 +64,12 @@ public class MessageSenderCdiExtension implements Extension {
     }
 
     void step3_createBeans(@Observes AfterBeanDiscovery abd, BeanManager bm) {
+        log.info("create beans for {} message api", messageApis.size());
         for (Entry<Class<?>, Set<InjectionPoint>> entry : messageApis.entrySet()) {
             Class<?> api = entry.getKey();
+            log.info("create {} beans for {}", entry.getValue().size(), api);
             for (InjectionPoint injectionPoint : entry.getValue()) {
-                log.info("create bean for {}@{}", api, injectionPoint);
+                log.info("create bean for {}", injectionPoint);
                 abd.addBean(MessageApiBean.of(api, injectionPoint));
             }
         }
