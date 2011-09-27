@@ -1,11 +1,11 @@
 package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.*;
 
 import net.java.messageapi.MessageApi;
@@ -52,18 +52,17 @@ public class MessageSenderCdiExtension implements Extension {
         }
     }
 
-    <X> void step2_discoverInjectionTargets(@Observes ProcessInjectionTarget<X> pit) {
+    void step2_discoverInjectionTargets(@Observes ProcessInjectionTarget<?> pit) {
         for (InjectionPoint injectionPoint : pit.getInjectionTarget().getInjectionPoints()) {
             log.debug("scan injection point {}", injectionPoint);
             Class<?> type = getMessageApi(injectionPoint);
             if (messageApis.contains(type)) {
-                final Class<X> api = getMessageApi(injectionPoint);
                 final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
                 log.info(
                         "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
                         new Object[] { injectionPoint.getMember().getName(),
-                                getBeanName(injectionPoint), api.getSimpleName(), qualifiers });
-                boolean added = beanIds.add(new BeanId(api, qualifiers));
+                                getBeanName(injectionPoint), type.getSimpleName(), qualifiers });
+                boolean added = beanIds.add(new BeanId(type, qualifiers));
                 if (!added) {
                     log.info("bean already defined");
                 }
@@ -71,18 +70,17 @@ public class MessageSenderCdiExtension implements Extension {
         }
     }
 
-    private <X> Class<X> getMessageApi(InjectionPoint injectionPoint) {
-        if (!(injectionPoint.getType() instanceof Class))
-            return null;
-        @SuppressWarnings("unchecked")
-        final Class<X> type = (Class<X>) injectionPoint.getType();
-        if (Instance.class.equals(type)) {
-            @SuppressWarnings("unchecked")
-            Class<Instance<?>> instance = (Class<Instance<?>>) type;
-            // FIXME resolve Instance type
-            log.info("generic interfaces: {}", (Object) instance.getGenericInterfaces());
+    private Class<?> getMessageApi(InjectionPoint injectionPoint) {
+        Type type = injectionPoint.getType();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            if (typeArguments.length == 1) {
+                type = typeArguments[0];
+                log.debug("parameterized type = {}", type);
+            }
         }
-        return type;
+        return (type instanceof Class) ? (Class<?>) type : null;
     }
 
     private Object getBeanName(InjectionPoint injectionPoint) {
