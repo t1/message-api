@@ -1,8 +1,8 @@
 package net.java.messageapi.adapter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -13,11 +13,15 @@ import net.java.messageapi.MessageApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 public class MessageSenderCdiExtension implements Extension {
     private final Logger log = LoggerFactory.getLogger(MessageSenderCdiExtension.class);
 
     // TODO provide the set of discovered message apis for injection
-    private final Map<Class<?>, Set<InjectionPoint>> messageApis = new HashMap<Class<?>, Set<InjectionPoint>>();
+
+    private final Set<Class<?>> messageApis = Sets.newHashSet();
+    private final Set<BeanId> beanIds = Sets.newHashSet();
 
     <X> void step1_discoverMessageApis(@Observes ProcessAnnotatedType<X> pat) {
         discoverMessageApi(pat);
@@ -31,80 +35,67 @@ public class MessageSenderCdiExtension implements Extension {
         if (annotation != null) {
             Class<X> messageApi = annotatedType.getJavaClass();
             log.info("discovered message api {}", messageApi.getName());
-            messageApis.put(messageApi, new HashSet<InjectionPoint>());
+            messageApis.add(messageApi);
         }
     }
 
     private <X> void vetoMessageApiImplementations(ProcessAnnotatedType<X> pat) {
+        // TODO what happens when the impl is scanned before the api?
         AnnotatedType<X> annotatedType = pat.getAnnotatedType();
         final Set<Type> typeClosure = annotatedType.getTypeClosure();
-        if (!isInterface(annotatedType) && intersect(typeClosure, messageApis.keySet())) {
+        Set<Type> intersection = Sets.intersection(typeClosure, messageApis);
+        if (!annotatedType.getJavaClass().isInterface() && !intersection.isEmpty()) {
             pat.veto();
             log.info(
-                    "Preventing {} from being installed as bean, as it's a receiver for a message api",
-                    annotatedType.getJavaClass());
+                    "Preventing {} from being installed as bean, as it's a receiver for message api {}",
+                    annotatedType.getJavaClass(), intersection);
         }
-    }
-
-    private <X> boolean isInterface(AnnotatedType<X> annotatedType) {
-        return annotatedType.getJavaClass().isInterface();
-    }
-
-    private boolean intersect(Set<?> setA, Set<?> setB) {
-        for (Object elementOfA : setA) {
-            if (setB.contains(elementOfA)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     <X> void step2_discoverInjectionTargets(@Observes ProcessInjectionTarget<X> pit) {
-        // FIXME check if a Bean can receive non-binding qualifiers... or maybe use interceptors
-        final InjectionTarget<X> injectionTarget = pit.getInjectionTarget();
-        for (InjectionPoint injectionPoint : getMessageApiInjectionPoints(injectionTarget)) {
-            final Class<X> api = getMessageApi(injectionPoint);
-            log.info("add injection point {} for message api {}", injectionPoint.getBean(),
-                    api.getName());
-            messageApis.get(api).add(injectionPoint);
+        for (InjectionPoint injectionPoint : pit.getInjectionTarget().getInjectionPoints()) {
+            log.debug("scan injection point {}", injectionPoint);
+            Class<?> type = getMessageApi(injectionPoint);
+            if (messageApis.contains(type)) {
+                final Class<X> api = getMessageApi(injectionPoint);
+                final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
+                log.info(
+                        "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
+                        new Object[] { injectionPoint.getMember().getName(),
+                                getBeanName(injectionPoint), api.getSimpleName(), qualifiers });
+                boolean added = beanIds.add(new BeanId(api, qualifiers));
+                if (!added) {
+                    log.info("bean already defined");
+                }
+            }
         }
     }
 
     private <X> Class<X> getMessageApi(InjectionPoint injectionPoint) {
+        if (!(injectionPoint.getType() instanceof Class))
+            return null;
         @SuppressWarnings("unchecked")
-        final Class<X> api = (Class<X>) injectionPoint.getType();
-        return api;
+        final Class<X> type = (Class<X>) injectionPoint.getType();
+        if (Instance.class.equals(type)) {
+            @SuppressWarnings("unchecked")
+            Class<Instance<?>> instance = (Class<Instance<?>>) type;
+            // FIXME resolve Instance type
+            log.info("generic interfaces: {}", (Object) instance.getGenericInterfaces());
+        }
+        return type;
     }
 
-    private <X> Set<InjectionPoint> getMessageApiInjectionPoints(InjectionTarget<X> injectionTarget) {
-        final Set<InjectionPoint> result = new HashSet<InjectionPoint>();
-        for (InjectionPoint injectionPoint : injectionTarget.getInjectionPoints()) {
-            Type type = injectionPoint.getType();
-            if (Instance.class.equals(type)) {
-                @SuppressWarnings("unchecked")
-                Class<Instance<?>> instance = (Class<Instance<?>>) type;
-                // FIXME resolve Instance type
-                log.info("generic interfaces: {}", (Object) instance.getGenericInterfaces());
-            }
-            if (messageApis.containsKey(type)) {
-                String apiName = getMessageApi(injectionPoint).getName();
-                Bean<?> bean = injectionPoint.getBean();
-                log.debug("discovered injection point for message api {} in {}", apiName, bean);
-                result.add(injectionPoint);
-            }
-        }
-        return result;
+    private Object getBeanName(InjectionPoint injectionPoint) {
+        final Bean<?> bean = injectionPoint.getBean();
+        return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
     }
 
     void step3_createBeans(@Observes AfterBeanDiscovery abd, BeanManager bm) {
-        log.info("create beans for {} message api", messageApis.size());
-        for (Entry<Class<?>, Set<InjectionPoint>> entry : messageApis.entrySet()) {
-            Class<?> api = entry.getKey();
-            log.info("create {} beans for {}", entry.getValue().size(), api.getName());
-            for (InjectionPoint injectionPoint : entry.getValue()) {
-                log.info("create bean for {}", injectionPoint);
-                abd.addBean(MessageApiBean.of(api, injectionPoint));
-            }
+        log.info("create {} beans for {} message apis", beanIds.size(), messageApis.size());
+        for (BeanId beanId : beanIds) {
+            log.info("create bean for {}", beanId);
+            MessageApiBean<?> bean = MessageApiBean.of(beanId.type, beanId.qualifiers);
+            abd.addBean(bean);
         }
     }
 }

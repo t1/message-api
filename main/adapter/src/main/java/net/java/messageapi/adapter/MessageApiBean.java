@@ -2,32 +2,32 @@ package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.util.AnnotationLiteral;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 final class MessageApiBean<T> implements Bean<T> {
     private final Logger log = LoggerFactory.getLogger(MessageApiBean.class);
 
-    public static <T> MessageApiBean<T> of(Class<T> api, InjectionPoint injectionPoint) {
-        return new MessageApiBean<T>(api, injectionPoint);
+    public static <T> MessageApiBean<T> of(Class<T> api, Set<Annotation> qualifiers) {
+        return new MessageApiBean<T>(api, qualifiers);
     }
 
     private final Class<T> api;
-    private final InjectionPoint injectionPoint;
+    private final Set<Annotation> qualifiers;
 
-    private MessageApiBean(Class<T> api, InjectionPoint injectionPoint) {
+    private MessageApiBean(Class<T> api, Set<Annotation> qualifiers) {
         this.api = api;
-        this.injectionPoint = injectionPoint;
+        this.qualifiers = qualifiers;
     }
 
     @Override
@@ -42,18 +42,11 @@ final class MessageApiBean<T> implements Bean<T> {
 
     @Override
     public String getName() {
-        return api.getSimpleName();
+        return api.getName() + qualifiers;
     }
 
     @Override
     public Set<Annotation> getQualifiers() {
-        Set<Annotation> qualifiers = new HashSet<Annotation>();
-        qualifiers.add(new AnnotationLiteral<Default>() {
-            private static final long serialVersionUID = 1L;
-        });
-        qualifiers.add(new AnnotationLiteral<Any>() {
-            private static final long serialVersionUID = 1L;
-        });
         return qualifiers;
     }
 
@@ -69,10 +62,7 @@ final class MessageApiBean<T> implements Bean<T> {
 
     @Override
     public Set<Type> getTypes() {
-        Set<Type> types = new HashSet<Type>();
-        types.add(api);
-        types.add(Object.class);
-        return types;
+        return Sets.<Type> newHashSet(api, Object.class);
     }
 
     @Override
@@ -87,14 +77,18 @@ final class MessageApiBean<T> implements Bean<T> {
 
     @Override
     public T create(CreationalContext<T> ctx) {
-        log.info("================ create {} for {}", api, injectionPoint);
-        log.info("annotations: {}", injectionPoint.getAnnotated().getAnnotations());
-        // TODO handle annotations
+        log.info("create message api bean {} qualified as {}", api.getSimpleName(), qualifiers);
+        // TODO handle qualifiers
         return MessageSender.of(api);
     }
 
     @Override
     public void destroy(T instance, CreationalContext<T> ctx) {
         ctx.release();
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + ": " + getName() + " with " + getQualifiers();
     }
 }
