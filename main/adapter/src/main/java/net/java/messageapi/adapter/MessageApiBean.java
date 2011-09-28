@@ -10,6 +10,11 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 
+import net.java.messageapi.DestinationName;
+import net.java.messageapi.JmsPayloadMapping;
+import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
+import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +83,36 @@ final class MessageApiBean<T> implements Bean<T> {
     @Override
     public T create(CreationalContext<T> ctx) {
         log.info("create message api bean {} qualified as {}", api.getSimpleName(), qualifiers);
-        // TODO handle qualifiers
-        return MessageSender.of(api);
+        JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(), getDestinationName(),
+                null, null, false, null, null);
+        return new JmsSenderFactory(config, getPayloadHandler()).create(api);
+    }
+
+    private String getConnectionFactory() {
+        return "ConnectionFactory";
+    }
+
+    private String getDestinationName() {
+        DestinationName destinationName = getQualifier(DestinationName.class);
+        if (destinationName != null)
+            return destinationName.value();
+        return api.getCanonicalName();
+    }
+
+    private <Q> Q getQualifier(Class<Q> type) {
+        for (Annotation qualifier : qualifiers) {
+            if (type.isInstance(qualifier)) {
+                return type.cast(qualifier);
+            }
+        }
+        return null;
+    }
+
+    private JmsPayloadHandler getPayloadHandler() {
+        JmsPayloadMapping mapping = api.getAnnotation(JmsPayloadMapping.class);
+        if (mapping == null)
+            return new XmlJmsPayloadHandler();
+        return new MapJmsPayloadHandler();
     }
 
     @Override
