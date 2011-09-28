@@ -10,9 +10,9 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import net.java.messageapi.DestinationName;
-import net.java.messageapi.JmsPayloadMapping;
+import net.java.messageapi.*;
 import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
+import net.java.messageapi.adapter.mapped.MappingBuilder;
 import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 
 import org.slf4j.Logger;
@@ -82,21 +82,29 @@ final class MessageApiBean<T> implements Bean<T> {
 
     @Override
     public T create(CreationalContext<T> ctx) {
-        log.info("create message api bean {} qualified as {}", api.getSimpleName(), qualifiers);
-        JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(), getDestinationName(),
-                null, null, false, null, null);
-        return new JmsSenderFactory(config, getPayloadHandler()).create(api);
+        try {
+            log.info("create message api bean {} qualified as {}", api.getSimpleName(), qualifiers);
+            JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(),
+                    getDestinationName(), null, null, false, null, null);
+            return new JmsSenderFactory(config, getPayloadHandler()).create(api);
+        } catch (RuntimeException e) {
+            log.error("exception while creating bean for " + getName(), e);
+            throw e;
+        }
     }
 
     private String getConnectionFactory() {
-        return "ConnectionFactory";
+        ConnectionFactoryName connectionFactoryName = getQualifier(ConnectionFactoryName.class);
+        if (connectionFactoryName == null)
+            return ConnectionFactoryName.DEFAULT;
+        return connectionFactoryName.value();
     }
 
     private String getDestinationName() {
         DestinationName destinationName = getQualifier(DestinationName.class);
-        if (destinationName != null)
-            return destinationName.value();
-        return api.getCanonicalName();
+        if (destinationName == null)
+            return api.getCanonicalName();
+        return destinationName.value();
     }
 
     private <Q> Q getQualifier(Class<Q> type) {
@@ -112,7 +120,7 @@ final class MessageApiBean<T> implements Bean<T> {
         JmsPayloadMapping mapping = api.getAnnotation(JmsPayloadMapping.class);
         if (mapping == null)
             return new XmlJmsPayloadHandler();
-        return new MapJmsPayloadHandler();
+        return new MapJmsPayloadHandler(new MappingBuilder(api).build());
     }
 
     @Override

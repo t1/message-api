@@ -37,6 +37,10 @@ public class MapMessageDecoder<T> implements MessageListener {
     private final PojoInvoker<T> invoker;
     private final Mapping mapping;
 
+    public MapMessageDecoder(Class<T> api, T impl) {
+        this(api, impl, new MappingBuilder(api).build());
+    }
+
     public MapMessageDecoder(Class<T> api, T impl, Mapping mapping) {
         if (mapping == null)
             throw new RuntimeException("mapping must not be null");

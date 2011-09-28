@@ -3,7 +3,6 @@ package net.java.messageapi.adapter;
 import javax.jms.*;
 
 import net.java.messageapi.adapter.mapped.MapMessageDecoder;
-import net.java.messageapi.adapter.mapped.MappingBuilder;
 import net.java.messageapi.adapter.xml.XmlMessageDecoder;
 
 /**
@@ -41,7 +40,7 @@ public class MessageDecoder<T> implements MessageListener {
 
     private MessageListener getMapMessageDecoder() {
         if (mapMessageDecoder == null)
-            mapMessageDecoder = new MapMessageDecoder<T>(api, impl, MappingBuilder.DEFAULT);
+            mapMessageDecoder = new MapMessageDecoder<T>(api, impl);
         return mapMessageDecoder;
     }
 }

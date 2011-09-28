@@ -1,11 +1,18 @@
 package net.java.messageapi.adapter.mapped;
 
+import java.lang.reflect.Method;
+
+import net.java.messageapi.JmsMappedName;
+import net.java.messageapi.JmsPayloadMapping;
+import net.java.messageapi.reflection.Parameter;
+
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 
 public class MappingBuilder {
 
-    public static final Mapping DEFAULT = new MappingBuilder("METHOD").build();
+    private static final String DEFAULT_OPERATION_FIELD = "METHOD";
+    public static final Mapping DEFAULT = new MappingBuilder(DEFAULT_OPERATION_FIELD).build();
 
     private Mapping mapping;
     private ImmutableMap.Builder<String, FieldMapping<?>> fieldMap;
@@ -13,6 +20,39 @@ public class MappingBuilder {
 
     public MappingBuilder(String operationName) {
         this.mapping = new DefaultMapping(operationName);
+    }
+
+    public MappingBuilder(Class<?> api) {
+        JmsPayloadMapping annotation = api.getAnnotation(JmsPayloadMapping.class);
+        String operationName = (annotation == null) ? DEFAULT_OPERATION_FIELD
+                : annotation.operationName();
+        this.mapping = new DefaultMapping(operationName);
+
+        if (annotation != null && annotation.upperCaseFields())
+            upperCaseFields();
+
+        for (Method method : api.getMethods()) {
+            mapMethod(method);
+        }
+    }
+
+    private void mapMethod(Method method) {
+        JmsMappedName mappedOperation = method.getAnnotation(JmsMappedName.class);
+        if (mappedOperation != null) {
+            String methodName = method.getName();
+            String mappedName = mappedOperation.value();
+            mapOperation(methodName, mappedName);
+        }
+        for (Parameter parameter : Parameter.allOf(method)) {
+            mapParameter(parameter);
+        }
+    }
+
+    private void mapParameter(Parameter parameter) {
+        JmsMappedName mappedParameter = parameter.getAnnotation(JmsMappedName.class);
+        if (mappedParameter != null) {
+            mapField(parameter.getName(), mappedParameter.value());
+        }
     }
 
     public MappingBuilder upperCaseFields() {
