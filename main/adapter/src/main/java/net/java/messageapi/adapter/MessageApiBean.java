@@ -29,10 +29,48 @@ final class MessageApiBean<T> implements Bean<T> {
 
     private final Class<T> api;
     private final Set<Annotation> qualifiers;
+    final JmsSenderFactory factory;
 
-    private MessageApiBean(Class<T> api, Set<Annotation> qualifiers) {
+    MessageApiBean(Class<T> api, Set<Annotation> qualifiers) {
         this.api = api;
         this.qualifiers = qualifiers;
+        this.factory = getFactory();
+    }
+
+    private JmsSenderFactory getFactory() {
+        JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(), getDestinationName(),
+                null, null, true, null, null);
+        return new JmsSenderFactory(config, getPayloadHandler());
+    }
+
+    private String getConnectionFactory() {
+        ConnectionFactoryName connectionFactoryName = getQualifier(ConnectionFactoryName.class);
+        if (connectionFactoryName == null)
+            return ConnectionFactoryName.DEFAULT;
+        return connectionFactoryName.value();
+    }
+
+    private String getDestinationName() {
+        DestinationName destinationName = getQualifier(DestinationName.class);
+        if (destinationName == null)
+            return api.getCanonicalName();
+        return destinationName.value();
+    }
+
+    private <Q> Q getQualifier(Class<Q> type) {
+        for (Annotation qualifier : qualifiers) {
+            if (type.isInstance(qualifier)) {
+                return type.cast(qualifier);
+            }
+        }
+        return null;
+    }
+
+    private JmsPayloadHandler getPayloadHandler() {
+        JmsPayloadMapping mapping = api.getAnnotation(JmsPayloadMapping.class);
+        if (mapping == null)
+            return new XmlJmsPayloadHandler();
+        return new MapJmsPayloadHandler(new MappingBuilder(api).build());
     }
 
     @Override
@@ -84,43 +122,12 @@ final class MessageApiBean<T> implements Bean<T> {
     public T create(CreationalContext<T> ctx) {
         try {
             log.info("create message api bean {} qualified as {}", api.getSimpleName(), qualifiers);
-            JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(),
-                    getDestinationName(), null, null, false, null, null);
-            return new JmsSenderFactory(config, getPayloadHandler()).create(api);
+            return factory.create(api);
         } catch (RuntimeException e) {
+            // by default CDI doesn't report exceptions, so we do it here ourselves
             log.error("exception while creating bean for " + getName(), e);
             throw e;
         }
-    }
-
-    private String getConnectionFactory() {
-        ConnectionFactoryName connectionFactoryName = getQualifier(ConnectionFactoryName.class);
-        if (connectionFactoryName == null)
-            return ConnectionFactoryName.DEFAULT;
-        return connectionFactoryName.value();
-    }
-
-    private String getDestinationName() {
-        DestinationName destinationName = getQualifier(DestinationName.class);
-        if (destinationName == null)
-            return api.getCanonicalName();
-        return destinationName.value();
-    }
-
-    private <Q> Q getQualifier(Class<Q> type) {
-        for (Annotation qualifier : qualifiers) {
-            if (type.isInstance(qualifier)) {
-                return type.cast(qualifier);
-            }
-        }
-        return null;
-    }
-
-    private JmsPayloadHandler getPayloadHandler() {
-        JmsPayloadMapping mapping = api.getAnnotation(JmsPayloadMapping.class);
-        if (mapping == null)
-            return new XmlJmsPayloadHandler();
-        return new MapJmsPayloadHandler(new MappingBuilder(api).build());
     }
 
     @Override
