@@ -18,10 +18,15 @@ import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 final class MessageApiBean<T> implements Bean<T> {
     private final Logger log = LoggerFactory.getLogger(MessageApiBean.class);
+
+    public static <T> MessageApiBean<T> of(Class<T> api, Annotation... qualifiers) {
+        return MessageApiBean.of(api, ImmutableSet.<Annotation> of(qualifiers));
+    }
 
     public static <T> MessageApiBean<T> of(Class<T> api, Set<Annotation> qualifiers) {
         return new MessageApiBean<T>(api, qualifiers);
@@ -31,7 +36,7 @@ final class MessageApiBean<T> implements Bean<T> {
     private final Set<Annotation> qualifiers;
     final JmsSenderFactory factory;
 
-    MessageApiBean(Class<T> api, Set<Annotation> qualifiers) {
+    private MessageApiBean(Class<T> api, Set<Annotation> qualifiers) {
         this.api = api;
         this.qualifiers = qualifiers;
         this.factory = getFactory();

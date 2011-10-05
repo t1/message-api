@@ -26,6 +26,14 @@ public class ParameterMapParser {
 
     private ImmutableList<String> fetchParameterNames() {
         List<String> content = getParameterMap();
+        if (content == null) {
+            ImmutableList.Builder<String> result = ImmutableList.builder();
+            final int n = method.getParameterTypes().length;
+            for (int i = 0; i < n; i++) {
+                result.add("arg" + i);
+            }
+            return result.build();
+        }
         for (String line : content) {
             if (line.startsWith("#"))
                 continue;
@@ -43,7 +51,7 @@ public class ParameterMapParser {
         String mapName = container.getSimpleName() + SUFFIX;
         URL url = container.getResource(mapName);
         if (url == null)
-            throw new NoParameterMapFileException(method, mapName);
+            return null;
         return getContent(url);
     }
 
