@@ -19,6 +19,7 @@
 	</description>
 
 	<modules>
+		<module>test-dummies</module>
 		<module>common</module>
 		<module>processor</module>
 		<module>adapter</module>
