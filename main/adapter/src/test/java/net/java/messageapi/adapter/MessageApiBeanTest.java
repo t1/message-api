@@ -54,29 +54,6 @@ public class MessageApiBeanTest {
         }
     }
 
-    @SuppressWarnings("all")
-    private static class JmsPayloadMappingBinding extends AnnotationLiteral<JmsPayloadMapping>
-            implements JmsPayloadMapping {
-
-        private final String operationName;
-        private final boolean upperCaseFields;
-
-        public JmsPayloadMappingBinding(String operationName, boolean upperCaseFields) {
-            this.operationName = operationName;
-            this.upperCaseFields = upperCaseFields;
-        }
-
-        @Override
-        public String operationName() {
-            return operationName;
-        }
-
-        @Override
-        public boolean upperCaseFields() {
-            return upperCaseFields;
-        }
-    }
-
     private static final Map<String, Object> EMPTY_PROPS = ImmutableMap.of();
 
     @MessageApi
