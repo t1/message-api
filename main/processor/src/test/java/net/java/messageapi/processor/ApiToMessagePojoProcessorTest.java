@@ -244,6 +244,18 @@ public class ApiToMessagePojoProcessorTest {
         assertEquals(Instant.class.getName(), pojo.getProperty("arg1").getType());
     }
 
+    @Test
+    public void shouldProducePropOrder() throws Exception {
+        convert(StringAndInstantApi.class);
+
+        Map<String, Object> xmlType = popPojo().getAnnotation(XmlType.class);
+        String[] propOrder = (String[]) xmlType.get("propOrder");
+
+        assertEquals(2, propOrder.length);
+        assertEquals("arg0", propOrder[0]);
+        assertEquals("arg1", propOrder[1]);
+    }
+
     @MessageApi
     public interface ArrayApi {
         public void arrayCall(String[] values);
@@ -341,6 +353,17 @@ public class ApiToMessagePojoProcessorTest {
         assertEquals(false, xmlElementFields.get("required"));
     }
 
+    @Test
+    public void shouldKeepOptionalArgumentInPropOrder() throws Exception {
+        convert(OptionalArgumentApi.class);
+
+        Map<String, Object> xmlType = popPojo().getAnnotation(XmlType.class);
+        String[] propOrder = (String[]) xmlType.get("propOrder");
+
+        assertEquals(1, propOrder.length);
+        assertEquals("arg0", propOrder[0]);
+    }
+
     @MessageApi
     public interface JmsPropertyApi {
         public void annotatedMethod(@JmsProperty String arg0);
@@ -390,6 +413,17 @@ public class ApiToMessagePojoProcessorTest {
         assertEquals(true, xmlElementFields.get("required"));
     }
 
+    @Test
+    public void shouldKeepPropOrder() throws Exception {
+        convert(JmsPropertyApi.class);
+
+        Map<String, Object> xmlType = popPojo().getAnnotation(XmlType.class);
+        String[] propOrder = (String[]) xmlType.get("propOrder");
+
+        assertEquals(1, propOrder.length);
+        assertEquals("arg0", propOrder[0]);
+    }
+
     @MessageApi
     public interface HeaderOnlyPropertyApi {
         public void annotatedMethod(@JmsProperty(headerOnly = true) String arg0);
@@ -399,13 +433,28 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldTurnHeaderOnlyPropertyToXmlTransient() throws Exception {
         convert(HeaderOnlyPropertyApi.class);
 
-        Pojo pojo = popPojo();
-        PojoProperty property = pojo.getProperty("arg0");
-        Map<String, Object> annotationFields = property.getAnnotationFieldsFor(XmlTransient.class);
+        PojoProperty property = popPojo().getProperty("arg0");
 
-        assertNotNull(annotationFields);
-        assertEquals(0, annotationFields.size());
-        assertTrue(pojo.getImports().contains(XmlTransient.class.getName()));
+        assertTrue(property.isAnnotatedAs(XmlTransient.class));
+    }
+
+    @Test
+    public void shouldImportXmlTransient() throws Exception {
+        convert(HeaderOnlyPropertyApi.class);
+
+        Set<String> imports = popPojo().getImports();
+
+        assertTrue(imports.contains(XmlTransient.class.getName()));
+    }
+
+    @Test
+    public void shouldSkipPropOrderForXmlTransient() throws Exception {
+        convert(HeaderOnlyPropertyApi.class);
+
+        Map<String, Object> xmlType = popPojo().getAnnotation(XmlType.class);
+        String[] propOrder = (String[]) xmlType.get("propOrder");
+
+        assertEquals(0, propOrder.length);
     }
 
     @Test

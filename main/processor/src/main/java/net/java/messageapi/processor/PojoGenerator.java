@@ -31,14 +31,6 @@ public class PojoGenerator extends AbstractGenerator {
             this.reflection = ReflectionAdapter.of(method);
         }
 
-        public String[] getPropOrder() {
-            List<String> result = Lists.newArrayList();
-            for (VariableElement variable : method.getParameters()) {
-                result.add(variable.getSimpleName().toString());
-            }
-            return result.toArray(new String[result.size()]);
-        }
-
         public boolean isUnique() {
             return reflection.isUnique();
         }
@@ -168,10 +160,11 @@ public class PojoGenerator extends AbstractGenerator {
                 "value", MessageApiAnnotationProcessor.class.getName(), //
                 "comments", "from " + method.getContainingClassName()));
         pojo.annotate(XmlRootElement.class);
-        pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", method.getPropOrder()));
     }
 
     private void addProperties(MethodAdapter method, Pojo pojo) {
+        List<String> propOrder = Lists.newArrayList();
+
         for (VariableElement parameter : method.getParameters()) {
             String type = parameter.asType().toString();
             String name = getParameterName(parameter);
@@ -192,8 +185,12 @@ public class PojoGenerator extends AbstractGenerator {
             } else {
                 boolean required = (optional == null);
                 property.annotate(XmlElement.class, ImmutableMap.of("required", required));
+                propOrder.add(parameter.getSimpleName().toString());
             }
         }
+
+        String[] propOrderArray = propOrder.toArray(new String[propOrder.size()]);
+        pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", propOrderArray));
     }
 
     private String getParameterName(VariableElement parameter) {
