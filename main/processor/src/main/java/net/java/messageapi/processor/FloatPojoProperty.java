@@ -5,8 +5,8 @@ import java.io.Writer;
 
 class FloatPojoProperty extends AbstractPrimitivePojoProperty {
 
-    public FloatPojoProperty(String type, String name) {
-        super(type, name);
+    public FloatPojoProperty(Pojo pojo, String type, String name) {
+        super(pojo, type, name);
     }
 
     @Override

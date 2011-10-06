@@ -13,20 +13,20 @@ import com.google.common.annotations.VisibleForTesting;
 @VisibleForTesting
 public abstract class PojoProperty {
 
-    public static PojoProperty create(String type, String name) {
+    public static PojoProperty create(Pojo pojo, String type, String name) {
         if (type.endsWith("[]"))
-            return new ArrayPojoProperty(type, name);
+            return new ArrayPojoProperty(pojo, type, name);
         if ("boolean".equals(type))
-            return new BooleanPojoProperty(type, name);
+            return new BooleanPojoProperty(pojo, type, name);
         if ("long".equals(type))
-            return new LongPojoProperty(type, name);
+            return new LongPojoProperty(pojo, type, name);
         if ("float".equals(type))
-            return new FloatPojoProperty(type, name);
+            return new FloatPojoProperty(pojo, type, name);
         if ("double".equals(type))
-            return new DoublePojoProperty(type, name);
+            return new DoublePojoProperty(pojo, type, name);
         if (isOtherPrimitive(type))
-            return new OtherPrimitivePojoProperty(type, name);
-        return new ObjectPojoProperty(type, name);
+            return new OtherPrimitivePojoProperty(pojo, type, name);
+        return new ObjectPojoProperty(pojo, type, name);
     }
 
     private static boolean isOtherPrimitive(String type) {
@@ -36,11 +36,13 @@ public abstract class PojoProperty {
 
     private final PojoAnnotations annotations = new PojoAnnotations();
 
+    private final Pojo pojo;
     private final String type;
     private final TypeMatcher matcher;
     protected final String name;
 
-    protected PojoProperty(String type, String name) {
+    protected PojoProperty(Pojo pojo, String type, String name) {
+        this.pojo = pojo;
         this.type = type;
         this.matcher = new TypeMatcher(type);
         this.name = name;
@@ -106,5 +108,6 @@ public abstract class PojoProperty {
 
     public void annotate(Class<? extends Annotation> type, Map<String, ?> fields) {
         annotations.add(type, fields);
+        pojo.addImport(type.getName());
     }
 }

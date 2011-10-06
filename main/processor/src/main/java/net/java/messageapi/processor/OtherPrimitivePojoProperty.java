@@ -5,8 +5,8 @@ import java.io.Writer;
 
 class OtherPrimitivePojoProperty extends AbstractPrimitivePojoProperty {
 
-    public OtherPrimitivePojoProperty(String type, String name) {
-        super(type, name);
+    public OtherPrimitivePojoProperty(Pojo pojo, String type, String name) {
+        super(pojo, type, name);
     }
 
     @Override

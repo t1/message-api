@@ -5,8 +5,8 @@ import java.io.Writer;
 
 class ArrayPojoProperty extends NullablePojoProperty {
 
-    public ArrayPojoProperty(String type, String name) {
-        super(type, name);
+    public ArrayPojoProperty(Pojo pojo, String type, String name) {
+        super(pojo, type, name);
     }
 
     @Override

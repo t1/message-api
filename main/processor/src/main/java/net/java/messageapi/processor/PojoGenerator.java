@@ -10,12 +10,10 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.JmsProperty;
 import net.java.messageapi.Optional;
-import net.java.messageapi.processor.Pojo.PropertyType;
 import net.java.messageapi.reflection.ReflectionAdapter;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -178,27 +176,23 @@ public class PojoGenerator extends AbstractGenerator {
             String type = parameter.asType().toString();
             String name = getParameterName(parameter);
 
-            final Optional optional = parameter.getAnnotation(Optional.class);
-            final JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
-            boolean required = (optional == null);
-            boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
+            Optional optional = parameter.getAnnotation(Optional.class);
+            JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
 
-            pojo.addProperty(type, name, getPropertyType(required, xmlTransient));
+            PojoProperty property = pojo.addProperty(type, name);
+
+            boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
+            if (xmlTransient) {
+                property.annotate(XmlTransient.class);
+            } else {
+                boolean required = (optional == null);
+                property.annotate(XmlElement.class, ImmutableMap.of("required", required));
+            }
         }
     }
 
     private String getParameterName(VariableElement parameter) {
         return parameter.getSimpleName().toString();
-    }
-
-    public static PropertyType getPropertyType(boolean required, boolean xmlTransient) {
-        if (xmlTransient) {
-            return PropertyType.TRANSIENT;
-        } else if (required) {
-            return PropertyType.REQUIRED;
-        } else {
-            return PropertyType.OPTIONAL;
-        }
     }
 
     @VisibleForTesting

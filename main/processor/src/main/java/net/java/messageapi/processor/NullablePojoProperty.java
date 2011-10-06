@@ -5,8 +5,8 @@ import java.io.Writer;
 
 abstract class NullablePojoProperty extends PojoProperty {
 
-    public NullablePojoProperty(String type, String name) {
-        super(type, name);
+    public NullablePojoProperty(Pojo pojo, String type, String name) {
+        super(pojo, type, name);
     }
 
     @Override

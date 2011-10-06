@@ -34,7 +34,7 @@ public class PojoTest {
     public void nestedClassProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("some.pack.age.with.a.TypeAnd.NestedType", "prop", true);
+        pojo.addProperty("some.pack.age.with.a.TypeAnd.NestedType", "prop");
 
         PojoProperty property = pojo.getProperty("prop");
         assertEquals("some.pack.age.with.a.TypeAnd.NestedType", property.getType());
@@ -46,7 +46,7 @@ public class PojoTest {
     public void genericProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("javax.util.List<java.lang.String>", "list", true);
+        pojo.addProperty("javax.util.List<java.lang.String>", "list");
 
         PojoProperty property = pojo.getProperty("list");
         assertEquals("javax.util.List<java.lang.String>", property.getType());
@@ -59,7 +59,7 @@ public class PojoTest {
     public void genericImportProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("javax.util.List<org.joda.time.Instant>", "list", true);
+        pojo.addProperty("javax.util.List<org.joda.time.Instant>", "list");
 
         PojoProperty property = pojo.getProperty("list");
         assertEquals("javax.util.List<org.joda.time.Instant>", property.getType());
@@ -72,7 +72,7 @@ public class PojoTest {
     public void genericPairProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("javax.util.Map<java.lang.Integer, java.lang.String>", "list", true);
+        pojo.addProperty("javax.util.Map<java.lang.Integer, java.lang.String>", "list");
 
         PojoProperty property = pojo.getProperty("list");
         assertEquals("javax.util.Map<java.lang.Integer, java.lang.String>", property.getType());
@@ -85,7 +85,7 @@ public class PojoTest {
     public void nestedGenericProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("javax.util.List<javax.util.Set<org.joda.time.Instant>>", "list", true);
+        pojo.addProperty("javax.util.List<javax.util.Set<org.joda.time.Instant>>", "list");
 
         PojoProperty property = pojo.getProperty("list");
         assertEquals("javax.util.List<javax.util.Set<org.joda.time.Instant>>", property.getType());
@@ -99,7 +99,7 @@ public class PojoTest {
     public void primitiveProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("int", "prop", true);
+        pojo.addProperty("int", "prop");
 
         PojoProperty property = pojo.getProperty("prop");
         assertEquals("int", property.getType());
@@ -111,7 +111,7 @@ public class PojoTest {
     public void arrayProperty() throws Exception {
         Pojo pojo = new Pojo("test.pkg", "TestClass");
 
-        pojo.addProperty("int[]", "prop", true);
+        pojo.addProperty("int[]", "prop");
 
         PojoProperty property = pojo.getProperty("prop");
         assertEquals("int[]", property.getType());

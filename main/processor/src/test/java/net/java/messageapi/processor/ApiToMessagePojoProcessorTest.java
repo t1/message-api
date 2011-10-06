@@ -392,7 +392,7 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldTurnHeaderOnlyPropertyToXmlTransient() throws Exception {
         convert(HeaderOnlyPropertyApi.class);
 
-        final Pojo pojo = popPojo();
+        Pojo pojo = popPojo();
         PojoAnnotations annotations = pojo.getProperty("arg0").getAnnotations();
         Map<String, Object> annotationFields = annotations.getAnnotationFieldsFor(XmlTransient.class);
 

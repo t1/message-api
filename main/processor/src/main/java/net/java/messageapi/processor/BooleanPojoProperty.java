@@ -5,8 +5,8 @@ import java.io.Writer;
 
 class BooleanPojoProperty extends AbstractPrimitivePojoProperty {
 
-    public BooleanPojoProperty(String type, String name) {
-        super(type, name);
+    public BooleanPojoProperty(Pojo pojo, String type, String name) {
+        super(pojo, type, name);
     }
 
     @Override
