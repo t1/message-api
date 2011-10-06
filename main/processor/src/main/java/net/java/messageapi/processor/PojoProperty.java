@@ -98,8 +98,12 @@ public abstract class PojoProperty {
         return matcher.getLocalType();
     }
 
-    public PojoAnnotations getAnnotations() {
-        return annotations;
+    public boolean isAnnotatedAs(Class<? extends Annotation> type) {
+        return annotations.getAnnotationFieldsFor(type) != null;
+    }
+
+    public Map<String, Object> getAnnotationFieldsFor(Class<? extends Annotation> type) {
+        return annotations.getAnnotationFieldsFor(type);
     }
 
     public void annotate(Class<? extends Annotation> type) {

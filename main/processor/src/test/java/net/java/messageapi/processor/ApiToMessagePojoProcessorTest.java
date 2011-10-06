@@ -337,8 +337,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(OptionalArgumentApi.class);
 
         PojoProperty property = popPojo().getProperty("arg0");
-        final PojoAnnotations annotations = property.getAnnotations();
-        Map<String, Object> xmlElementFields = annotations.getAnnotationFieldsFor(XmlElement.class);
+        Map<String, Object> xmlElementFields = property.getAnnotationFieldsFor(XmlElement.class);
         assertEquals(false, xmlElementFields.get("required"));
     }
 
@@ -372,13 +371,21 @@ public class ApiToMessagePojoProcessorTest {
     }
 
     @Test
+    public void shouldAddJmsPropertyAnnotationToPojo() throws Exception {
+        convert(JmsPropertyApi.class);
+
+        PojoProperty property = popPojo().getProperty("arg0");
+
+        assertTrue(property.isAnnotatedAs(JmsProperty.class));
+    }
+
+    @Test
     public void shouldAnnotateXmlElement() throws Exception {
         convert(JmsPropertyApi.class);
 
         PojoProperty property = popPojo().getProperty("arg0");
 
-        Map<String, Object> xmlElementFields = property.getAnnotations().getAnnotationFieldsFor(
-                XmlElement.class);
+        Map<String, Object> xmlElementFields = property.getAnnotationFieldsFor(XmlElement.class);
         assertEquals(1, xmlElementFields.size());
         assertEquals(true, xmlElementFields.get("required"));
     }
@@ -393,11 +400,20 @@ public class ApiToMessagePojoProcessorTest {
         convert(HeaderOnlyPropertyApi.class);
 
         Pojo pojo = popPojo();
-        PojoAnnotations annotations = pojo.getProperty("arg0").getAnnotations();
-        Map<String, Object> annotationFields = annotations.getAnnotationFieldsFor(XmlTransient.class);
+        PojoProperty property = pojo.getProperty("arg0");
+        Map<String, Object> annotationFields = property.getAnnotationFieldsFor(XmlTransient.class);
 
         assertNotNull(annotationFields);
         assertEquals(0, annotationFields.size());
         assertTrue(pojo.getImports().contains(XmlTransient.class.getName()));
+    }
+
+    @Test
+    public void shouldAddHeaderOnlyJmsPropertyAnnotationToPojo() throws Exception {
+        convert(HeaderOnlyPropertyApi.class);
+
+        PojoProperty property = popPojo().getProperty("arg0");
+
+        assertEquals(true, property.getAnnotationFieldsFor(JmsProperty.class).get("headerOnly"));
     }
 }

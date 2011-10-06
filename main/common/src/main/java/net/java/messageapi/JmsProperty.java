@@ -9,10 +9,11 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Place this parameter in the header, by default in addition to the payload.
+ * Place this parameter of a MessageApi method or some indirect field of such a parameter in the
+ * header, by default in addition to the payload.
  */
 @Qualifier
-@Target({ PARAMETER })
+@Target({ PARAMETER, FIELD })
 @Retention(RUNTIME)
 public @interface JmsProperty {
     public boolean headerOnly() default false;

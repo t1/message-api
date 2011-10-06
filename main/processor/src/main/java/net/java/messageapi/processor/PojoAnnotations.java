@@ -98,8 +98,4 @@ class PojoAnnotations {
     private boolean isPrimitive(Class<?> type) {
         return type.isPrimitive() || BOXED_PRIMITIVES.contains(type);
     }
-
-    public int getSize() {
-        return annotations.size();
-    }
 }

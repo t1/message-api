@@ -181,6 +181,11 @@ public class PojoGenerator extends AbstractGenerator {
 
             PojoProperty property = pojo.addProperty(type, name);
 
+            if (jmsProperty != null) {
+                property.annotate(JmsProperty.class,
+                        ImmutableMap.of("headerOnly", jmsProperty.headerOnly()));
+            }
+
             boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
             if (xmlTransient) {
                 property.annotate(XmlTransient.class);
