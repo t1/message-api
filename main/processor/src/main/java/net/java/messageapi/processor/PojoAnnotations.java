@@ -1,4 +1,4 @@
-package net.java.messageapi.processor.pojo;
+package net.java.messageapi.processor;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,7 +25,7 @@ class PojoAnnotations {
         annotations.put((Class<Annotation>) type, (Map<String, Object>) fields);
     }
 
-    public Map<String, Object> get(Class<? extends Annotation> annotationClass) {
+    public Map<String, Object> getAnnotationFieldsFor(Class<? extends Annotation> annotationClass) {
         return annotations.get(annotationClass);
     }
 
@@ -97,5 +97,9 @@ class PojoAnnotations {
 
     private boolean isPrimitive(Class<?> type) {
         return type.isPrimitive() || BOXED_PRIMITIVES.contains(type);
+    }
+
+    public int getSize() {
+        return annotations.size();
     }
 }

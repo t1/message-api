@@ -1,25 +1,26 @@
-package net.java.messageapi.processor.pojo;
+package net.java.messageapi.processor;
 
 import java.io.IOException;
 import java.io.Writer;
 
-class LongPojoProperty extends AbstractPrimitivePojoProperty {
+class DoublePojoProperty extends AbstractPrimitivePojoProperty {
 
-    public LongPojoProperty(String type, String name) {
+    public DoublePojoProperty(String type, String name) {
         super(type, name);
     }
 
     @Override
     protected String getDefaultValue() {
-        return "0L";
+        return "0d";
     }
 
     @Override
     protected void writeHashCodeValueTo(Writer writer) throws IOException {
+        String temp = "Double.doubleToLongBits(" + name + ")";
         writer.append("(int) (");
-        writer.append(name);
+        writer.append(temp);
         writer.append(" ^ (");
-        writer.append(name);
+        writer.append(temp);
         writer.append(" >>> 32))");
     }
 }

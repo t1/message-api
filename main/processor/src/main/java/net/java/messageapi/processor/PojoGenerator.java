@@ -13,8 +13,9 @@ import javax.tools.JavaFileObject;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import net.java.messageapi.JmsProperty;
 import net.java.messageapi.Optional;
-import net.java.messageapi.processor.pojo.Pojo;
+import net.java.messageapi.processor.Pojo.PropertyType;
 import net.java.messageapi.reflection.ReflectionAdapter;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -176,8 +177,13 @@ public class PojoGenerator extends AbstractGenerator {
         for (VariableElement parameter : method.getParameters()) {
             String type = parameter.asType().toString();
             String name = getParameterName(parameter);
-            boolean required = !isOptional(parameter);
-            pojo.addProperty(type, name, required);
+
+            final Optional optional = parameter.getAnnotation(Optional.class);
+            final JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
+            boolean required = (optional == null);
+            boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
+
+            pojo.addProperty(type, name, getPropertyType(required, xmlTransient));
         }
     }
 
@@ -185,8 +191,14 @@ public class PojoGenerator extends AbstractGenerator {
         return parameter.getSimpleName().toString();
     }
 
-    private boolean isOptional(VariableElement parameter) {
-        return parameter.getAnnotation(Optional.class) != null;
+    public static PropertyType getPropertyType(boolean required, boolean xmlTransient) {
+        if (xmlTransient) {
+            return PropertyType.TRANSIENT;
+        } else if (required) {
+            return PropertyType.REQUIRED;
+        } else {
+            return PropertyType.OPTIONAL;
+        }
     }
 
     @VisibleForTesting

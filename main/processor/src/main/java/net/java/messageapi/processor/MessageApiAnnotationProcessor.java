@@ -10,7 +10,6 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic.Kind;
 
 import net.java.messageapi.MessageApi;
-import net.java.messageapi.processor.pojo.Pojo;
 
 import com.google.common.annotations.VisibleForTesting;
 

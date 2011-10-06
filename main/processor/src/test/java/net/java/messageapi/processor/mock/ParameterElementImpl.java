@@ -43,7 +43,12 @@ class ParameterElementImpl implements VariableElement {
 
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
-        return method.getAnnotation(annotationType);
+        for (Annotation annotation : method.getParameterAnnotations()[index]) {
+            if (annotationType.isInstance(annotation)) {
+                return annotationType.cast(annotation);
+            }
+        }
+        return null;
     }
 
     @Override

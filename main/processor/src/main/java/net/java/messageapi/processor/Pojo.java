@@ -1,10 +1,11 @@
-package net.java.messageapi.processor.pojo;
+package net.java.messageapi.processor;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import net.java.messageapi.reflection.DelimiterWriter;
 
@@ -15,6 +16,46 @@ import com.google.common.collect.*;
  * Collects properties to generate the java source for an immutable POJO (plain old java object).
  */
 public class Pojo {
+
+    public enum PropertyType {
+        REQUIRED {
+            @Override
+            public Set<String> getImports() {
+                return ImmutableSet.of(XmlElement.class.getName());
+            }
+
+            @Override
+            public void addAnnotationsTo(PojoProperty property) {
+                property.annotate(XmlElement.class, ImmutableMap.of("required", true));
+            }
+        },
+        OPTIONAL {
+            @Override
+            public Set<String> getImports() {
+                return ImmutableSet.of(XmlElement.class.getName());
+            }
+
+            @Override
+            public void addAnnotationsTo(PojoProperty property) {
+                property.annotate(XmlElement.class, ImmutableMap.of("required", false));
+            }
+        },
+        TRANSIENT {
+            @Override
+            public Set<String> getImports() {
+                return ImmutableSet.of(XmlTransient.class.getName());
+            }
+
+            @Override
+            public void addAnnotationsTo(PojoProperty property) {
+                property.annotate(XmlTransient.class);
+            }
+        };
+
+        abstract public Set<String> getImports();
+
+        abstract public void addAnnotationsTo(PojoProperty property);
+    }
 
     private final String pkg;
     private final String className;
@@ -184,12 +225,18 @@ public class Pojo {
     }
 
     public void addProperty(String type, String name, boolean required) {
-        imports.add(XmlElement.class.getName());
+        addProperty(type, name, required ? PropertyType.REQUIRED : PropertyType.OPTIONAL);
+    }
+
+    public void addProperty(String type, String name, PropertyType propertyType) {
         PojoProperty property = PojoProperty.create(type, name);
-        property.annotate(XmlElement.class, ImmutableMap.of("required", required));
+
         List<String> importTypes = property.getImportTypesFor(pkg);
         imports.addAll(importTypes);
         properties.add(property);
+
+        imports.addAll(propertyType.getImports());
+        propertyType.addAnnotationsTo(property);
     }
 
     public void addPrivateDefaultConstructor() {
@@ -203,8 +250,8 @@ public class Pojo {
         return writer.toString();
     }
 
-    public List<String> getImports() {
-        return ImmutableList.copyOf(imports);
+    public Set<String> getImports() {
+        return ImmutableSet.copyOf(imports);
     }
 
     public String getPackage() {
@@ -212,7 +259,7 @@ public class Pojo {
     }
 
     public Map<String, Object> getAnnotation(Class<? extends Annotation> annotationClass) {
-        return annotations.get(annotationClass);
+        return annotations.getAnnotationFieldsFor(annotationClass);
     }
 
     public List<PojoProperty> getProperties() {

@@ -1,23 +1,23 @@
-package net.java.messageapi.processor.pojo;
+package net.java.messageapi.processor;
 
 import java.io.IOException;
 import java.io.Writer;
 
-class FloatPojoProperty extends AbstractPrimitivePojoProperty {
+class BooleanPojoProperty extends AbstractPrimitivePojoProperty {
 
-    public FloatPojoProperty(String type, String name) {
+    public BooleanPojoProperty(String type, String name) {
         super(type, name);
     }
 
     @Override
     protected String getDefaultValue() {
-        return "0f";
+        return "false";
     }
 
     @Override
     protected void writeHashCodeValueTo(Writer writer) throws IOException {
-        writer.append("Float.floatToIntBits(");
+        writer.append("(");
         writer.append(name);
-        writer.append(")");
+        writer.append(" ? 1231 : 1237)");
     }
 }

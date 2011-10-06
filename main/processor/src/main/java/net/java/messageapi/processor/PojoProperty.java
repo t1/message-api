@@ -1,4 +1,4 @@
-package net.java.messageapi.processor.pojo;
+package net.java.messageapi.processor;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -35,6 +35,7 @@ public abstract class PojoProperty {
     }
 
     private final PojoAnnotations annotations = new PojoAnnotations();
+
     private final String type;
     private final TypeMatcher matcher;
     protected final String name;
@@ -93,6 +94,10 @@ public abstract class PojoProperty {
 
     public String getLocalType() {
         return matcher.getLocalType();
+    }
+
+    public PojoAnnotations getAnnotations() {
+        return annotations;
     }
 
     public void annotate(Class<? extends Annotation> type) {

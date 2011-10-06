@@ -4,7 +4,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Generated;
 import javax.annotation.processing.Messager;
@@ -12,9 +13,8 @@ import javax.lang.model.element.Element;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.*;
 
-import net.java.messageapi.MessageApi;
+import net.java.messageapi.*;
 import net.java.messageapi.processor.mock.*;
-import net.java.messageapi.processor.pojo.Pojo;
 import net.sf.twip.TwiP;
 
 import org.joda.time.Instant;
@@ -24,15 +24,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 @RunWith(TwiP.class)
 public class ApiToMessagePojoProcessorTest {
 
-    private static final List<String> REQUIRED_IMPORTS = ImmutableList.of(
-            Generated.class.getName(), XmlRootElement.class.getName(), XmlType.class.getName(),
-            XmlElement.class.getName());
+    private static final Set<String> REQUIRED_IMPORTS = ImmutableSet.of(Generated.class.getName(),
+            XmlRootElement.class.getName(), XmlType.class.getName(), XmlElement.class.getName());
 
     private static final String PACKAGE = ApiToMessagePojoProcessorTest.class.getPackage().getName();
 
@@ -126,7 +125,6 @@ public class ApiToMessagePojoProcessorTest {
     }
 
     @Test
-    // (expected = MessageApiThrowingMethodException.class)
     public void shouldNotAcceptThrowingMethod() throws Exception {
         convert(ThrowingApi.class);
 
@@ -151,7 +149,7 @@ public class ApiToMessagePojoProcessorTest {
     public void noArgPojoShouldImportOnlyRequiredClasses() throws Exception {
         convert(NoArgApi.class);
 
-        final List<String> expected = ImmutableList.of(Generated.class.getName(),
+        Set<String> expected = ImmutableSet.of(Generated.class.getName(),
                 XmlRootElement.class.getName(), XmlType.class.getName());
         assertEquals(expected, popPojo().getImports());
     }
@@ -183,7 +181,6 @@ public class ApiToMessagePojoProcessorTest {
 
         Pojo pojo = popPojo();
         assertEquals("StringCall", pojo.getSimpleName());
-        assertEquals(1, pojo.getProperties().size());
         assertEquals(String.class.getName(), pojo.getProperty("arg0").getType());
     }
 
@@ -205,7 +202,6 @@ public class ApiToMessagePojoProcessorTest {
 
         Pojo pojo = popPojo();
         assertEquals("IntCall", pojo.getSimpleName());
-        assertEquals(1, pojo.getProperties().size());
         assertEquals(Integer.TYPE.getName(), pojo.getProperty("arg0").getType());
     }
 
@@ -220,7 +216,6 @@ public class ApiToMessagePojoProcessorTest {
 
         Pojo pojo = popPojo();
         assertEquals("InstantCall", pojo.getSimpleName());
-        assertEquals(1, pojo.getProperties().size());
         assertEquals(Instant.class.getName(), pojo.getProperty("arg0").getType());
     }
 
@@ -228,7 +223,7 @@ public class ApiToMessagePojoProcessorTest {
     public void instantPojoShouldImportInstant() throws Exception {
         convert(InstantApi.class);
 
-        ImmutableList<String> expected = ImmutableList.<String> builder().addAll(REQUIRED_IMPORTS).add(
+        ImmutableSet<String> expected = ImmutableSet.<String> builder().addAll(REQUIRED_IMPORTS).add(
                 Instant.class.getName()).build();
         assertEquals(expected, popPojo().getImports());
     }
@@ -260,7 +255,6 @@ public class ApiToMessagePojoProcessorTest {
 
         Pojo pojo = popPojo();
         assertEquals("ArrayCall", pojo.getSimpleName());
-        assertEquals(1, pojo.getProperties().size());
         assertEquals(String.class.getName() + "[]", pojo.getProperty("arg0").getType());
     }
 
@@ -275,7 +269,6 @@ public class ApiToMessagePojoProcessorTest {
 
         Pojo pojo = popPojo();
         assertEquals("VarargCall", pojo.getSimpleName());
-        assertEquals(1, pojo.getProperties().size());
         assertEquals(String.class.getName() + "[]", pojo.getProperty("arg0").getType());
     }
 
@@ -332,5 +325,79 @@ public class ApiToMessagePojoProcessorTest {
                 "ambiguous method name; it's generally better to use unique names "
                         + "and not rely on the parameter type mangling.",
                 new MethodElementImpl(AmbiguousMethodNamesApi.class.getMethod("method", args)));
+    }
+
+    @MessageApi
+    public interface OptionalArgumentApi {
+        public void optionalArgument(@Optional String arg0);
+    }
+
+    @Test
+    public void shouldRecognizeOptionalArgument() throws Exception {
+        convert(OptionalArgumentApi.class);
+
+        PojoProperty property = popPojo().getProperty("arg0");
+        final PojoAnnotations annotations = property.getAnnotations();
+        Map<String, Object> xmlElementFields = annotations.getAnnotationFieldsFor(XmlElement.class);
+        assertEquals(false, xmlElementFields.get("required"));
+    }
+
+    @MessageApi
+    public interface JmsPropertyApi {
+        public void annotatedMethod(@JmsProperty String arg0);
+    }
+
+    @Test
+    public void shouldFindSingleArgument() throws Exception {
+        convert(JmsPropertyApi.class);
+
+        Pojo pojo = popPojo();
+        assertEquals(1, pojo.getProperties().size());
+    }
+
+    @Test
+    public void localTypeShouldBeString() throws Exception {
+        convert(JmsPropertyApi.class);
+
+        PojoProperty property = popPojo().getProperty("arg0");
+        assertEquals("String", property.getLocalType());
+    }
+
+    @Test
+    public void shouldReadFallbackArgumentName() throws Exception {
+        convert(JmsPropertyApi.class);
+
+        PojoProperty property = popPojo().getProperty("arg0");
+        assertEquals("arg0", property.getName());
+    }
+
+    @Test
+    public void shouldAnnotateXmlElement() throws Exception {
+        convert(JmsPropertyApi.class);
+
+        PojoProperty property = popPojo().getProperty("arg0");
+
+        Map<String, Object> xmlElementFields = property.getAnnotations().getAnnotationFieldsFor(
+                XmlElement.class);
+        assertEquals(1, xmlElementFields.size());
+        assertEquals(true, xmlElementFields.get("required"));
+    }
+
+    @MessageApi
+    public interface HeaderOnlyPropertyApi {
+        public void annotatedMethod(@JmsProperty(headerOnly = true) String arg0);
+    }
+
+    @Test
+    public void shouldTurnHeaderOnlyPropertyToXmlTransient() throws Exception {
+        convert(HeaderOnlyPropertyApi.class);
+
+        final Pojo pojo = popPojo();
+        PojoAnnotations annotations = pojo.getProperty("arg0").getAnnotations();
+        Map<String, Object> annotationFields = annotations.getAnnotationFieldsFor(XmlTransient.class);
+
+        assertNotNull(annotationFields);
+        assertEquals(0, annotationFields.size());
+        assertTrue(pojo.getImports().contains(XmlTransient.class.getName()));
     }
 }

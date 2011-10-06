@@ -15,4 +15,5 @@ import javax.inject.Qualifier;
 @Target({ PARAMETER })
 @Retention(RUNTIME)
 public @interface JmsProperty {
+    public boolean headerOnly() default false;
 }
