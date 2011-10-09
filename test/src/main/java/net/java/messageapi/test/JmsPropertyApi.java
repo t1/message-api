@@ -19,6 +19,14 @@ public interface JmsPropertyApi {
 
     public void jmsPropertyPrimitiveBooleanMethod(@JmsProperty boolean one, String two);
 
+    public void jmsPropertyIntMethod(@JmsProperty Integer one, String two);
+
+    public void jmsPropertyPrimitiveIntMethod(@JmsProperty int one, String two);
+
+    public void jmsPropertyLongMethod(@JmsProperty Long one, String two);
+
+    public void jmsPropertyPrimitiveLongMethod(@JmsProperty long one, String two);
+
     public void jmsPropertyTwiceMethod(@JmsProperty String one, @JmsProperty String two);
 
     public void jmsPropertyMethodWithHeaderOnly(@JmsProperty(headerOnly = true) String one,

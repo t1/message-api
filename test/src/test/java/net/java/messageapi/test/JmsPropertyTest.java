@@ -56,6 +56,42 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
+    public void jmsPropertyMethodShouldIncludeIntPropertiesInHeader() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyIntMethod(123, "ttt");
+
+        assertEquals(123, captureMessage().getIntProperty("one"));
+    }
+
+    @Test
+    public void jmsPropertyMethodShouldIncludePrimitiveIntPropertiesInHeader() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveIntMethod(123, "ttt");
+
+        assertEquals(123, captureMessage().getIntProperty("one"));
+    }
+
+    @Test
+    public void jmsPropertyMethodShouldIncludeLongPropertiesInHeader() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyLongMethod(123L, "ttt");
+
+        assertEquals(123L, captureMessage().getLongProperty("one"));
+    }
+
+    @Test
+    public void jmsPropertyMethodShouldIncludePrimitiveLongPropertiesInHeader() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveLongMethod(123L, "ttt");
+
+        assertEquals(123L, captureMessage().getLongProperty("one"));
+    }
+
+    @Test
     public void jmsPropertyMethodShouldNotIncludeUnannotatedParameterInHeader() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
