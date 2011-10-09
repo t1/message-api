@@ -2,11 +2,11 @@ package net.java.messageapi.adapter.xml;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.jms.JMSException;
 import javax.jms.Session;
+import javax.xml.bind.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,19 +30,34 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     @Override
-    public String toPayload(Class<?> api, Method method, Object[] args) {
+    public String toPayload(Class<?> api, Method method, Object pojo) {
         Writer writer = new StringWriter();
-        Object xmlSender = ToXmlEncoder.create(api, writer, jaxbProvider);
-
-        try {
-            method.invoke(xmlSender, args);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-
+        convert(api, writer, jaxbProvider, pojo);
         return writer.toString();
+    }
+
+    public void convert(Class<?> api, Writer writer, JaxbProvider jaxbProvider, Object pojo) {
+        Marshaller marshaller = createMarshaller(api, jaxbProvider);
+        marshalPojo(marshaller, pojo, writer);
+    }
+
+    private <T> Marshaller createMarshaller(Class<T> api, JaxbProvider jaxbProvider) {
+        try {
+            JAXBContext context = jaxbProvider.createJaxbContextFor(api.getPackage());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            return marshaller;
+        } catch (JAXBException e) {
+            throw new RuntimeException("can't create marshaller for " + api, e);
+        }
+    }
+
+    private void marshalPojo(Marshaller marshaller, Object pojo, Writer writer) {
+        try {
+            marshaller.marshal(pojo, writer);
+        } catch (JAXBException e) {
+            throw new RuntimeException("can't marshal " + pojo, e);
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.*;
 
+import net.java.messageapi.adapter.MessageCallFactory;
 import net.java.messageapi.adapter.MessageSenderFactory;
 
 /**
@@ -15,6 +16,7 @@ public class ForwardingSenderFactory implements MessageSenderFactory {
 
     private final Object impl;
     private final JaxbProvider jaxbProvider;
+    private final XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler();
 
     public ForwardingSenderFactory(Object impl) {
         this(impl, JaxbProvider.UNCHANGED);
@@ -51,8 +53,8 @@ public class ForwardingSenderFactory implements MessageSenderFactory {
     private <T> void forward(Class<T> api, Method method, Object[] args)
             throws IllegalAccessException, InvocationTargetException {
         Writer writer = new StringWriter();
-        T xmlSender = ToXmlEncoder.create(api, writer, jaxbProvider);
-        method.invoke(xmlSender, args);
+        Object pojo = new MessageCallFactory<Object>(method).apply(args);
+        payloadHandler.convert(api, writer, jaxbProvider, pojo);
 
         XmlStringDecoder<T> decoder = XmlStringDecoder.create(api, api.cast(impl), jaxbProvider);
         decoder.decode(writer.toString());

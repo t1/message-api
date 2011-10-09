@@ -8,7 +8,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.ToXmlEncoder;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class ToXmlEncoderTest {
     public void shouldUseAllProviders(JaxbProvider jaxbProvider) throws Exception {
         // Given
         Writer writer = new StringWriter();
-        TestApi impl = ToXmlEncoder.create(TestApi.class, writer, jaxbProvider);
+        TestApi impl = ToXmlEncoderHelper.create(TestApi.class, writer, jaxbProvider);
 
         // When
         impl.noArgCall();
@@ -36,7 +35,7 @@ public class ToXmlEncoderTest {
     public void shouldUseDefaultProvider() throws Exception {
         // Given
         Writer writer = new StringWriter();
-        TestApi impl = ToXmlEncoder.create(TestApi.class, writer);
+        TestApi impl = ToXmlEncoderHelper.create(TestApi.class, writer);
 
         // When
         impl.noArgCall();

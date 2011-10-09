@@ -1,6 +1,7 @@
 package net.java.messageapi.adapter;
 
 import java.lang.reflect.*;
+import java.util.List;
 import java.util.Map;
 
 import javax.jms.*;
@@ -10,6 +11,8 @@ import javax.xml.bind.annotation.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * Base implementation for a {@link MessageSenderFactory} that transfers calls using JMS. A
@@ -27,15 +30,10 @@ public class JmsSenderFactory implements MessageSenderFactory {
         return new JmsSenderFactory(config, payloadHandler);
     }
 
-    /**
-     * The name of the property used to store the api version
-     */
-    private static final String VERSION = "VERSION";
-
     @XmlElement(name = "destination", required = true)
     private final JmsQueueConfig config;
     @XmlElementRef
-    JmsPayloadHandler payloadHandler;
+    private final JmsPayloadHandler payloadHandler;
 
     @XmlTransient
     private Context jndiContext = null;
@@ -44,9 +42,14 @@ public class JmsSenderFactory implements MessageSenderFactory {
     @XmlTransient
     private Destination destination = null;
 
+    @XmlTransient
+    private final List<JmsHeaderSupplier> headers = Lists.<JmsHeaderSupplier> newArrayList(
+            new VersionSupplier(), new JmsPropertySupplier());
+
     // just to satisfy JAXB
-    protected JmsSenderFactory() {
+    JmsSenderFactory() {
         this.config = null;
+        this.payloadHandler = null;
     }
 
     public JmsSenderFactory(JmsQueueConfig config, JmsPayloadHandler payloadHandler) {
@@ -95,8 +98,7 @@ public class JmsSenderFactory implements MessageSenderFactory {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
-                Object payload = payloadHandler.toPayload(api, method, args);
-                sendJms(api, payload);
+                sendJms(method, args);
                 return null;
             }
         };
@@ -105,11 +107,15 @@ public class JmsSenderFactory implements MessageSenderFactory {
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    protected void sendJms(Class<?> api, Object payload) {
+    protected void sendJms(Method method, Object[] args) {
         Connection connection = null;
         boolean sent = false;
 
-        log(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
+        Class<?> api = method.getDeclaringClass();
+        Object pojo = new MessageCallFactory<Object>(method).apply(args);
+        Object payload = payloadHandler.toPayload(api, method, pojo);
+
+        loggerFor(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
 
         try {
             ConnectionFactory factory = getConnectionFactory(config);
@@ -122,10 +128,9 @@ public class JmsSenderFactory implements MessageSenderFactory {
 
             Message message = payloadHandler.createJmsMessage(payload, session);
 
-            // TODO refactor this into a HeaderSupplier plugin mechanism
-            String version = getApiVersion(api);
-            if (version != null)
-                message.setStringProperty(VERSION, version);
+            for (JmsHeaderSupplier header : headers) {
+                header.addTo(message, pojo);
+            }
 
             for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {
                 message.setObjectProperty(additionalProperty.getKey(),
@@ -134,7 +139,7 @@ public class JmsSenderFactory implements MessageSenderFactory {
 
             messageProducer.send(message);
 
-            log(api).info("sent message id {} to {}", message.getJMSMessageID(),
+            loggerFor(api).info("sent message id {} to {}", message.getJMSMessageID(),
                     message.getJMSDestination());
             sent = true;
         } catch (NamingException e) {
@@ -155,15 +160,8 @@ public class JmsSenderFactory implements MessageSenderFactory {
         }
     }
 
-    private Logger log(Class<?> api) {
+    private Logger loggerFor(Class<?> api) {
         return LoggerFactory.getLogger(api);
-    }
-
-    private String getApiVersion(Class<?> api) {
-        String version = api.getPackage().getSpecificationVersion();
-        if (version == null)
-            version = api.getPackage().getImplementationVersion();
-        return version;
     }
 
     @Override
@@ -175,8 +173,9 @@ public class JmsSenderFactory implements MessageSenderFactory {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((config == null) ? 0 : config.hashCode());
-        result = prime * result + ((payloadHandler == null) ? 0 : payloadHandler.hashCode());
+        result = prime * result + config.hashCode();
+        result = prime * result + headers.hashCode();
+        result = prime * result + payloadHandler.hashCode();
         return result;
     }
 
@@ -192,18 +191,13 @@ public class JmsSenderFactory implements MessageSenderFactory {
             return false;
         }
         JmsSenderFactory other = (JmsSenderFactory) obj;
-        if (config == null) {
-            if (other.config != null) {
-                return false;
-            }
-        } else if (!config.equals(other.config)) {
+        if (!config.equals(other.config)) {
             return false;
         }
-        if (payloadHandler == null) {
-            if (other.payloadHandler != null) {
-                return false;
-            }
-        } else if (!payloadHandler.equals(other.payloadHandler)) {
+        if (!headers.equals(other.headers)) {
+            return false;
+        }
+        if (!payloadHandler.equals(other.payloadHandler)) {
             return false;
         }
         return true;

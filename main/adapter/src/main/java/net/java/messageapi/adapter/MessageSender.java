@@ -49,7 +49,7 @@ public class MessageSender {
     /** Assumes that the config for that api is a mapped jms config */
     public static Mapping getJmsMappingFor(Class<?> api) {
         JmsSenderFactory config = (JmsSenderFactory) getConfigFor(api);
-        MapJmsPayloadHandler payloadHandler = (MapJmsPayloadHandler) config.payloadHandler;
+        MapJmsPayloadHandler payloadHandler = (MapJmsPayloadHandler) config.getPayloadHandler();
         return payloadHandler.mapping;
     }
 

@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import net.java.messageapi.*;
 import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
 import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
+import net.java.messageapi.test.JmsPropertyApi;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;
@@ -31,25 +32,21 @@ public class MessageApiBeanIntegrationTest {
         verifyThat(handler.mapping.getMappingForField("someArg").getAttributeName(), is("aarg"));
     }
 
-    @MessageApi
-    public static interface JmsPropertyTestApi {
-        public void propertyTestMethod(@JmsProperty() String first, String second);
-    }
-
     @Test
     public void shouldCreatePropertyPayload() throws Exception {
-        MessageApiBean<JmsPropertyTestApi> bean = MessageApiBean.of(JmsPropertyTestApi.class);
+        MessageApiBean<JmsPropertyApi> bean = MessageApiBean.of(JmsPropertyApi.class);
         XmlJmsPayloadHandler handler = (XmlJmsPayloadHandler) bean.factory.getPayloadHandler();
-        Method method = JmsPropertyTestApi.class.getMethod("propertyTestMethod", new Class[] {
+        Method method = JmsPropertyApi.class.getMethod("jmsPropertyMethod", new Class[] {
                 String.class, String.class });
+        Object pojo = Class.forName("net.java.messageapi.test.JmsPropertyMethod").getConstructor(
+                String.class, String.class).newInstance("first", "second");
 
-        String payload = handler.toPayload(JmsPropertyTestApi.class, method, new Object[] {
-                "first", "second" });
+        String payload = handler.toPayload(JmsPropertyApi.class, method, pojo);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
-                + "<propertyTestMethod>\n" //
-                + "    <first>first</first>\n" //
-                + "    <second>second</second>\n" //
-                + "</propertyTestMethod>\n", payload);
+                + "<jmsPropertyMethod>\n" //
+                + "    <one>first</one>\n" //
+                + "    <two>second</two>\n" //
+                + "</jmsPropertyMethod>\n", payload);
     }
 }

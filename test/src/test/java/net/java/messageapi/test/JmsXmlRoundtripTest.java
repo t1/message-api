@@ -3,8 +3,7 @@ package net.java.messageapi.test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import net.java.messageapi.adapter.MessageSender;
 import net.java.messageapi.adapter.xml.*;
@@ -42,8 +41,13 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
                 + "</ns2:instantCall>\n";
     }
 
+    @Override
+    public TextMessage captureMessage() {
+        return (TextMessage) super.captureMessage();
+    }
+
     private String getMessagePayload() throws JMSException {
-        return ((TextMessage) captureMessage()).getText();
+        return captureMessage().getText();
     }
 
     @Test
@@ -60,6 +64,19 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
         TestApi serviceImpl = mock(TestApi.class);
         XmlStringDecoder.create(TestApi.class, serviceImpl).decode(xml);
         verify(serviceImpl).multiCall("a", "b");
+    }
+
+    @Test
+    public void shouldSetVersionHeader() throws JMSException {
+        // Given
+        TestApi service = MessageSender.of(TestApi.class);
+
+        // When
+        service.multiCall("a", "b");
+
+        // Then
+        Message message = captureMessage();
+        assertEquals("?", message.getStringProperty("VERSION"));
     }
 
     @Test

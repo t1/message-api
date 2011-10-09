@@ -6,7 +6,6 @@ import static org.junit.Assert.*;
 import java.io.StringWriter;
 
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.ToXmlEncoder;
 import net.sf.twip.TwiP;
 
 import org.junit.Ignore;
@@ -23,7 +22,7 @@ public class TestApiSendTest {
     private final TestApi testApi;
 
     public TestApiSendTest(JaxbProvider jaxbProvider) {
-        testApi = ToXmlEncoder.create(TestApi.class, writer, jaxbProvider);
+        testApi = ToXmlEncoderHelper.create(TestApi.class, writer, jaxbProvider);
     }
 
     private String getLine(StringWriter writer, int lineNumber) {
@@ -87,8 +86,8 @@ public class TestApiSendTest {
         TestType t = new TestType("someValue");
         testApi.namespaceCall(t);
 
-        assertEquals("<ns2:namespaceCall xmlns:ns2=\"" + NS + "\" xmlns:ns3=\"test-ns\">", getLine(
-                writer, 1));
+        assertEquals("<ns2:namespaceCall xmlns:ns2=\"" + NS + "\" xmlns:ns3=\"test-ns\">",
+                getLine(writer, 1));
         assertEquals("    <theType>", getLine(writer, 2));
         assertEquals("        <ns3:value>someValue</ns3:value>", getLine(writer, 3));
         assertEquals("    </theType>", getLine(writer, 4));

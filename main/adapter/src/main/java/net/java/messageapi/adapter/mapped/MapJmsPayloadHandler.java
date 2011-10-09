@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.java.messageapi.adapter.JmsPayloadHandler;
-import net.java.messageapi.adapter.MessageCallFactory;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -47,14 +46,13 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     @Override
-    public Object toPayload(Class<?> api, Method method, Object[] args) {
+    public Object toPayload(Class<?> api, Method method, Object pojo) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
         String operationName = mapping.getOperationForMethod(method.getName());
         String operationField = mapping.getOperationMessageAttibute();
         builder.put(operationField, operationName);
 
-        Object pojo = new MessageCallFactory<Object>(method).apply(args);
         builder.putAll(readFields(pojo));
 
         return builder.build();

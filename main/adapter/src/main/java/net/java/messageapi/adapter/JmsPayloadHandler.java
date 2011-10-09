@@ -11,7 +11,7 @@ import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 @XmlSeeAlso({ XmlJmsPayloadHandler.class, MapJmsPayloadHandler.class })
 public abstract class JmsPayloadHandler {
 
-    public abstract Object toPayload(Class<?> api, Method method, Object[] args);
+    public abstract Object toPayload(Class<?> api, Method method, Object pojo);
 
     public abstract Message createJmsMessage(Object payload, Session session) throws JMSException;
 }

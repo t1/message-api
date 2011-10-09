@@ -6,7 +6,6 @@ import static org.junit.Assert.*;
 import java.io.StringWriter;
 
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.ToXmlEncoder;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;
@@ -22,7 +21,7 @@ public class BoxedPrimitiveTestApiTest {
     private final StringWriter writer = new StringWriter();
 
     public BoxedPrimitiveTestApiTest(JaxbProvider jaxbProvider) {
-        this.testApi = ToXmlEncoder.create(BoxedPrimitivesTestApi.class, writer, jaxbProvider);
+        this.testApi = ToXmlEncoderHelper.create(BoxedPrimitivesTestApi.class, writer, jaxbProvider);
     }
 
     private String getLine(StringWriter writer, int lineNumber) {

@@ -13,9 +13,16 @@ public interface JmsPropertyApi {
         String nested;
     }
 
-    public void methodWithProperty(@JmsProperty String one, String two);
+    public void jmsPropertyMethod(@JmsProperty String one, String two);
 
-    public void methodWithHeaderOnlyProperty(@JmsProperty(headerOnly = true) String one, String two);
+    public void jmsPropertyBooleanMethod(@JmsProperty Boolean one, String two);
 
-    public void methodWithNestedProperty(NestedAnnotated one, String two);
+    public void jmsPropertyPrimitiveBooleanMethod(@JmsProperty boolean one, String two);
+
+    public void jmsPropertyTwiceMethod(@JmsProperty String one, @JmsProperty String two);
+
+    public void jmsPropertyMethodWithHeaderOnly(@JmsProperty(headerOnly = true) String one,
+            String two);
+
+    public void jmsPropertyInNestedClass(NestedAnnotated one, String two);
 }

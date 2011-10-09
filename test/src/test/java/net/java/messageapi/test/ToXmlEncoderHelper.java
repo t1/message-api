@@ -1,18 +1,13 @@
-package net.java.messageapi.adapter.xml;
+package net.java.messageapi.test;
 
 import java.io.Writer;
 import java.lang.reflect.*;
 
-import javax.xml.bind.*;
-
 import net.java.messageapi.adapter.MessageCallFactory;
+import net.java.messageapi.adapter.xml.JaxbProvider;
+import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 
-/**
- * Creates instances for an interface that serialize the parameters to an XML written to some
- * {@link Writer}; very handy for testing.
- */
-public class ToXmlEncoder<T> {
-
+public class ToXmlEncoderHelper {
     public static <T> T create(Class<T> api, Writer writer) {
         return create(api, writer, JaxbProvider.UNCHANGED);
     }
@@ -34,33 +29,13 @@ public class ToXmlEncoder<T> {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
-                Marshaller marshaller = createMarshaller(api, jaxbProvider);
                 Object pojo = new MessageCallFactory<Object>(method).apply(args);
-                marshalPojo(marshaller, pojo, writer);
+                new XmlJmsPayloadHandler().convert(api, writer, jaxbProvider, pojo);
                 return null;
             }
         };
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
-    }
-
-    private static <T> Marshaller createMarshaller(Class<T> api, JaxbProvider jaxbProvider) {
-        try {
-            JAXBContext context = jaxbProvider.createJaxbContextFor(api.getPackage());
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            return marshaller;
-        } catch (JAXBException e) {
-            throw new RuntimeException("can't create marshaller for " + api, e);
-        }
-    }
-
-    private static void marshalPojo(Marshaller marshaller, Object pojo, Writer writer) {
-        try {
-            marshaller.marshal(pojo, writer);
-        } catch (JAXBException e) {
-            throw new RuntimeException("can't marshal " + pojo, e);
-        }
     }
 }
