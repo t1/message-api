@@ -86,7 +86,6 @@ class JmsPropertySupplier implements JmsHeaderSupplier {
         }
 
         private void setProperty(String name, Object value) throws JMSException {
-            // TODO add other primitive and collection types
             if (value instanceof String) {
                 message.setStringProperty(name, (String) value);
             } else if (value instanceof Boolean) {
