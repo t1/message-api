@@ -17,7 +17,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludePropertiesInPayload() throws Exception {
+    public void shouldIncludePropertiesInPayload() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyMethod("ooo", "ttt");
@@ -31,7 +31,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludePropertiesInHeader() throws Exception {
+    public void shouldIncludePropertiesInHeader() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyMethod("ooo", "ttt");
@@ -40,7 +40,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeBooleanPropertiesInHeader() throws Exception {
+    public void shouldIncludeBoolean() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyBooleanMethod(true, "ttt");
@@ -49,7 +49,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludePrimitiveBooleanPropertiesInHeader() throws Exception {
+    public void shouldIncludePrimitiveBoolean() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyPrimitiveBooleanMethod(true, "ttt");
@@ -58,7 +58,97 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeIntPropertiesInHeader() throws Exception {
+    public void shouldIncludeByte() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyByteMethod((byte) 123, "ttt");
+
+        assertEquals(123, captureMessage().getByteProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludePrimitiveByte() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveByteMethod((byte) 123, "ttt");
+
+        assertEquals(123, captureMessage().getByteProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludeShort() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyShortMethod((short) 1234, "ttt");
+
+        assertEquals(1234, captureMessage().getShortProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludePrimitiveShort() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveShortMethod((short) 1234, "ttt");
+
+        assertEquals(1234, captureMessage().getShortProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludeChar() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyCharMethod('c', "ttt");
+
+        assertEquals("c", captureMessage().getStringProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludePrimitiveChar() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveCharMethod('c', "ttt");
+
+        assertEquals("c", captureMessage().getStringProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludeFloat() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyFloatMethod(123.4f, "ttt");
+
+        assertEquals((Float) 123.4f, (Float) captureMessage().getFloatProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludePrimitiveFloat() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveFloatMethod(123.4f, "ttt");
+
+        assertEquals((Float) 123.4f, (Float) captureMessage().getFloatProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludeDouble() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyDoubleMethod(123.456d, "ttt");
+
+        assertEquals((Double) 123.456, (Double) captureMessage().getDoubleProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludePrimitiveDouble() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyPrimitiveDoubleMethod(123.456d, "ttt");
+
+        assertEquals((Double) 123.456, (Double) captureMessage().getDoubleProperty("one"));
+    }
+
+    @Test
+    public void shouldIncludeInt() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyIntMethod(123, "ttt");
@@ -67,7 +157,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludePrimitiveIntPropertiesInHeader() throws Exception {
+    public void shouldIncludePrimitiveInt() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyPrimitiveIntMethod(123, "ttt");
@@ -76,7 +166,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeLongPropertiesInHeader() throws Exception {
+    public void shouldIncludeLong() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyLongMethod(123L, "ttt");
@@ -85,7 +175,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludePrimitiveLongPropertiesInHeader() throws Exception {
+    public void shouldIncludePrimitiveLong() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyPrimitiveLongMethod(123L, "ttt");
@@ -94,7 +184,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldNotIncludeUnannotatedParameterInHeader() throws Exception {
+    public void shouldNotIncludeUnannotatedParameterInHeader() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyMethod("ooo", "ttt");
@@ -103,7 +193,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeTwoPropertiesInHeader() throws Exception {
+    public void shouldIncludeTwo() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyTwiceMethod("ooo", "ttt");
@@ -113,7 +203,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldNotIncludeHeaderOnlyPropertiesInPayload() throws Exception {
+    public void shouldNotIncludeHeaderOnlyPropertiesInPayload() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyMethodWithHeaderOnly("ooo", "ttt");
@@ -126,7 +216,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeHeaderOnlyPropertiesInHeader() throws Exception {
+    public void shouldIncludeHeaderOnly() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyMethodWithHeaderOnly("ooo", "ttt");
@@ -135,7 +225,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeNestedPropertiesInPayload() throws Exception {
+    public void shouldIncludeNestedPropertiesInPayload() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         JmsPropertyApi.NestedAnnotated one = new JmsPropertyApi.NestedAnnotated();
@@ -153,7 +243,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyMethodShouldIncludeNestedPropertiesInHeader() throws Exception {
+    public void shouldIncludeNested() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         JmsPropertyApi.NestedAnnotated one = new JmsPropertyApi.NestedAnnotated();
@@ -164,26 +254,84 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void jmsPropertyWithComplexValue() throws Exception {
+    public void shouldNotIncludeNestedStatic() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
-        List<String> list = new ArrayList<String>(); // non-cyclic
+        JmsPropertyApi.NestedAnnotated one = new JmsPropertyApi.NestedAnnotated();
+        one.nested = "ooo";
+        api.jmsPropertyInNestedClass(one, "ttt");
+
+        assertNull(captureMessage().getStringProperty("one/serialVersionUID"));
+    }
+
+    @Test
+    public void shouldNotIncludeNestedNull() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        JmsPropertyApi.NestedAnnotated one = new JmsPropertyApi.NestedAnnotated();
+        one.nested = null;
+        api.jmsPropertyInNestedClass(one, "ttt");
+
+        assertNull(captureMessage().getStringProperty("one/nested"));
+    }
+
+    @Test
+    public void shouldNotCycle() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        JmsPropertyApi.Cyclic one = new JmsPropertyApi.Cyclic();
+        one.cycle = one;
+        api.jmsPropertyInCyclicClass(one, "ttt");
+
+        assertNull(captureMessage().getStringProperty("one/nested"));
+    }
+
+    @Test
+    public void shouldFoldListValue() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        List<String> list = new ArrayList<String>();
         list.add("one");
         list.add("two");
-        api.jmsPropertyOnComplexType(list);
+        api.jmsPropertyOnCollectionType(list);
 
         assertEquals("one", captureMessage().getStringProperty("param[0]"));
         assertEquals("two", captureMessage().getStringProperty("param[1]"));
     }
 
     @Test
-    public void jmsPropertyWithCyclicValue() throws Exception {
+    public void shouldFoldSetValue() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        Set<String> set = new TreeSet<String>();
+        set.add("one");
+        set.add("two");
+        api.jmsPropertyOnCollectionType(set);
+
+        assertEquals("one", captureMessage().getStringProperty("param[0]"));
+        assertEquals("two", captureMessage().getStringProperty("param[1]"));
+    }
+
+    @Test
+    public void shouldFoldArrayValue() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        String[] array = { "one", "two" };
+        api.jmsPropertyOnArrayType(array);
+
+        assertEquals("one", captureMessage().getStringProperty("param[0]"));
+        assertEquals("two", captureMessage().getStringProperty("param[1]"));
+    }
+
+    @Test
+    public void shouldFoldCyclicValue() throws Exception {
+        // FIXME use non-collection cycle
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         LinkedList<String> list = new LinkedList<String>(); // has cycles!
         list.add("one");
         list.add("two");
-        api.jmsPropertyOnComplexType(list);
+        api.jmsPropertyOnCollectionType(list);
 
         assertEquals("one", captureMessage().getStringProperty("param[0]"));
         assertEquals("two", captureMessage().getStringProperty("param[1]"));

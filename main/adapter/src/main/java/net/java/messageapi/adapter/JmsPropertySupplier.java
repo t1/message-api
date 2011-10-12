@@ -2,8 +2,7 @@ package net.java.messageapi.adapter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.EJBException;
 import javax.jms.JMSException;
@@ -46,15 +45,22 @@ class JmsPropertySupplier implements JmsHeaderSupplier {
                 String fieldName = prefix + field.getName();
                 if (nestedDoAdd) {
                     setProperty(fieldName, value);
-                } else if (!isPrimitive(field.getType())) {
-                    scan(value, fieldName + "/", nestedDoAdd);
                 }
             }
         }
 
-        private void scan(List<?> list, String prefix, boolean doAdd) throws JMSException {
-            for (int i = 0; i < list.size(); i++) {
-                Object element = list.get(i);
+        private void scan(Collection<?> collection, String prefix, boolean doAdd)
+                throws JMSException {
+            int i = 0;
+            for (Iterator<?> iterator = collection.iterator(); iterator.hasNext(); i++) {
+                Object element = iterator.next();
+                setProperty(prefix + "[" + i + "]", element);
+            }
+        }
+
+        private void scan(Object[] list, String prefix, boolean doAdd) throws JMSException {
+            for (int i = 0; i < list.length; i++) {
+                Object element = list[i];
                 setProperty(prefix + "[" + i + "]", element);
             }
         }
@@ -83,14 +89,28 @@ class JmsPropertySupplier implements JmsHeaderSupplier {
             // TODO add other primitive and collection types
             if (value instanceof String) {
                 message.setStringProperty(name, (String) value);
-            } else if (value instanceof Integer) {
-                message.setIntProperty(name, (Integer) value);
             } else if (value instanceof Boolean) {
                 message.setBooleanProperty(name, (Boolean) value);
+            } else if (value instanceof Byte) {
+                message.setByteProperty(name, (Byte) value);
+            } else if (value instanceof Character) {
+                message.setStringProperty(name, ((Character) value).toString());
+            } else if (value instanceof Short) {
+                message.setShortProperty(name, (Short) value);
+            } else if (value instanceof Integer) {
+                message.setIntProperty(name, (Integer) value);
             } else if (value instanceof Long) {
                 message.setLongProperty(name, (Long) value);
-            } else if (value instanceof List) {
-                scan((List<?>) value, name, true);
+            } else if (value instanceof Float) {
+                message.setFloatProperty(name, (Float) value);
+            } else if (value instanceof Double) {
+                message.setDoubleProperty(name, (Double) value);
+            } else if (value instanceof Collection) {
+                scan((Collection<?>) value, name, true);
+            } else if (value.getClass().isArray()) {
+                scan((Object[]) value, name, true);
+            } else if (!isPrimitive(value.getClass())) {
+                scan(value, name + "/", true);
             }
         }
 
