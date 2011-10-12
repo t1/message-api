@@ -1,5 +1,7 @@
 package net.java.messageapi.test;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 
 import net.java.messageapi.JmsProperty;
@@ -33,4 +35,6 @@ public interface JmsPropertyApi {
             String two);
 
     public void jmsPropertyInNestedClass(NestedAnnotated one, String two);
+
+    public void jmsPropertyOnComplexType(@JmsProperty List<String> param);
 }

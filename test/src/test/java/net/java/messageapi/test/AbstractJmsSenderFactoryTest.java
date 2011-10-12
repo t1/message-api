@@ -2,8 +2,7 @@ package net.java.messageapi.test;
 
 import static org.mockito.Mockito.*;
 
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 import javax.jms.*;
 import javax.naming.InitialContext;
@@ -57,6 +56,18 @@ public abstract class AbstractJmsSenderFactoryTest {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
         verify(targetMDB).onMessage(messageCaptor.capture());
         return messageCaptor.getValue();
+    }
+
+    /** Helper for debugging */
+    protected void printHeaders() {
+        Message message = captureMessage();
+        @SuppressWarnings("unchecked")
+        Enumeration<String> propertyNames = message.getPropertyNames();
+        while (propertyNames.hasMoreElements()) {
+            String propertyName = propertyNames.nextElement();
+            System.out.println(propertyName + ": " + message.getStringProperty(propertyName));
+        }
+        System.out.println();
     }
 
     @After

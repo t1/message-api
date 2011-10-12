@@ -2,6 +2,8 @@ package net.java.messageapi.test;
 
 import static org.junit.Assert.*;
 
+import java.util.*;
+
 import javax.jms.TextMessage;
 
 import net.java.messageapi.adapter.MessageSender;
@@ -158,6 +160,34 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
         one.nested = "ooo";
         api.jmsPropertyInNestedClass(one, "ttt");
 
-        assertEquals("ooo", captureMessage().getStringProperty("nested"));
+        assertEquals("ooo", captureMessage().getStringProperty("one/nested"));
     }
+
+    @Test
+    public void jmsPropertyWithComplexValue() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        List<String> list = new ArrayList<String>(); // non-cyclic
+        list.add("one");
+        list.add("two");
+        api.jmsPropertyOnComplexType(list);
+
+        assertEquals("one", captureMessage().getStringProperty("param[0]"));
+        assertEquals("two", captureMessage().getStringProperty("param[1]"));
+    }
+
+    @Test
+    public void jmsPropertyWithCyclicValue() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        LinkedList<String> list = new LinkedList<String>(); // has cycles!
+        list.add("one");
+        list.add("two");
+        api.jmsPropertyOnComplexType(list);
+
+        assertEquals("one", captureMessage().getStringProperty("param[0]"));
+        assertEquals("two", captureMessage().getStringProperty("param[1]"));
+    }
+
+    // FIXME decode headerOnly parameters
 }
