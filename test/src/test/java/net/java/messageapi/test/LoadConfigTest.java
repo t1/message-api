@@ -26,12 +26,12 @@ public class LoadConfigTest extends AbstractJmsSenderFactoryTest {
         TestApi serviceImpl = mock(TestApi.class);
 
         // When
-        serviceProxy.multiCall("a", "b");
+        serviceProxy.multiCall("aaa", "bbb");
         // TODO wire the decoder to the mock JMS
         String xml = getMessagePayload();
         XmlStringDecoder.create(TestApi.class, serviceImpl).decode(xml);
 
         // Then
-        verify(serviceImpl).multiCall("a", "b");
+        verify(serviceImpl).multiCall("aaa", "bbb");
     }
 }

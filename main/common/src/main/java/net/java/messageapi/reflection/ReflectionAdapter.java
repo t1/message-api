@@ -3,7 +3,7 @@ package net.java.messageapi.reflection;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.*;
 
 /**
  * Adapt the java reflection api or the apt api to the level of abstraction we need to generate
@@ -11,12 +11,16 @@ import javax.lang.model.element.ExecutableElement;
  */
 public abstract class ReflectionAdapter<T> {
 
+    public static ReflectionAdapter<Method> of(Method method) {
+        return new JavaReflectionAdapter(method);
+    }
+
     public static ReflectionAdapter<ExecutableElement> of(ExecutableElement method) {
         return new AptReflectionAdapter(method);
     }
 
-    public static ReflectionAdapter<Method> of(Method method) {
-        return new JavaReflectionAdapter(method);
+    public static PackageElement getPackageOf(Element element) {
+        return AptReflectionAdapter.getPackageOf(element);
     }
 
     protected final T method;
@@ -48,7 +52,7 @@ public abstract class ReflectionAdapter<T> {
         return unique;
     }
 
-    public String getFullName() {
+    public String getMethodNameAsFullyQualifiedClassName() {
         return getPackage() + "." + getMethodNameAsClassName();
     }
 

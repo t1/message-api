@@ -9,7 +9,7 @@ import javax.lang.model.element.*;
 import javax.tools.FileObject;
 
 import net.java.messageapi.reflection.DelimiterWriter;
-import net.java.messageapi.reflection.ParameterMapParser;
+import net.java.messageapi.reflection.ParameterMapNameSupplier;
 
 import org.joda.time.Instant;
 
@@ -27,7 +27,7 @@ public class ParameterMapGenerator extends AbstractGenerator {
 
     public void process(Element element) {
         TypeElement type = (TypeElement) element;
-        String fileName = type.getSimpleName() + ParameterMapParser.SUFFIX;
+        String fileName = type.getSimpleName() + ParameterMapNameSupplier.SUFFIX;
         String pkg = getPackageOf(type);
 
         try {
@@ -44,7 +44,7 @@ public class ParameterMapGenerator extends AbstractGenerator {
     }
 
     private void writeParameterMap(TypeElement type, Writer writer) throws IOException {
-        note("Writing " + ParameterMapParser.SUFFIX + " for " + type.getQualifiedName());
+        note("Writing " + ParameterMapNameSupplier.SUFFIX + " for " + type.getQualifiedName());
 
         writer.append("# generated from ").append(type.getQualifiedName());
         writer.append(" at ").append(new Instant().toString()).append('\n');

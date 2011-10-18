@@ -21,12 +21,13 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
     }
 
     private Class<T> getType(Method method) {
-        String pojoClassName = ReflectionAdapter.of(method).getFullName();
+        String pojoClassName = ReflectionAdapter.of(method).getMethodNameAsFullyQualifiedClassName();
         try {
             @SuppressWarnings("unchecked")
             Class<T> cls = (Class<T>) Class.forName(pojoClassName);
             return cls;
         } catch (ClassNotFoundException e) {
+            // TODO generate dynamically
             throw new RuntimeException(e);
         }
     }

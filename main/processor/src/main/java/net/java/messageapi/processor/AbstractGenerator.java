@@ -7,11 +7,10 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.tools.*;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.*;
 
-import net.java.messageapi.reflection.AptReflectionAdapter;
-
+import net.java.messageapi.reflection.ReflectionAdapter;
 
 public class AbstractGenerator {
 
@@ -64,6 +63,6 @@ public class AbstractGenerator {
     }
 
     protected String getPackageOf(Element element) {
-        return AptReflectionAdapter.getPackageOf(element).getQualifiedName().toString();
+        return ReflectionAdapter.getPackageOf(element).getQualifiedName().toString();
     }
 }

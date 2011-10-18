@@ -7,19 +7,34 @@ import java.util.*;
 
 /**
  * The Java reflection api regards method arguments as second class citizens: They are not
- * represented as objects like Class, Method, Package, etc. but only accessible through helper
- * methods... and the parameter name is not available. It may be stored in the debug infos, but
- * those are not accessible through the normal apis. This class tries to fill that gap as good as it
- * goes.
- * <p>
- * To get the names of the parameters, store them into a file with the same name as the class or
- * interface that the method is in plus <code>.parametermap</code>. The file simply contains the
- * full signatures of all methods. If there is no such file, {@link #getName()} will throw a
- * {@link NoParameterMapFileException}.
+ * represented as objects like Class, Method, Package, etc. are. They are only accessible through
+ * helper methods. This class tries to fill that gap as good as it goes.
  * 
- * @see net.sf.twip.util.Parameter
+ * Note that the parameter name is not accessible through the normal reflection apis. It is stored
+ * in the debug infos, though, so we use javassist to read it. If your code is not compiled with
+ * debug options, if the method is abstract (including interfaces), or if javassist is not
+ * available, we'll fall back to the generic name <code>arg0</code> etc.
  */
 public class Parameter {
+
+    private static final ParameterNameSupplier PARAMETER_NAME_SUPPLIER = parameterNameSupplierStack();
+
+    private static ParameterNameSupplier parameterNameSupplierStack() {
+        ParameterNameSupplier stack = new FallbackParameterNameSupplier();
+        if (javassistAvailable())
+            stack = new DebugInfoParameterNameSupplier(stack);
+        stack = new ParameterMapNameSupplier(stack);
+        return stack;
+    }
+
+    private static boolean javassistAvailable() {
+        try {
+            Class.forName("javassist.ClassPool");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
 
     public static List<Parameter> allOf(Method method) {
         final List<Parameter> list = new ArrayList<Parameter>();
@@ -77,10 +92,9 @@ public class Parameter {
         return method.getParameterTypes()[index];
     }
 
-    public String getName() throws NoParameterMapFileException, InvalidParameterMapFileException {
+    public String getName() {
         if (name == null) {
-            // TODO cache the parsers?
-            name = new ParameterMapParser(method).getParameterName(index);
+            name = PARAMETER_NAME_SUPPLIER.get(method, index);
         }
         return name;
     }

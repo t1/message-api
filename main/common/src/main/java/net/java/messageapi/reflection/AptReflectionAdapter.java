@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.lang.model.element.*;
 
-public class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
+class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
 
     public static PackageElement getPackageOf(Element startElement) {
         for (Element e = startElement; e != null; e = e.getEnclosingElement()) {
