@@ -21,14 +21,16 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
     }
 
     private Class<T> getType(Method method) {
-        String pojoClassName = ReflectionAdapter.of(method).getMethodNameAsFullyQualifiedClassName();
+        Class<?> result;
         try {
-            @SuppressWarnings("unchecked")
-            Class<T> cls = (Class<T>) Class.forName(pojoClassName);
-            return cls;
+            String pojoClassName = ReflectionAdapter.of(method).getMethodNameAsFullyQualifiedClassName();
+            result = Class.forName(pojoClassName);
         } catch (ClassNotFoundException e) {
-            return new MethodAsClassGenerator(method).generate();
+            result = new MethodAsClassGenerator(method).get();
         }
+        @SuppressWarnings("unchecked")
+        Class<T> classT = (Class<T>) result;
+        return classT;
     }
 
     public T apply(Object[] args) {

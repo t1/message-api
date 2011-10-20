@@ -4,42 +4,74 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javassist.*;
+import javassist.bytecode.*;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.BooleanMemberValue;
 import net.java.messageapi.reflection.Parameter;
 import net.java.messageapi.reflection.ReflectionAdapter;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
-class MethodAsClassGenerator {
+class MethodAsClassGenerator implements Supplier<Class<?>> {
 
     private final ReflectionAdapter<Method> reflectionAdapter;
     private final List<Parameter> parameters;
     private final ClassPool classPool = ClassPool.getDefault();
+    private final CtClass ctClass;
+    private final Class<?> result;
 
     public MethodAsClassGenerator(Method method) {
         this.reflectionAdapter = ReflectionAdapter.of(method);
         this.parameters = Parameter.allOf(method);
-    }
 
-    public <T> Class<T> generate() {
         try {
             // TODO maybe use Nested Class Syntax instead, so the same method name can be defined
             // in several interfaces without collision
             String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
-            CtClass ctClass = classPool.makeClass(className);
+            this.ctClass = classPool.makeClass(className);
 
             // TODO pojo.annotate(XmlRootElement.class);
-            addProperties(ctClass);
-            addConstructors(ctClass);
+            addXmlRootElement();
+            addProperties();
+            addConstructors();
 
-            @SuppressWarnings("unchecked")
-            Class<T> result = ctClass.toClass();
-            return result;
+            this.result = ctClass.toClass();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void addConstructors(CtClass pojo) throws Exception {
+    @Override
+    public Class<?> get() {
+        return result;
+    }
+
+    private void addXmlRootElement() {
+        ClassFile classFile = ctClass.getClassFile();
+        ConstPool constPool = classFile.getConstPool();
+        AnnotationsAttribute attribute = new AnnotationsAttribute(constPool,
+                AnnotationsAttribute.visibleTag);
+        Annotation annotation = new Annotation("javax.xml.bind.annotation.XmlRootElement",
+                constPool);
+        attribute.setAnnotation(annotation);
+        classFile.addAttribute(attribute);
+        ctClass.getClassFile().setVersionToJava5();
+    }
+
+    private void addConstructors() throws Exception {
+        addDefaultConstuctor();
+        addFullConstructor();
+    }
+
+    private void addDefaultConstuctor() throws NotFoundException, CannotCompileException {
+        CtConstructor constructor = new CtConstructor(new CtClass[0], ctClass);
+        constructor.setBody("{ super(); }");
+        constructor.setModifiers(Modifier.PRIVATE);
+        ctClass.addConstructor(constructor);
+    }
+
+    private void addFullConstructor() throws NotFoundException, CannotCompileException {
         List<CtClass> argTypes = Lists.newArrayList();
         StringBuilder constructorBody = new StringBuilder("{ super();");
         for (Parameter parameter : parameters) {
@@ -49,15 +81,13 @@ class MethodAsClassGenerator {
         }
 
         CtClass[] argTypeArray = argTypes.toArray(new CtClass[argTypes.size()]);
-        CtConstructor constructor = new CtConstructor(argTypeArray, pojo);
+        CtConstructor constructor = new CtConstructor(argTypeArray, ctClass);
         constructorBody.append("}");
         constructor.setBody(constructorBody.toString());
-        pojo.addConstructor(constructor);
-
-        // TODO pojo.addPrivateDefaultConstructor();
+        ctClass.addConstructor(constructor);
     }
 
-    private void addProperties(CtClass pojo) throws Exception {
+    private void addProperties() throws Exception {
         // TODO List<String> propOrder = Lists.newArrayList();
 
         for (Parameter parameter : parameters) {
@@ -65,7 +95,7 @@ class MethodAsClassGenerator {
             // TODO JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
 
             // PojoProperty property =
-            addProperty(pojo, parameter);
+            addProperty(parameter);
 
             // if (jmsProperty != null) {
             // property.annotate(JmsProperty.class,
@@ -86,11 +116,25 @@ class MethodAsClassGenerator {
         // pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", propOrderArray));
     }
 
-    private void addProperty(CtClass pojo, Parameter parameter) throws Exception {
+    private void addProperty(Parameter parameter) throws Exception {
         CtClass type = classPool.get(parameter.getType().getName());
-        CtField field = new CtField(type, parameter.getName(), pojo);
-        pojo.addField(field);
+        CtField field = new CtField(type, parameter.getName(), ctClass);
+        addXmlElement(field);
+        ctClass.addField(field);
+
         CtMethod getter = CtNewMethod.getter("getArg" + parameter.getIndex(), field);
-        pojo.addMethod(getter);
+        ctClass.addMethod(getter);
+    }
+
+    private void addXmlElement(CtField field) {
+        FieldInfo fieldInfo = field.getFieldInfo();
+        fieldInfo.getConstPool();
+        ConstPool constPool = fieldInfo.getConstPool();
+        AnnotationsAttribute attribute = new AnnotationsAttribute(constPool,
+                AnnotationsAttribute.visibleTag);
+        Annotation annotation = new Annotation("javax.xml.bind.annotation.XmlElement", constPool);
+        annotation.addMemberValue("required", new BooleanMemberValue(true, constPool));
+        attribute.setAnnotation(annotation);
+        fieldInfo.addAttribute(attribute);
     }
 }

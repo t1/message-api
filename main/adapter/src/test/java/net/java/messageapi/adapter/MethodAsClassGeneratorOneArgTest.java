@@ -2,7 +2,12 @@ package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
 
+import java.io.StringWriter;
 import java.lang.reflect.*;
+
+import javax.xml.bind.JAXB;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,14 +18,22 @@ public class MethodAsClassGeneratorOneArgTest {
         public void testMethodOne(String foo);
     }
 
-    private static Class<Object> generated;
+    private static Class<?> generated;
+    private static Constructor<?> constructor;
 
     @BeforeClass
     public static void before() throws Exception {
         Method testMethod = TestInterfaceOne.class.getMethod("testMethodOne", String.class);
         MethodAsClassGenerator generator = new MethodAsClassGenerator(testMethod);
 
-        generated = generator.generate();
+        generated = generator.get();
+        constructor = generated.getDeclaredConstructor(String.class);
+    }
+
+    @Test
+    public void shouldAnnotateAsXmlRootElement() throws Exception {
+        XmlRootElement xmlRootElement = generated.getAnnotation(XmlRootElement.class);
+        assertNotNull(xmlRootElement);
     }
 
     @Test
@@ -31,6 +44,8 @@ public class MethodAsClassGeneratorOneArgTest {
         assertEquals("arg0", field.getName());
         assertEquals(0, field.getModifiers()); // not public, etc.
         assertEquals(String.class, field.getType());
+        XmlElement element = field.getAnnotation(XmlElement.class);
+        assertTrue(element.required());
     }
 
     @Test
@@ -45,19 +60,37 @@ public class MethodAsClassGeneratorOneArgTest {
     }
 
     @Test
-    public void shouldBuildConstructor() throws Exception {
+    public void shouldBuildConstructors() throws Exception {
         Constructor<?>[] declaredConstructors = generated.getDeclaredConstructors();
-        assertEquals(1, declaredConstructors.length);
-        Constructor<?> constructor = declaredConstructors[0];
-        assertEquals(1, constructor.getParameterTypes().length);
-        assertEquals(String.class, constructor.getParameterTypes()[0]);
+        assertEquals(2, declaredConstructors.length);
+
+        Constructor<?> defaultConstructor = declaredConstructors[0];
+        assertEquals(0, defaultConstructor.getParameterTypes().length);
+        assertTrue(Modifier.isPrivate(defaultConstructor.getModifiers()));
+
+        Constructor<?> fullConstructor = declaredConstructors[1];
+        assertEquals(1, fullConstructor.getParameterTypes().length);
+        assertEquals(String.class, fullConstructor.getParameterTypes()[0]);
+        assertTrue(Modifier.isPublic(fullConstructor.getModifiers()));
     }
 
     @Test
     public void constructorAndGetterShouldWork() throws Exception {
-        Object instance = generated.getDeclaredConstructor(String.class).newInstance("foo");
+        Object instance = constructor.newInstance("foo");
 
         Method method = generated.getDeclaredMethod("getArg0");
         assertEquals("foo", method.invoke(instance));
+    }
+
+    @Test
+    public void shouldSerialize() throws Exception {
+        Object instance = constructor.newInstance("foo");
+
+        StringWriter writer = new StringWriter();
+        JAXB.marshal(instance, writer);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodOne>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodOne>\n", writer.toString());
     }
 }
