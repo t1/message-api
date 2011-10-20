@@ -9,13 +9,16 @@ import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import net.java.messageapi.JmsProperty;
+import net.java.messageapi.Optional;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MethodAsClassGeneratorTwoArgsTest {
 
     public interface TestInterfaceTwo {
-        public void testMethodTwo(String foo, Integer bar);
+        public void testMethodTwo(String foo, @JmsProperty @Optional Integer bar);
     }
 
     private static Class<?> generated;
@@ -54,7 +57,7 @@ public class MethodAsClassGeneratorTwoArgsTest {
         assertEquals(0, field2.getModifiers()); // not public, etc.
         assertEquals(Integer.class, field2.getType());
         XmlElement element2 = field2.getAnnotation(XmlElement.class);
-        assertTrue(element2.required());
+        assertFalse(element2.required());
     }
 
     @Test

@@ -7,6 +7,7 @@ import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.BooleanMemberValue;
+import net.java.messageapi.Optional;
 import net.java.messageapi.reflection.Parameter;
 import net.java.messageapi.reflection.ReflectionAdapter;
 
@@ -91,11 +92,12 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         // TODO List<String> propOrder = Lists.newArrayList();
 
         for (Parameter parameter : parameters) {
-            // TODO Optional optional = parameter.getAnnotation(Optional.class);
+            Optional optional = parameter.getAnnotation(Optional.class);
             // TODO JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
 
             // PojoProperty property =
-            addProperty(parameter);
+            boolean required = (optional == null);
+            addProperty(parameter, required);
 
             // if (jmsProperty != null) {
             // property.annotate(JmsProperty.class,
@@ -106,8 +108,6 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
             // if (xmlTransient) {
             // property.annotate(XmlTransient.class);
             // } else {
-            // boolean required = (optional == null);
-            // property.annotate(XmlElement.class, ImmutableMap.of("required", required));
             // propOrder.add(name);
             // }
         }
@@ -116,24 +116,24 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         // pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", propOrderArray));
     }
 
-    private void addProperty(Parameter parameter) throws Exception {
+    private void addProperty(Parameter parameter, boolean required) throws Exception {
         CtClass type = classPool.get(parameter.getType().getName());
         CtField field = new CtField(type, parameter.getName(), ctClass);
-        addXmlElement(field);
+        addXmlElement(field, required);
         ctClass.addField(field);
 
         CtMethod getter = CtNewMethod.getter("getArg" + parameter.getIndex(), field);
         ctClass.addMethod(getter);
     }
 
-    private void addXmlElement(CtField field) {
+    private void addXmlElement(CtField field, boolean required) {
         FieldInfo fieldInfo = field.getFieldInfo();
         fieldInfo.getConstPool();
         ConstPool constPool = fieldInfo.getConstPool();
         AnnotationsAttribute attribute = new AnnotationsAttribute(constPool,
                 AnnotationsAttribute.visibleTag);
         Annotation annotation = new Annotation("javax.xml.bind.annotation.XmlElement", constPool);
-        annotation.addMemberValue("required", new BooleanMemberValue(true, constPool));
+        annotation.addMemberValue("required", new BooleanMemberValue(required, constPool));
         attribute.setAnnotation(annotation);
         fieldInfo.addAttribute(attribute);
     }
