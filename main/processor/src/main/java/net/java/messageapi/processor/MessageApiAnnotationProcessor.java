@@ -1,6 +1,5 @@
 package net.java.messageapi.processor;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.*;
@@ -50,7 +49,7 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
     }
 
     @VisibleForTesting
-    public List<Pojo> getGeneratedPojos() {
-        return pojoGenerator.getGeneratedPojos();
+    public PojoGenerator getPojoGenerator() {
+        return pojoGenerator;
     }
 }

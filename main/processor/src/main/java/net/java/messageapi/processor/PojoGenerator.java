@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.JmsProperty;
 import net.java.messageapi.Optional;
+import net.java.messageapi.pojo.Pojo;
+import net.java.messageapi.pojo.PojoProperty;
 import net.java.messageapi.reflection.ReflectionAdapter;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -185,7 +187,7 @@ public class PojoGenerator extends AbstractGenerator {
             } else {
                 boolean required = (optional == null);
                 property.annotate(XmlElement.class, ImmutableMap.of("required", required));
-                propOrder.add(parameter.getSimpleName().toString());
+                propOrder.add(name);
             }
         }
 

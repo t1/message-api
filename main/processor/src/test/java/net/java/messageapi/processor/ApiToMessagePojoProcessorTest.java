@@ -4,8 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Generated;
 import javax.annotation.processing.Messager;
@@ -14,6 +13,8 @@ import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.*;
+import net.java.messageapi.pojo.Pojo;
+import net.java.messageapi.pojo.PojoProperty;
 import net.java.messageapi.processor.mock.*;
 import net.sf.twip.TwiP;
 
@@ -42,7 +43,11 @@ public class ApiToMessagePojoProcessorTest {
 
     @After
     public void after() {
-        assertTrue(processor.getGeneratedPojos().isEmpty());
+        assertTrue(getGeneratedPojos().isEmpty());
+    }
+
+    private List<Pojo> getGeneratedPojos() {
+        return processor.getPojoGenerator().getGeneratedPojos();
     }
 
     private void convert(Class<?> type) {
@@ -54,18 +59,18 @@ public class ApiToMessagePojoProcessorTest {
         verify(messager, atLeast(0)).printMessage(eq(Kind.NOTE), anyString());
         verifyNoMoreInteractions(messager);
 
-        return processor.getGeneratedPojos().remove(0);
+        return getGeneratedPojos().remove(0);
     }
 
     private void assertPojoGenerated(final String pojoName) {
-        Pojo generated = Iterables.find(processor.getGeneratedPojos(), new Predicate<Pojo>() {
+        Pojo generated = Iterables.find(getGeneratedPojos(), new Predicate<Pojo>() {
             @Override
             public boolean apply(Pojo input) {
                 return input.getSimpleName().equals(pojoName);
             }
         });
         assertNotNull(generated);
-        processor.getGeneratedPojos().remove(generated);
+        getGeneratedPojos().remove(generated);
     }
 
     @MessageApi
@@ -324,7 +329,7 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldWarnAmbiguousMethodName() throws Exception {
         convert(AmbiguousMethodNamesApi.class);
 
-        processor.getGeneratedPojos().clear();
+        getGeneratedPojos().clear();
 
         verifyAmbiguousMethodName(String.class);
         verifyAmbiguousMethodName(Integer.class);

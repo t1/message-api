@@ -1,4 +1,4 @@
-package net.java.messageapi.processor;
+package net.java.messageapi.pojo;
 
 import java.io.IOException;
 import java.io.Writer;

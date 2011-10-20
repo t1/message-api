@@ -27,8 +27,7 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
             Class<T> cls = (Class<T>) Class.forName(pojoClassName);
             return cls;
         } catch (ClassNotFoundException e) {
-            // TODO generate dynamically
-            throw new RuntimeException(e);
+            return new MethodAsClassGenerator(method).generate();
         }
     }
 

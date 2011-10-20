@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import net.java.messageapi.pojo.Pojo;
+import net.java.messageapi.pojo.PojoProperty;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;

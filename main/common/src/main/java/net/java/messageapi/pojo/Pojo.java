@@ -1,4 +1,4 @@
-package net.java.messageapi.processor;
+package net.java.messageapi.pojo;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
