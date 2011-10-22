@@ -6,8 +6,7 @@ import java.io.StringWriter;
 import java.lang.reflect.*;
 
 import javax.xml.bind.JAXB;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.JmsProperty;
 import net.java.messageapi.Optional;
@@ -15,10 +14,11 @@ import net.java.messageapi.Optional;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class MethodAsClassGeneratorTwoArgsTest {
+public class MethodAsClassGeneratorHeaderOnlyTest {
 
-    public interface TestInterfaceTwo {
-        public void testMethodTwo(String foo, @JmsProperty @Optional Integer bar);
+    public interface TestInterfaceHeaderOnly {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Integer bar);
     }
 
     private static Class<?> generated;
@@ -26,8 +26,8 @@ public class MethodAsClassGeneratorTwoArgsTest {
 
     @BeforeClass
     public static void before() throws Exception {
-        Method testMethod = TestInterfaceTwo.class.getMethod("testMethodTwo", String.class,
-                Integer.class);
+        Method testMethod = TestInterfaceHeaderOnly.class.getMethod("testMethodHeaderOnly",
+                String.class, Integer.class);
         MethodAsClassGenerator generator = new MethodAsClassGenerator(testMethod);
 
         generated = generator.get();
@@ -45,17 +45,25 @@ public class MethodAsClassGeneratorTwoArgsTest {
         Field[] declaredFields = generated.getDeclaredFields();
         assertEquals(2, declaredFields.length);
 
-        verify(declaredFields, 0, String.class, true);
-        verify(declaredFields, 1, Integer.class, false);
+        verify(declaredFields, 0, String.class, false, false);
+        verify(declaredFields, 1, Integer.class, true, true);
     }
 
-    private void verify(Field[] declaredFields, int index, Class<?> type, boolean required) {
+    private void verify(Field[] declaredFields, int index, Class<?> type, boolean required,
+            boolean isTransient) {
         Field field = declaredFields[index];
         assertEquals("arg" + index, field.getName());
         assertEquals(0, field.getModifiers()); // not public, etc.
         assertEquals(type, field.getType());
         XmlElement element = field.getAnnotation(XmlElement.class);
-        assertEquals(required, element.required());
+        if (isTransient) {
+            assertNull(element);
+        } else {
+            assertEquals(required, element.required());
+        }
+
+        XmlTransient xmlTransient = field.getAnnotation(XmlTransient.class);
+        assertEquals(isTransient, xmlTransient != null);
     }
 
     @Test
@@ -110,10 +118,9 @@ public class MethodAsClassGeneratorTwoArgsTest {
         StringWriter writer = new StringWriter();
         JAXB.marshal(instance, writer);
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodTwo>\n" //
+                + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
-                + "    <arg1>3</arg1>\n" //
-                + "</testMethodTwo>\n", writer.toString());
+                + "</testMethodHeaderOnly>\n", writer.toString());
     }
 
     @Test
@@ -125,6 +132,6 @@ public class MethodAsClassGeneratorTwoArgsTest {
         assertEquals("arg1", field.getName()); // just to make sure
         JmsProperty jmsProperty = field.getAnnotation(JmsProperty.class);
         assertNotNull(jmsProperty);
-        assertEquals(false, jmsProperty.headerOnly());
+        assertEquals(true, jmsProperty.headerOnly());
     }
 }

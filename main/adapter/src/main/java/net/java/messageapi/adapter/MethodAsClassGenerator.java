@@ -5,8 +5,11 @@ import java.util.List;
 
 import javassist.*;
 import javassist.bytecode.*;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.*;
+
+import javax.xml.bind.annotation.*;
+
+import net.java.messageapi.JmsProperty;
 import net.java.messageapi.Optional;
 import net.java.messageapi.reflection.Parameter;
 import net.java.messageapi.reflection.ReflectionAdapter;
@@ -32,10 +35,9 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
             String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
             this.ctClass = classPool.makeClass(className);
 
-            // TODO pojo.annotate(XmlRootElement.class);
-            addXmlRootElement();
-            addProperties();
+            List<String> propOrder = addProperties();
             addConstructors();
+            addClassAnnotations(propOrder);
 
             this.result = ctClass.toClass();
         } catch (Exception e) {
@@ -48,15 +50,28 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         return result;
     }
 
-    private void addXmlRootElement() {
+    private void addClassAnnotations(List<String> propOrderList) {
         ClassFile classFile = ctClass.getClassFile();
         ConstPool constPool = classFile.getConstPool();
-        AnnotationsAttribute attribute = new AnnotationsAttribute(constPool,
+        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constPool,
                 AnnotationsAttribute.visibleTag);
-        Annotation annotation = new Annotation("javax.xml.bind.annotation.XmlRootElement",
-                constPool);
-        attribute.setAnnotation(annotation);
-        classFile.addAttribute(attribute);
+
+        Annotation xmlRootElement = new Annotation(XmlRootElement.class.getName(), constPool);
+        annotationsAttribute.addAnnotation(xmlRootElement);
+
+        Annotation xmlType = new Annotation(XmlType.class.getName(), constPool);
+        annotationsAttribute.addAnnotation(xmlType);
+        ArrayMemberValue propOrderValue = new ArrayMemberValue(constPool);
+        MemberValue[] elements = new MemberValue[propOrderList.size()];
+        for (int i = 0; i < elements.length; i++) {
+            String propertyName = propOrderList.get(i);
+            elements[i] = new StringMemberValue(propertyName, constPool);
+        }
+        propOrderValue.setValue(elements);
+        xmlType.addMemberValue("propOrder", propOrderValue);
+
+        classFile.addAttribute(annotationsAttribute);
+
         ctClass.getClassFile().setVersionToJava5();
     }
 
@@ -88,53 +103,41 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         ctClass.addConstructor(constructor);
     }
 
-    private void addProperties() throws Exception {
-        // TODO List<String> propOrder = Lists.newArrayList();
+    private List<String> addProperties() throws Exception {
+        List<String> propOrder = Lists.newArrayList();
 
         for (Parameter parameter : parameters) {
             Optional optional = parameter.getAnnotation(Optional.class);
-            // TODO JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
+            JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
 
-            // PojoProperty property =
-            boolean required = (optional == null);
-            addProperty(parameter, required);
+            CtField field = addProperty(parameter);
 
-            // if (jmsProperty != null) {
-            // property.annotate(JmsProperty.class,
-            // ImmutableMap.of("headerOnly", jmsProperty.headerOnly()));
-            // }
-            //
-            // boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
-            // if (xmlTransient) {
-            // property.annotate(XmlTransient.class);
-            // } else {
-            // propOrder.add(name);
-            // }
+            if (jmsProperty != null) {
+                new CtFieldAnnotation(field, jmsProperty).set();
+            }
+
+            boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
+            if (xmlTransient) {
+                new CtFieldAnnotation(field, XmlTransient.class).set();
+            } else {
+                CtFieldAnnotation xmlElement = new CtFieldAnnotation(field, XmlElement.class);
+                xmlElement.addMemberValue("required", (optional == null));
+                xmlElement.set();
+                propOrder.add(field.getName());
+            }
         }
 
-        // String[] propOrderArray = propOrder.toArray(new String[propOrder.size()]);
-        // pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", propOrderArray));
+        return propOrder;
     }
 
-    private void addProperty(Parameter parameter, boolean required) throws Exception {
+    private CtField addProperty(Parameter parameter) throws Exception {
         CtClass type = classPool.get(parameter.getType().getName());
         CtField field = new CtField(type, parameter.getName(), ctClass);
-        addXmlElement(field, required);
         ctClass.addField(field);
 
         CtMethod getter = CtNewMethod.getter("getArg" + parameter.getIndex(), field);
         ctClass.addMethod(getter);
-    }
 
-    private void addXmlElement(CtField field, boolean required) {
-        FieldInfo fieldInfo = field.getFieldInfo();
-        fieldInfo.getConstPool();
-        ConstPool constPool = fieldInfo.getConstPool();
-        AnnotationsAttribute attribute = new AnnotationsAttribute(constPool,
-                AnnotationsAttribute.visibleTag);
-        Annotation annotation = new Annotation("javax.xml.bind.annotation.XmlElement", constPool);
-        annotation.addMemberValue("required", new BooleanMemberValue(required, constPool));
-        attribute.setAnnotation(annotation);
-        fieldInfo.addAttribute(attribute);
+        return field;
     }
 }

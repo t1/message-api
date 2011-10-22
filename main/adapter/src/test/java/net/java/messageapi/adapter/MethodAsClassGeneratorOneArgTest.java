@@ -6,11 +6,9 @@ import java.io.StringWriter;
 import java.lang.reflect.*;
 
 import javax.xml.bind.JAXB;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 public class MethodAsClassGeneratorOneArgTest {
 
@@ -34,6 +32,14 @@ public class MethodAsClassGeneratorOneArgTest {
     public void shouldAnnotateAsXmlRootElement() throws Exception {
         XmlRootElement xmlRootElement = generated.getAnnotation(XmlRootElement.class);
         assertNotNull(xmlRootElement);
+    }
+
+    @Test
+    @Ignore("not yet implemented")
+    public void shouldAnnotateAsXmlTypeWithPropOrder() throws Exception {
+        XmlType xmlType = generated.getAnnotation(XmlType.class);
+        assertNotNull(xmlType);
+        assertArrayEquals(new String[] { "arg0" }, xmlType.propOrder());
     }
 
     @Test
