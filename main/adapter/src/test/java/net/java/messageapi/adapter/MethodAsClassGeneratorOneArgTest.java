@@ -8,7 +8,8 @@ import java.lang.reflect.*;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.*;
 
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class MethodAsClassGeneratorOneArgTest {
 
@@ -35,7 +36,6 @@ public class MethodAsClassGeneratorOneArgTest {
     }
 
     @Test
-    @Ignore("not yet implemented")
     public void shouldAnnotateAsXmlTypeWithPropOrder() throws Exception {
         XmlType xmlType = generated.getAnnotation(XmlType.class);
         assertNotNull(xmlType);
@@ -81,7 +81,7 @@ public class MethodAsClassGeneratorOneArgTest {
     }
 
     @Test
-    public void constructorAndGetterShouldWork() throws Exception {
+    public void getterShouldWork() throws Exception {
         Object instance = constructor.newInstance("foo");
 
         Method method = generated.getDeclaredMethod("getArg0");

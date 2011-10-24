@@ -41,6 +41,13 @@ public class MethodAsClassGeneratorHeaderOnlyTest {
     }
 
     @Test
+    public void shouldAnnotateAsXmlTypeWithPropOrder() throws Exception {
+        XmlType xmlType = generated.getAnnotation(XmlType.class);
+        assertNotNull(xmlType);
+        assertArrayEquals(new String[] { "arg0" }, xmlType.propOrder());
+    }
+
+    @Test
     public void shouldBuildFields() throws Exception {
         Field[] declaredFields = generated.getDeclaredFields();
         assertEquals(2, declaredFields.length);
@@ -101,7 +108,7 @@ public class MethodAsClassGeneratorHeaderOnlyTest {
     }
 
     @Test
-    public void constructorAndGetterShouldWork() throws Exception {
+    public void getterShouldWork() throws Exception {
         Object instance = constructor.newInstance("foo", 3);
 
         Method method1 = generated.getDeclaredMethod("getArg0");

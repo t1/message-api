@@ -4,8 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javassist.*;
-import javassist.bytecode.*;
-import javassist.bytecode.annotation.*;
+import javassist.bytecode.ClassFile;
 
 import javax.xml.bind.annotation.*;
 
@@ -23,6 +22,7 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
     private final List<Parameter> parameters;
     private final ClassPool classPool = ClassPool.getDefault();
     private final CtClass ctClass;
+    private ClassFile classFile;
     private final Class<?> result;
 
     public MethodAsClassGenerator(Method method) {
@@ -34,6 +34,9 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
             // in several interfaces without collision
             String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
             this.ctClass = classPool.makeClass(className);
+            this.classFile = ctClass.getClassFile();
+
+            classFile.setVersionToJava5();
 
             List<String> propOrder = addProperties();
             addConstructors();
@@ -45,34 +48,12 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         }
     }
 
-    @Override
-    public Class<?> get() {
-        return result;
-    }
+    private void addClassAnnotations(List<String> propOrder) {
+        new CtClassAnnotation(ctClass, XmlRootElement.class).set();
 
-    private void addClassAnnotations(List<String> propOrderList) {
-        ClassFile classFile = ctClass.getClassFile();
-        ConstPool constPool = classFile.getConstPool();
-        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constPool,
-                AnnotationsAttribute.visibleTag);
-
-        Annotation xmlRootElement = new Annotation(XmlRootElement.class.getName(), constPool);
-        annotationsAttribute.addAnnotation(xmlRootElement);
-
-        Annotation xmlType = new Annotation(XmlType.class.getName(), constPool);
-        annotationsAttribute.addAnnotation(xmlType);
-        ArrayMemberValue propOrderValue = new ArrayMemberValue(constPool);
-        MemberValue[] elements = new MemberValue[propOrderList.size()];
-        for (int i = 0; i < elements.length; i++) {
-            String propertyName = propOrderList.get(i);
-            elements[i] = new StringMemberValue(propertyName, constPool);
-        }
-        propOrderValue.setValue(elements);
-        xmlType.addMemberValue("propOrder", propOrderValue);
-
-        classFile.addAttribute(annotationsAttribute);
-
-        ctClass.getClassFile().setVersionToJava5();
+        CtClassAnnotation xmlType = new CtClassAnnotation(ctClass, XmlType.class);
+        xmlType.addMemberValue("propOrder", propOrder);
+        xmlType.set();
     }
 
     private void addConstructors() throws Exception {
@@ -139,5 +120,10 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         ctClass.addMethod(getter);
 
         return field;
+    }
+
+    @Override
+    public Class<?> get() {
+        return result;
     }
 }
