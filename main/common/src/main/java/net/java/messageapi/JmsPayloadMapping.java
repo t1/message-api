@@ -12,7 +12,7 @@ import javax.inject.Qualifier;
  * Convert the payload to/from a {@link javax.jms.MapMessage}.
  */
 @Qualifier
-@Target({ FIELD, TYPE })
+@Target({TYPE, METHOD, FIELD, PARAMETER})
 @Retention(RUNTIME)
 public @interface JmsPayloadMapping {
     /** The message field that contians the name of the operation/method to be performed */

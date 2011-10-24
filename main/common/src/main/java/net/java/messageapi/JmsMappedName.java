@@ -13,7 +13,7 @@ import javax.inject.Qualifier;
  * method or parameter name itself.
  */
 @Qualifier
-@Target({ METHOD, PARAMETER })
+@Target({TYPE, METHOD, FIELD, PARAMETER})
 @Retention(RUNTIME)
 public @interface JmsMappedName {
     String value();

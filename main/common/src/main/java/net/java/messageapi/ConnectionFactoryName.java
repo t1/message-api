@@ -14,7 +14,7 @@ import javax.inject.Qualifier;
  * "ConnectionFactory".
  */
 @Qualifier
-@Target(FIELD)
+@Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 public @interface ConnectionFactoryName {
     public static final String DEFAULT = "ConnectionFactory";

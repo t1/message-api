@@ -6,7 +6,6 @@
 		<version>1.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>net.java.messageapi</groupId>
 	<artifactId>processor</artifactId>
 	<name>Annotation Processor</name>
 	<description>The annotation processors for MessageApis</description>

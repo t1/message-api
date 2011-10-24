@@ -9,7 +9,6 @@
 		<version>1.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>net.java.messageapi</groupId>
 	<artifactId>main-container</artifactId>
 	<packaging>pom</packaging>
 	<name>MessageAPI main container</name>

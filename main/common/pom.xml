@@ -7,7 +7,6 @@
 		<version>1.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>net.java.messageapi</groupId>
 	<artifactId>common</artifactId>
 	<name>Common</name>
 	<description>
