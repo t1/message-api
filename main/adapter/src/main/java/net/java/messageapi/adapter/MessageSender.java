@@ -72,8 +72,8 @@ public class MessageSender {
     }
 
     static MessageSenderFactory newDefaultConfigFor(Class<?> api) {
-        JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getCanonicalName(),
-                null, null, false, null, null);
+        JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getName(), null, null,
+                true, null, null);
         return new JmsSenderFactory(config, new XmlJmsPayloadHandler());
     }
 
