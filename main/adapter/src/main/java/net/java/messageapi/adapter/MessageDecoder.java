@@ -10,6 +10,10 @@ import net.java.messageapi.adapter.xml.XmlMessageDecoder;
  */
 public class MessageDecoder<T> implements MessageListener {
 
+    public static <T> MessageDecoder<T> of(Class<T> api, T impl) {
+        return new MessageDecoder<T>(api, impl);
+    }
+
     private final Class<T> api;
     private final T impl;
 

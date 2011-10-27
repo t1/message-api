@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javassist.*;
-import javassist.bytecode.ClassFile;
 
 import javax.xml.bind.annotation.*;
 
@@ -16,34 +15,55 @@ import net.java.messageapi.reflection.ReflectionAdapter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
-class MethodAsClassGenerator implements Supplier<Class<?>> {
+public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
     private final ReflectionAdapter<Method> reflectionAdapter;
     private final List<Parameter> parameters;
     private final ClassPool classPool = ClassPool.getDefault();
-    private final CtClass ctClass;
-    private ClassFile classFile;
+    private CtClass ctClass;
     private final Class<?> result;
 
     public MethodAsClassGenerator(Method method) {
         this.reflectionAdapter = ReflectionAdapter.of(method);
         this.parameters = Parameter.allOf(method);
 
+        this.result = generate();
+    }
+
+    protected Class<?> generate() {
+        String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
+
+        // try real class
         try {
-            String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
-            this.ctClass = classPool.makeClass(className);
-            this.classFile = ctClass.getClassFile();
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            // continue
+        }
 
-            classFile.setVersionToJava5();
+        // try already generated class; can't generate twice
+        try {
+            this.ctClass = classPool.get(className);
+            return ctClass.getClass();
+        } catch (NotFoundException e) {
+            // continue
+        }
 
-            List<String> propOrder = addProperties();
-            addConstructors();
-            addClassAnnotations(propOrder);
-
-            this.result = ctClass.toClass();
+        // now really generate
+        try {
+            generate(className);
+            return ctClass.toClass();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected void generate(String className) throws Exception {
+        this.ctClass = classPool.makeClass(className);
+        ctClass.getClassFile().setVersionToJava5();
+
+        List<String> propOrder = addProperties();
+        addConstructors();
+        addClassAnnotations(propOrder);
     }
 
     private void addClassAnnotations(List<String> propOrder) {

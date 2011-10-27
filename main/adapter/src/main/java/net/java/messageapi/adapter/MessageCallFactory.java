@@ -3,8 +3,6 @@ package net.java.messageapi.adapter;
 import java.lang.reflect.*;
 import java.util.Arrays;
 
-import net.java.messageapi.reflection.ReflectionAdapter;
-
 import com.google.common.base.Function;
 
 /**
@@ -20,18 +18,9 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
         this.pojoClass = getType(method);
     }
 
+    @SuppressWarnings("unchecked")
     private Class<T> getType(Method method) {
-        // TODO cache results?!?
-        Class<?> result;
-        try {
-            String pojoClassName = ReflectionAdapter.of(method).getMethodNameAsFullyQualifiedClassName();
-            result = Class.forName(pojoClassName);
-        } catch (ClassNotFoundException e) {
-            result = new MethodAsClassGenerator(method).get();
-        }
-        @SuppressWarnings("unchecked")
-        Class<T> classT = (Class<T>) result;
-        return classT;
+        return (Class<T>) new MethodAsClassGenerator(method).get();
     }
 
     public T apply(Object[] args) {

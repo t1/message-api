@@ -92,7 +92,8 @@ public class FullRoundTripTest {
 
     @Test
     public void shouldReceive() throws Exception {
-        System.out.println(FullRoundTripTestInterface.class.getName());
         XmlStringDecoder.create(FullRoundTripTestInterface.class, receiver).decode(XML);
+
+        verify(receiver).fullRoundTripMessage("fooo", 123);
     }
 }

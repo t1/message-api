@@ -8,8 +8,8 @@ import java.util.List;
 import javax.xml.bind.*;
 
 import net.java.messageapi.MessageApi;
+import net.java.messageapi.adapter.MethodAsClassGenerator;
 import net.java.messageapi.adapter.PojoInvoker;
-import net.java.messageapi.reflection.ReflectionAdapter;
 
 import com.google.common.collect.Lists;
 
@@ -55,15 +55,8 @@ public class XmlStringDecoder<T> {
     protected JAXBContext getContext(Class<T> api, JaxbProvider jaxbProvider) {
         List<Class<?>> classes = Lists.newArrayList();
         for (Method method : api.getMethods()) {
-            ReflectionAdapter<Method> reflectionAdapter = ReflectionAdapter.of(method);
-            try {
-                String methodAsClassName = reflectionAdapter.getMethodNameAsClassName();
-                String containerName = method.getDeclaringClass().getName();
-                Class<?> type = Class.forName(containerName + "$" + methodAsClassName);
-                classes.add(type);
-            } catch (ClassNotFoundException e2) {
-                throw new RuntimeException(e2);
-            }
+            Class<?> type = new MethodAsClassGenerator(method).get();
+            classes.add(type);
         }
         Class<?>[] classesToBeBound = classes.toArray(new Class[classes.size()]);
         return jaxbProvider.createJaxbContextFor(classesToBeBound);
