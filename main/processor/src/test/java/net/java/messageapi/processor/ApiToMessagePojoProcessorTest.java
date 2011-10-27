@@ -66,7 +66,7 @@ public class ApiToMessagePojoProcessorTest {
         Pojo generated = Iterables.find(getGeneratedPojos(), new Predicate<Pojo>() {
             @Override
             public boolean apply(Pojo input) {
-                return input.getSimpleName().equals(pojoName);
+                return input.getSimplifiedClassName().equals(pojoName);
             }
         });
         assertNotNull(generated);
@@ -171,8 +171,20 @@ public class ApiToMessagePojoProcessorTest {
         convert(NoArgApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("NoArgCall", pojo.getSimpleName());
+        assertEquals(name(NoArgApi.class) + "$NoArgCall", pojo.getSimplifiedClassName());
         assertEquals(0, pojo.getProperties().size());
+    }
+
+    /**
+     * Extract the name of the class without the package prefix. This is not the simple name if it
+     * is a nested class.
+     */
+    private String name(Class<?> type) {
+        String pkg = type.getPackage().getName();
+        String name = type.getName();
+        assertTrue(name.startsWith(pkg + "."));
+        name = name.substring(pkg.length() + 1);
+        return name;
     }
 
     @MessageApi
@@ -185,7 +197,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(StringApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("StringCall", pojo.getSimpleName());
+        assertEquals(name(StringApi.class) + "$StringCall", pojo.getSimplifiedClassName());
         assertEquals(String.class.getName(), pojo.getProperty("arg0").getType());
     }
 
@@ -206,7 +218,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(IntApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("IntCall", pojo.getSimpleName());
+        assertEquals(name(IntApi.class) + "$IntCall", pojo.getSimplifiedClassName());
         assertEquals(Integer.TYPE.getName(), pojo.getProperty("arg0").getType());
     }
 
@@ -220,7 +232,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(InstantApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("InstantCall", pojo.getSimpleName());
+        assertEquals(name(InstantApi.class) + "$InstantCall", pojo.getSimplifiedClassName());
         assertEquals(Instant.class.getName(), pojo.getProperty("arg0").getType());
     }
 
@@ -243,7 +255,8 @@ public class ApiToMessagePojoProcessorTest {
         convert(StringAndInstantApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("StringAndInstantCall", pojo.getSimpleName());
+        assertEquals(name(StringAndInstantApi.class) + "$StringAndInstantCall",
+                pojo.getSimplifiedClassName());
         assertEquals(2, pojo.getProperties().size());
         assertEquals(String.class.getName(), pojo.getProperty("arg0").getType());
         assertEquals(Instant.class.getName(), pojo.getProperty("arg1").getType());
@@ -271,7 +284,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(ArrayApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("ArrayCall", pojo.getSimpleName());
+        assertEquals(name(ArrayApi.class) + "$ArrayCall", pojo.getSimplifiedClassName());
         assertEquals(String.class.getName() + "[]", pojo.getProperty("arg0").getType());
     }
 
@@ -285,7 +298,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(VarargApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals("VarargCall", pojo.getSimpleName());
+        assertEquals(name(VarargApi.class) + "$VarargCall", pojo.getSimplifiedClassName());
         assertEquals(String.class.getName() + "[]", pojo.getProperty("arg0").getType());
     }
 
@@ -300,8 +313,9 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldAcceptTwoMethodNames() throws Exception {
         convert(TwoMethodNamesApi.class);
 
-        assertPojoGenerated("MethodA");
-        assertPojoGenerated("MethodB");
+        String prefix = name(TwoMethodNamesApi.class) + "$";
+        assertPojoGenerated(prefix + "MethodA");
+        assertPojoGenerated(prefix + "MethodB");
     }
 
     @MessageApi
@@ -320,9 +334,10 @@ public class ApiToMessagePojoProcessorTest {
         verify(messager, times(3)).printMessage(eq(Kind.WARNING), anyString(),
                 (Element) anyObject());
 
-        assertEquals("MethodString", popPojo().getSimpleName());
-        assertEquals("MethodInteger", popPojo().getSimpleName());
-        assertEquals("MethodOrgJodaTimeInstant", popPojo().getSimpleName());
+        String prefix = name(AmbiguousMethodNamesApi.class) + "$";
+        assertEquals(prefix + "MethodString", popPojo().getSimplifiedClassName());
+        assertEquals(prefix + "MethodInteger", popPojo().getSimplifiedClassName());
+        assertEquals(prefix + "MethodOrgJodaTimeInstant", popPojo().getSimplifiedClassName());
     }
 
     @Test

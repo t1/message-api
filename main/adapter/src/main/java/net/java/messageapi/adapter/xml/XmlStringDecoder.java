@@ -2,12 +2,16 @@ package net.java.messageapi.adapter.xml;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.xml.bind.*;
 
 import net.java.messageapi.MessageApi;
 import net.java.messageapi.adapter.PojoInvoker;
+import net.java.messageapi.reflection.ReflectionAdapter;
 
+import com.google.common.collect.Lists;
 
 /**
  * Takes XML Strings, deserializes them and calls the corresponding methods in an implementation of
@@ -40,12 +44,29 @@ public class XmlStringDecoder<T> {
     }
 
     private Unmarshaller createUnmarshaller(Class<T> api, JaxbProvider jaxbProvider) {
-        JAXBContext context = jaxbProvider.createJaxbContextFor(api.getPackage());
+        JAXBContext context = getContext(api, jaxbProvider);
         try {
             return context.createUnmarshaller();
         } catch (JAXBException e) {
             throw new RuntimeException("can't unmarshal", e);
         }
+    }
+
+    protected JAXBContext getContext(Class<T> api, JaxbProvider jaxbProvider) {
+        List<Class<?>> classes = Lists.newArrayList();
+        for (Method method : api.getMethods()) {
+            ReflectionAdapter<Method> reflectionAdapter = ReflectionAdapter.of(method);
+            try {
+                String methodAsClassName = reflectionAdapter.getMethodNameAsClassName();
+                String containerName = method.getDeclaringClass().getName();
+                Class<?> type = Class.forName(containerName + "$" + methodAsClassName);
+                classes.add(type);
+            } catch (ClassNotFoundException e2) {
+                throw new RuntimeException(e2);
+            }
+        }
+        Class<?>[] classesToBeBound = classes.toArray(new Class[classes.size()]);
+        return jaxbProvider.createJaxbContextFor(classesToBeBound);
     }
 
     public void decode(String xml) {

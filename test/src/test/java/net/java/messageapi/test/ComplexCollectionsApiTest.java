@@ -6,7 +6,6 @@ import java.util.*;
 
 import net.java.messageapi.adapter.xml.ForwardingSenderFactory;
 import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.test.eclipselink.ComplexCollectionsApi;
 import net.sf.twip.*;
 
 import org.junit.Test;

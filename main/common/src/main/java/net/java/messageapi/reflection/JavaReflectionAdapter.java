@@ -34,4 +34,9 @@ class JavaReflectionAdapter extends ReflectionAdapter<Method> {
     protected String typeNameOf(Object object) {
         return ((Class<?>) object).getName();
     }
+
+    @Override
+    public String getDeclaringType() {
+        return method.getDeclaringClass().getName();
+    }
 }

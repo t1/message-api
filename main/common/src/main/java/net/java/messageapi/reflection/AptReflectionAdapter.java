@@ -42,6 +42,12 @@ class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
     }
 
     @Override
+    public String getDeclaringType() {
+        TypeElement typeElement = (TypeElement) method.getEnclosingElement();
+        return typeElement.getQualifiedName().toString();
+    }
+
+    @Override
     protected List<?> getParameters() {
         return method.getParameters();
     }

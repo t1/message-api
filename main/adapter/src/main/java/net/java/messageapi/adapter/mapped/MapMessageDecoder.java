@@ -103,7 +103,7 @@ public class MapMessageDecoder<T> implements MessageListener {
     }
 
     private String getClassName(String methodName) {
-        return api.getPackage().getName() + "." //
+        return api.getName() + "$" //
                 + Character.toUpperCase(methodName.charAt(0)) //
                 + methodName.substring(1);
     }

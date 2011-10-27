@@ -30,8 +30,6 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
         this.parameters = Parameter.allOf(method);
 
         try {
-            // TODO maybe use Nested Class Syntax instead, so the same method name can be defined
-            // in several interfaces without collision
             String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
             this.ctClass = classPool.makeClass(className);
             this.classFile = ctClass.getClassFile();
@@ -49,7 +47,9 @@ class MethodAsClassGenerator implements Supplier<Class<?>> {
     }
 
     private void addClassAnnotations(List<String> propOrder) {
-        new CtClassAnnotation(ctClass, XmlRootElement.class).set();
+        CtClassAnnotation xmlRootElement = new CtClassAnnotation(ctClass, XmlRootElement.class);
+        xmlRootElement.addMemberValue("name", reflectionAdapter.getMethodName());
+        xmlRootElement.set();
 
         CtClassAnnotation xmlType = new CtClassAnnotation(ctClass, XmlType.class);
         xmlType.addMemberValue("propOrder", propOrder);

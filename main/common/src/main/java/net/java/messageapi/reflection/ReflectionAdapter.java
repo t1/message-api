@@ -47,16 +47,18 @@ public abstract class ReflectionAdapter<T> {
 
     protected abstract Iterable<T> siblings(T method);
 
+    public abstract String getPackage();
+
+    public abstract String getDeclaringType();
+
     /** Is this method name unique within the type it is enclosed in? */
     public boolean isUnique() {
         return unique;
     }
 
     public String getMethodNameAsFullyQualifiedClassName() {
-        return getPackage() + "." + getMethodNameAsClassName();
+        return getDeclaringType() + "$" + getMethodNameAsClassName();
     }
-
-    public abstract String getPackage();
 
     public String getMethodNameAsClassName() {
         StringBuilder methodName = new StringBuilder();

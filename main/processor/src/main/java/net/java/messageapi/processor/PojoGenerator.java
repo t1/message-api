@@ -45,6 +45,10 @@ public class PojoGenerator extends AbstractGenerator {
             return reflection.getPackage();
         }
 
+        public String getMethodName() {
+            return reflection.getMethodName();
+        }
+
         public String getMethodNameAsClassName() {
             return reflection.getMethodNameAsClassName();
         }
@@ -149,7 +153,13 @@ public class PojoGenerator extends AbstractGenerator {
             warn("ambiguous method name; it's generally better to use unique names "
                     + "and not rely on the parameter type mangling.", method.getElement());
 
-        Pojo pojo = new Pojo(method.getPackage(), method.getMethodNameAsClassName());
+        String pkg = method.getPackage();
+        String container = method.getContainingClassName();
+        assert container.startsWith(pkg + ".");
+        container = container.substring(pkg.length() + 1);
+        container = container.replace('.', '$');
+        String className = container + "$" + method.getMethodNameAsClassName();
+        Pojo pojo = new Pojo(pkg, className);
         addAnnotations(method, pojo);
         addProperties(method, pojo);
         pojo.addPrivateDefaultConstructor();
@@ -158,10 +168,9 @@ public class PojoGenerator extends AbstractGenerator {
     }
 
     private void addAnnotations(MethodAdapter method, Pojo pojo) {
-        pojo.annotate(Generated.class, ImmutableMap.of( //
-                "value", MessageApiAnnotationProcessor.class.getName(), //
-                "comments", "from " + method.getContainingClassName()));
-        pojo.annotate(XmlRootElement.class);
+        pojo.annotate(Generated.class,
+                ImmutableMap.of("value", MessageApiAnnotationProcessor.class.getName()));
+        pojo.annotate(XmlRootElement.class, ImmutableMap.of("name", method.getMethodName()));
     }
 
     private void addProperties(MethodAdapter method, Pojo pojo) {

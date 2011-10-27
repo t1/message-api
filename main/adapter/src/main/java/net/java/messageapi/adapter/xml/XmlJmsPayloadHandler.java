@@ -37,13 +37,13 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     public void convert(Class<?> api, Writer writer, JaxbProvider jaxbProvider, Object pojo) {
-        Marshaller marshaller = createMarshaller(api, jaxbProvider);
+        Marshaller marshaller = createMarshaller(api, jaxbProvider, pojo);
         marshalPojo(marshaller, pojo, writer);
     }
 
-    private <T> Marshaller createMarshaller(Class<T> api, JaxbProvider jaxbProvider) {
+    private <T> Marshaller createMarshaller(Class<T> api, JaxbProvider jaxbProvider, Object pojo) {
         try {
-            JAXBContext context = jaxbProvider.createJaxbContextFor(api.getPackage());
+            JAXBContext context = jaxbProvider.createJaxbContextFor(pojo.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             return marshaller;

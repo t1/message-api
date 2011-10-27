@@ -21,6 +21,7 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
     }
 
     private Class<T> getType(Method method) {
+        // TODO cache results?!?
         Class<?> result;
         try {
             String pojoClassName = ReflectionAdapter.of(method).getMethodNameAsFullyQualifiedClassName();

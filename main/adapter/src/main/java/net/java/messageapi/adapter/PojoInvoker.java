@@ -49,7 +49,8 @@ public class PojoInvoker<T> {
     }
 
     private String getMethodNameFor(Object pojo) {
-        String name = pojo.getClass().getSimpleName();
+        String[] names = pojo.getClass().getSimpleName().split("\\$");
+        String name = names[names.length - 1];
         return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 

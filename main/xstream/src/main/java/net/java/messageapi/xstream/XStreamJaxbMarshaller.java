@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.helpers.AbstractMarshallerImpl;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -35,6 +36,13 @@ class XStreamJaxbMarshaller extends AbstractMarshallerImpl {
     }
 
     private String getAlias(Class<? extends Object> rootClass) {
+    	XmlRootElement xmlRootElement = rootClass.getAnnotation(XmlRootElement.class);
+    	if (xmlRootElement!= null) {
+    		String name = xmlRootElement.name();
+    		if (!"##default".equals(name)) {
+    			return name;
+    		}
+    	}
         String name = rootClass.getSimpleName();
         return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }

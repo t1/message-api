@@ -33,12 +33,12 @@ public class MessageApiBeanIntegrationTest {
     }
 
     @Test
-    public void shouldCreatePropertyPayload() throws Exception {
+    public void shouldCreatePropertyPayloadForJmsPropertyApi() throws Exception {
         MessageApiBean<JmsPropertyApi> bean = MessageApiBean.of(JmsPropertyApi.class);
         XmlJmsPayloadHandler handler = (XmlJmsPayloadHandler) bean.factory.getPayloadHandler();
         Method method = JmsPropertyApi.class.getMethod("jmsPropertyMethod", new Class[] {
                 String.class, String.class });
-        Object pojo = Class.forName("net.java.messageapi.test.JmsPropertyMethod").getConstructor(
+        Object pojo = Class.forName("net.java.messageapi.test.JmsPropertyApi$JmsPropertyMethod").getConstructor(
                 String.class, String.class).newInstance("first", "second");
 
         String payload = handler.toPayload(JmsPropertyApi.class, method, pojo);

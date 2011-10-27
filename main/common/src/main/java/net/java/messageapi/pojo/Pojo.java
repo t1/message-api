@@ -164,7 +164,8 @@ public class Pojo {
         writer.append("\t}\n");
     }
 
-    public String getSimpleName() {
+    /** This is not the simple name for nested types */
+    public String getSimplifiedClassName() {
         return className;
     }
 

@@ -1,4 +1,4 @@
-package net.java.messageapi.test.eclipselink;
+package net.java.messageapi.test;
 
 import java.util.*;
 
