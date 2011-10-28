@@ -43,7 +43,8 @@ public final class FieldMapping<BoundType> {
         this.defaultValue = defaultValue;
     }
 
-    private Converter<BoundType> converterOrIdentity(Converter<BoundType> converter) {
+    private Converter<BoundType> converterOrIdentity(
+            @SuppressWarnings("hiding") Converter<BoundType> converter) {
         return (converter == null) ? new IdentityConverter<BoundType>() : converter;
     }
 
