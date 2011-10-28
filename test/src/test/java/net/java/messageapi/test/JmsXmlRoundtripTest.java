@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import javax.jms.*;
 
 import net.java.messageapi.adapter.MessageSender;
+import net.java.messageapi.adapter.PojoInvoker;
 import net.java.messageapi.adapter.xml.*;
 import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
@@ -62,7 +63,8 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
         // Then
         String xml = getMessagePayload();
         TestApi serviceImpl = mock(TestApi.class);
-        XmlStringDecoder.create(TestApi.class, serviceImpl).decode(xml);
+        Object pojo = XmlStringDecoder.create(TestApi.class).decode(xml);
+        PojoInvoker.of(TestApi.class, serviceImpl).invoke(pojo);
         verify(serviceImpl).multiCall("a", "b");
     }
 

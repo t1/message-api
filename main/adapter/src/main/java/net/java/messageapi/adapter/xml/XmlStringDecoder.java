@@ -9,7 +9,6 @@ import javax.xml.bind.*;
 
 import net.java.messageapi.MessageApi;
 import net.java.messageapi.adapter.MethodAsClassGenerator;
-import net.java.messageapi.adapter.PojoInvoker;
 
 import com.google.common.collect.Lists;
 
@@ -23,22 +22,20 @@ import com.google.common.collect.Lists;
  */
 public class XmlStringDecoder<T> {
 
-    public static <T> XmlStringDecoder<T> create(Class<T> api, T impl) {
-        return create(api, impl, JaxbProvider.UNCHANGED);
+    public static <T> XmlStringDecoder<T> create(Class<T> api) {
+        return create(api, JaxbProvider.UNCHANGED);
     }
 
-    public static <T> XmlStringDecoder<T> create(Class<T> api, T impl, JaxbProvider jaxbProvider) {
-        return new XmlStringDecoder<T>(api, impl, jaxbProvider);
+    public static <T> XmlStringDecoder<T> create(Class<T> api, JaxbProvider jaxbProvider) {
+        return new XmlStringDecoder<T>(api, jaxbProvider);
     }
 
-    private final PojoInvoker<T> invoker;
     private final Unmarshaller unmarshaller;
 
-    private XmlStringDecoder(Class<T> api, T impl, JaxbProvider jaxbProvider) {
+    private XmlStringDecoder(Class<T> api, JaxbProvider jaxbProvider) {
         if (jaxbProvider == null)
             throw new NullPointerException(
                     "jaxbProvider must not be null; eventually pass JaxbProvider.UNCHANGED");
-        this.invoker = new PojoInvoker<T>(api, impl);
         this.unmarshaller = createUnmarshaller(api, jaxbProvider);
         // TODO verify by calling unmarshaller.setSchema(...)
     }
@@ -62,10 +59,9 @@ public class XmlStringDecoder<T> {
         return jaxbProvider.createJaxbContextFor(classesToBeBound);
     }
 
-    public void decode(String xml) {
+    public Object decode(String xml) {
         Reader reader = new StringReader(xml);
-        Object pojo = readPojo(reader);
-        invoker.invoke(pojo);
+        return readPojo(reader);
     }
 
     private Object readPojo(Reader reader) {

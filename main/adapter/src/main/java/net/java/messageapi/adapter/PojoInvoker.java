@@ -15,6 +15,10 @@ import com.google.common.collect.Lists;
  */
 public class PojoInvoker<T> {
 
+    public static <T> PojoInvoker<T> of(Class<T> api, T impl) {
+        return new PojoInvoker<T>(api, impl);
+    }
+
     private final Class<T> api;
     private final T impl;
 

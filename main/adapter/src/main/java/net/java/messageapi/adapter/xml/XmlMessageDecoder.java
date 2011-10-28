@@ -2,8 +2,9 @@ package net.java.messageapi.adapter.xml;
 
 import javax.jms.*;
 
+import net.java.messageapi.JmsProperty;
 import net.java.messageapi.MessageApi;
-
+import net.java.messageapi.adapter.PojoInvoker;
 
 /**
  * Takes a {@link TextMessage}, deserializes it and calls the corresponding method in an
@@ -24,23 +25,27 @@ public class XmlMessageDecoder<T> implements MessageListener {
     }
 
     private final XmlStringDecoder<T> decoder;
+    private final PojoInvoker<T> invoker;
 
-    public XmlMessageDecoder(XmlStringDecoder<T> decoder) {
+    private XmlMessageDecoder(Class<T> api, T impl, XmlStringDecoder<T> decoder) {
         this.decoder = decoder;
+        this.invoker = new PojoInvoker<T>(api, impl);
     }
 
     public XmlMessageDecoder(Class<T> api, T impl) {
-        this(XmlStringDecoder.create(api, impl));
+        this(api, impl, XmlStringDecoder.create(api));
     }
 
     public XmlMessageDecoder(Class<T> api, T impl, JaxbProvider jaxbProvider) {
-        this(XmlStringDecoder.create(api, impl, jaxbProvider));
+        this(api, impl, XmlStringDecoder.create(api, jaxbProvider));
     }
 
     @Override
     public void onMessage(Message message) {
         String xml = getXml((TextMessage) message);
-        decoder.decode(xml);
+        Object pojo = decoder.decode(xml);
+        JmsProperty p = null;
+        invoker.invoke(pojo);
     }
 
     private String getXml(TextMessage message) {

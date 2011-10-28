@@ -5,6 +5,7 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 import javax.jms.*;
 import javax.naming.Context;
@@ -92,8 +93,35 @@ public class FullRoundTripTest {
 
     @Test
     public void shouldReceive() throws Exception {
-        XmlStringDecoder.create(FullRoundTripTestInterface.class, receiver).decode(XML);
+        Object pojo = XmlStringDecoder.create(FullRoundTripTestInterface.class).decode(XML);
+        PojoInvoker.of(FullRoundTripTestInterface.class, receiver).invoke(pojo);
 
         verify(receiver).fullRoundTripMessage("fooo", 123);
+    }
+
+    public interface TestInterfaceHeaderOnly {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Integer bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnly impl;
+
+    @Test
+    public void shouldCopyJmsPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        when(message.getStringProperty("arg1")).thenReturn("123");
+
+        MessageDecoder<TestInterfaceHeaderOnly> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnly.class, impl);
+
+        decoder.onMessage(message);
+
+        verify(impl).testMethodHeaderOnly("foo", null); // TODO 123
     }
 }

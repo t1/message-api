@@ -6,6 +6,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import net.java.messageapi.adapter.MessageSender;
+import net.java.messageapi.adapter.PojoInvoker;
 import net.java.messageapi.adapter.xml.XmlStringDecoder;
 import net.sf.twip.TwiP;
 
@@ -29,7 +30,8 @@ public class LoadConfigTest extends AbstractJmsSenderFactoryTest {
         serviceProxy.multiCall("aaa", "bbb");
         // TODO wire the decoder to the mock JMS
         String xml = getMessagePayload();
-        XmlStringDecoder.create(TestApi.class, serviceImpl).decode(xml);
+        Object pojo = XmlStringDecoder.create(TestApi.class).decode(xml);
+        PojoInvoker.of(TestApi.class, serviceImpl).invoke(pojo);
 
         // Then
         verify(serviceImpl).multiCall("aaa", "bbb");

@@ -4,8 +4,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.*;
 
-import net.java.messageapi.adapter.MessageCallFactory;
-import net.java.messageapi.adapter.MessageSenderFactory;
+import net.java.messageapi.adapter.*;
 
 /**
  * A {@link MessageSenderFactory} that produces a sender that -- when called -- serializes the call
@@ -32,16 +31,7 @@ public class ForwardingSenderFactory implements MessageSenderFactory {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
-                try {
-                    forward(api, method, args);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                } catch (InvocationTargetException e) {
-                    Throwable cause = e.getCause();
-                    if (cause instanceof RuntimeException)
-                        throw (RuntimeException) cause;
-                    throw new RuntimeException(cause);
-                }
+                forward(api, method, args);
                 return null;
             }
         };
@@ -50,13 +40,12 @@ public class ForwardingSenderFactory implements MessageSenderFactory {
         return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    private <T> void forward(Class<T> api, Method method, Object[] args)
-            throws IllegalAccessException, InvocationTargetException {
+    private <T> void forward(Class<T> api, Method method, Object[] args) {
         Writer writer = new StringWriter();
         Object pojo = new MessageCallFactory<Object>(method).apply(args);
         payloadHandler.convert(api, writer, jaxbProvider, pojo);
 
-        XmlStringDecoder<T> decoder = XmlStringDecoder.create(api, api.cast(impl), jaxbProvider);
-        decoder.decode(writer.toString());
+        Object decoded = XmlStringDecoder.create(api, jaxbProvider).decode(writer.toString());
+        PojoInvoker.of(api, api.cast(impl)).invoke(decoded);
     }
 }
