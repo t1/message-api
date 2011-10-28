@@ -9,43 +9,58 @@ import net.java.messageapi.adapter.*;
 /**
  * A {@link MessageSenderFactory} that produces a sender that -- when called -- serializes the call
  * to xml, deserializes it again and calls the receiver implementation of the same api. Quite handy
- * to test the complete serialization round trip.
+ * to test the complete serialization round trip, but without JMS itself.
  */
 public class ForwardingSenderFactory implements MessageSenderFactory {
 
-    private final Object impl;
-    private final JaxbProvider jaxbProvider;
-    private final XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler();
-
-    public ForwardingSenderFactory(Object impl) {
-        this(impl, JaxbProvider.UNCHANGED);
+    public static <T> T create(Class<T> api, T impl) {
+        return create(api, impl, JaxbProvider.UNCHANGED);
     }
 
-    public ForwardingSenderFactory(Object impl, JaxbProvider jaxbProvider) {
+    @SuppressWarnings("unchecked")
+    public static <T> T create(Class<T> api, T impl, JaxbProvider provider) {
+        return new ForwardingSenderFactory((Class<Object>) api, impl, provider).create(api);
+    }
+
+    private final Class<Object> api;
+    private final Object impl;
+    private final JaxbProvider jaxbProvider;
+    private final XmlJmsPayloadHandler payloadHandler;
+
+    public ForwardingSenderFactory(Class<Object> api, Object impl) {
+        this(api, impl, JaxbProvider.UNCHANGED);
+    }
+
+    public ForwardingSenderFactory(Class<Object> api, Object impl, JaxbProvider jaxbProvider) {
+        assert api.isInstance(impl);
+        this.api = api;
         this.impl = impl;
         this.jaxbProvider = jaxbProvider;
+        this.payloadHandler = new XmlJmsPayloadHandler(jaxbProvider);
     }
 
     @Override
-    public <T> T create(final Class<T> api) {
+    public <T> T create(final Class<T> apiIn) {
+        assert apiIn == api;
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
-                forward(api, method, args);
+                forward(method, args);
                 return null;
             }
         };
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return api.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
+        return apiIn.cast(Proxy.newProxyInstance(classLoader, new Class<?>[] { api }, handler));
     }
 
-    private <T> void forward(Class<T> api, Method method, Object[] args) {
+    private <T> void forward(Method method, Object[] args) {
         Writer writer = new StringWriter();
         Object pojo = new MessageCallFactory<Object>(method).apply(args);
-        payloadHandler.convert(api, writer, jaxbProvider, pojo);
+        payloadHandler.convert(api, writer, pojo);
 
-        Object decoded = XmlStringDecoder.create(api, jaxbProvider).decode(writer.toString());
-        PojoInvoker.of(api, api.cast(impl)).invoke(decoded);
+        XmlStringDecoder<?> decoder = XmlStringDecoder.create(api, jaxbProvider);
+        Object decoded = decoder.decode(writer.toString());
+        PojoInvoker.<Object> of(api, impl).invoke(decoded);
     }
 }

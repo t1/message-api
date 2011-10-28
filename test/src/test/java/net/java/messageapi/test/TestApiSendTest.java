@@ -25,31 +25,31 @@ public class TestApiSendTest {
         testApi = ToXmlEncoderHelper.create(TestApi.class, writer, jaxbProvider);
     }
 
-    private String getLine(StringWriter writer, int lineNumber) {
+    private String getLine(int lineNumber) {
         return writer.toString().split("\n")[lineNumber];
     }
 
     private void matchFrame(String methodName, int lines) {
-        assertThat(getLine(writer, 0),
+        assertThat(getLine(0),
                 matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
         String elementStart = "<(ns2:)?" + methodName + "( xmlns:ns2=\"" + NS + "\")?";
         if (lines == 2) {
-            assertThat(getLine(writer, 1), matches(elementStart + "/>"));
+            assertThat(getLine(1), matches(elementStart + "/>"));
         } else {
-            assertThat(getLine(writer, 1), matches(elementStart + ">"));
-            assertThat(getLine(writer, lines), matches("</(ns2:)?" + methodName + ">"));
+            assertThat(getLine(1), matches(elementStart + ">"));
+            assertThat(getLine(lines), matches("</(ns2:)?" + methodName + ">"));
         }
     }
 
     private void matchElement(String name, String value, int line) {
-        assertThat(getLine(writer, line), matches("\\s*<" + name + ">" + value + "</" + name + ">"));
+        assertThat(getLine(line), matches("\\s*<" + name + ">" + value + "</" + name + ">"));
     }
 
     @Test
     public void testNoArgCall() throws Exception {
         testApi.noArgCall();
 
-        assertThat(getLine(writer, 1), matches("<(ns2:)?noArgCall( xmlns:ns2=\"" + NS + "\")?/>"));
+        assertThat(getLine(1), matches("<(ns2:)?noArgCall( xmlns:ns2=\"" + NS + "\")?/>"));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class TestApiSendTest {
         testApi.numberCall(345);
 
         matchFrame("numberCall", 3);
-        assertThat(getLine(writer, 2), matches("\\s*<numberName( xsi:type=\"xs:int\" "
+        assertThat(getLine(2), matches("\\s*<numberName( xsi:type=\"xs:int\" "
                 + "xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" "
                 + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"| class=\"int\"|)" //
                 + ">345</numberName>"));
@@ -87,11 +87,11 @@ public class TestApiSendTest {
         testApi.namespaceCall(t);
 
         assertEquals("<ns2:namespaceCall xmlns:ns2=\"" + NS + "\" xmlns:ns3=\"test-ns\">",
-                getLine(writer, 1));
-        assertEquals("    <theType>", getLine(writer, 2));
-        assertEquals("        <ns3:value>someValue</ns3:value>", getLine(writer, 3));
-        assertEquals("    </theType>", getLine(writer, 4));
-        assertEquals("</ns2:namespaceCall>", getLine(writer, 5));
+                getLine(1));
+        assertEquals("    <theType>", getLine(2));
+        assertEquals("        <ns3:value>someValue</ns3:value>", getLine(3));
+        assertEquals("    </theType>", getLine(4));
+        assertEquals("</ns2:namespaceCall>", getLine(5));
     }
 
     @Test

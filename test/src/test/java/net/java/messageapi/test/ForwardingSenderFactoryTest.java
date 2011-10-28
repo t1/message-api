@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class ForwardingSenderFactoryTest {
 
     private final TestApi service = mock(TestApi.class);
-    private final TestApi sender = new ForwardingSenderFactory(service).create(TestApi.class);
+    private final TestApi sender = ForwardingSenderFactory.create(TestApi.class, service);
 
     @Test
     public void shouldSendNoArgCall() throws Exception {

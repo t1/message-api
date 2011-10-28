@@ -15,14 +15,14 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
 
     public MessageCallFactory(Method method) {
         this.method = method;
-        this.pojoClass = getType(method);
+        this.pojoClass = getType();
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<T> getType(Method method) {
+    private Class<T> getType() {
         return (Class<T>) new MethodAsClassGenerator(method).get();
     }
 
+    @Override
     public T apply(Object[] args) {
         try {
             Class<?>[] argTypes = getArgTypes(args);

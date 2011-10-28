@@ -22,4 +22,9 @@ class VersionSupplier implements JmsHeaderSupplier {
     public boolean equals(Object other) {
         return other != null && other.getClass().equals(this.getClass());
     }
+
+    @Override
+    public int hashCode() {
+        return 1; // that's okay... all VersionSuppliers are equal
+    }
 }

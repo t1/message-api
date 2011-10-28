@@ -22,7 +22,7 @@ public class SimpleCollectionsApiTest {
     private final SimpleCollectionsApi sender;
 
     public SimpleCollectionsApiTest(@NotNull @Assume("!= XSTREAM") JaxbProvider provider) {
-        sender = new ForwardingSenderFactory(service, provider).create(SimpleCollectionsApi.class);
+        sender = ForwardingSenderFactory.create(SimpleCollectionsApi.class, service, provider);
     }
 
     @Test

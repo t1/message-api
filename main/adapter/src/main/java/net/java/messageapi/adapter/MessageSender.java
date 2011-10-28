@@ -57,7 +57,7 @@ public class MessageSender {
         Reader reader = getReaderFor(api);
         if (reader == null)
             return newDefaultConfigFor(api);
-        return readConfigFrom(reader, api);
+        return readConfigFrom(reader);
     }
 
     static Reader getReaderFor(Class<?> api) {
@@ -91,7 +91,7 @@ public class MessageSender {
         }
     }
 
-    public static MessageSenderFactory readConfigFrom(Reader reader, Class<?> api) {
+    public static MessageSenderFactory readConfigFrom(Reader reader) {
         try {
             Unmarshaller unmarshaller = getContext().createUnmarshaller();
             MessageSenderFactory factory = (MessageSenderFactory) unmarshaller.unmarshal(reader);

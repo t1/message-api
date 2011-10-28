@@ -417,7 +417,6 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         MapMessageDecoder.create(MappedApi.class, serviceMock, mapping).onMessage(message);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> void givenFieldMapping(Mapping receiveMapping, String attributeName,
             FieldMapping<T> fieldMapping) {
         given((FieldMapping<T>) receiveMapping.getMappingForField(attributeName)).willReturn(

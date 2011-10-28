@@ -54,7 +54,6 @@ public class PojoGenerator extends AbstractGenerator {
         }
 
         public List<VariableElement> getParameters() {
-            @SuppressWarnings("unchecked")
             List<VariableElement> parameters = (List<VariableElement>) method.getParameters();
             return parameters;
         }

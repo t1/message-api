@@ -31,7 +31,7 @@ class JavaFileObjectDummy extends FileObjectDummy implements JavaFileObject {
     }
 
     @Override
-    public boolean isNameCompatible(String simpleName, Kind kind) {
+    public boolean isNameCompatible(String simpleName, Kind otherKind) {
         throw new UnsupportedOperationException();
     }
 }

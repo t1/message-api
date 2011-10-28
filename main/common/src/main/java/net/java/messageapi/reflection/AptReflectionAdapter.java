@@ -23,14 +23,13 @@ class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
     }
 
     @Override
-    protected String getMethodName(ExecutableElement method) {
-        return method.getSimpleName().toString();
+    protected String getSimpleMethodNameOf(ExecutableElement otherMethod) {
+        return otherMethod.getSimpleName().toString();
     }
 
     @Override
-    protected Iterable<ExecutableElement> siblings(ExecutableElement method) {
+    protected Iterable<ExecutableElement> siblings() {
         Iterable<? extends Element> allSiblings = method.getEnclosingElement().getEnclosedElements();
-        @SuppressWarnings("unchecked")
         Iterable<ExecutableElement> siblingMethods = (Iterable<ExecutableElement>) filter(
                 allSiblings, instanceOf(ExecutableElement.class));
         return siblingMethods;

@@ -98,20 +98,20 @@ public abstract class PojoProperty {
         return matcher.getLocalType();
     }
 
-    public boolean isAnnotatedAs(Class<? extends Annotation> type) {
-        return annotations.getAnnotationFieldsFor(type) != null;
+    public boolean isAnnotatedAs(Class<? extends Annotation> annotationType) {
+        return annotations.getAnnotationFieldsFor(annotationType) != null;
     }
 
-    public Map<String, Object> getAnnotationFieldsFor(Class<? extends Annotation> type) {
-        return annotations.getAnnotationFieldsFor(type);
+    public Map<String, Object> getAnnotationFieldsFor(Class<? extends Annotation> annotationType) {
+        return annotations.getAnnotationFieldsFor(annotationType);
     }
 
-    public void annotate(Class<? extends Annotation> type) {
-        annotate(type, PojoAnnotations.NO_FIELDS);
+    public void annotate(Class<? extends Annotation> annotationType) {
+        annotate(annotationType, PojoAnnotations.NO_FIELDS);
     }
 
-    public void annotate(Class<? extends Annotation> type, Map<String, ?> fields) {
-        annotations.add(type, fields);
-        pojo.addImport(type.getName());
+    public void annotate(Class<? extends Annotation> annotationType, Map<String, ?> fields) {
+        annotations.add(annotationType, fields);
+        pojo.addImport(annotationType.getName());
     }
 }

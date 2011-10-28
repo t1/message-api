@@ -67,24 +67,23 @@ public class JmsSenderFactory implements MessageSenderFactory {
         destination = null;
     }
 
-    private Context getJNDIContext(JmsQueueConfig config) throws NamingException {
+    private Context getJNDIContext() throws NamingException {
         if (jndiContext == null) {
             jndiContext = config.getContext();
         }
         return jndiContext;
     }
 
-    protected ConnectionFactory getConnectionFactory(JmsQueueConfig config) throws NamingException {
+    protected ConnectionFactory getConnectionFactory() throws NamingException {
         if (connectionFactory == null) {
-            connectionFactory = (ConnectionFactory) getJNDIContext(config).lookup(
-                    config.getFactoryName());
+            connectionFactory = (ConnectionFactory) getJNDIContext().lookup(config.getFactoryName());
         }
         return connectionFactory;
     }
 
-    protected Destination getDestination(JmsQueueConfig config) throws NamingException {
+    protected Destination getDestination() throws NamingException {
         if (destination == null) {
-            destination = (Destination) getJNDIContext(config).lookup(config.getDestinationName());
+            destination = (Destination) getJNDIContext().lookup(config.getDestinationName());
         }
         return destination;
     }
@@ -118,12 +117,12 @@ public class JmsSenderFactory implements MessageSenderFactory {
         loggerFor(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
 
         try {
-            ConnectionFactory factory = getConnectionFactory(config);
+            ConnectionFactory factory = getConnectionFactory();
             connection = factory.createConnection(config.getUser(), config.getPass());
             Session session = connection.createSession(config.isTransacted(),
                     Session.AUTO_ACKNOWLEDGE);
 
-            Destination destination = getDestination(config);
+            getDestination();
             MessageProducer messageProducer = session.createProducer(destination);
 
             Message message = payloadHandler.createJmsMessage(payload, session);

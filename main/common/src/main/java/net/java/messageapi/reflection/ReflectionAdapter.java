@@ -28,24 +28,24 @@ public abstract class ReflectionAdapter<T> {
 
     protected ReflectionAdapter(T method) {
         this.method = method;
-        this.unique = initUnique(method);
+        this.unique = initUnique();
     }
 
-    private boolean initUnique(T method) {
-        final String methodName = getMethodName(method);
-        for (T sibling : siblings(method)) {
+    private boolean initUnique() {
+        final String methodName = getSimpleMethodNameOf(method);
+        for (T sibling : siblings()) {
             if (sibling.equals(method))
                 continue;
-            if (methodName.equals(getMethodName(sibling))) {
+            if (methodName.equals(getSimpleMethodNameOf(sibling))) {
                 return false;
             }
         }
         return true;
     }
 
-    protected abstract String getMethodName(T method);
+    protected abstract String getSimpleMethodNameOf(T otherMethod);
 
-    protected abstract Iterable<T> siblings(T method);
+    protected abstract Iterable<T> siblings();
 
     public abstract String getPackage();
 
@@ -68,7 +68,7 @@ public abstract class ReflectionAdapter<T> {
     }
 
     public String getMethodName() {
-        StringBuilder name = new StringBuilder(getMethodName(method));
+        StringBuilder name = new StringBuilder(getSimpleMethodNameOf(method));
 
         if (!unique) {
             for (Object parameter : getParameters()) {

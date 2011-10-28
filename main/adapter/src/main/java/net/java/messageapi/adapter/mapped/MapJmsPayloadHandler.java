@@ -62,7 +62,6 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         for (Field field : pojo.getClass().getDeclaredFields()) {
             String fieldName = field.getName();
-            @SuppressWarnings("unchecked")
             FieldMapping<Object> fieldMapping = (FieldMapping<Object>) mapping.getMappingForField(fieldName);
             Object value = getField(pojo, field);
             if (value != null) {

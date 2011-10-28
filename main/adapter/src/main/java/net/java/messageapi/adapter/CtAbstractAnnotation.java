@@ -19,7 +19,8 @@ public abstract class CtAbstractAnnotation {
     protected ConstPool constPool;
     protected Annotation annotation;
 
-    protected void init(ConstPool constPool, Class<? extends java.lang.annotation.Annotation> type) {
+    protected void init(@SuppressWarnings("hiding") ConstPool constPool,
+            Class<? extends java.lang.annotation.Annotation> type) {
         this.constPool = constPool;
         this.annotation = new Annotation(type.getName(), constPool);
     }

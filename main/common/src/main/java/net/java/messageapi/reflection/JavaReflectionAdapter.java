@@ -11,12 +11,12 @@ class JavaReflectionAdapter extends ReflectionAdapter<Method> {
     }
 
     @Override
-    protected String getMethodName(Method method) {
-        return method.getName();
+    protected String getSimpleMethodNameOf(Method otherMethod) {
+        return otherMethod.getName();
     }
 
     @Override
-    protected List<Method> siblings(Method method) {
+    protected List<Method> siblings() {
         return Arrays.asList(method.getDeclaringClass().getMethods());
     }
 

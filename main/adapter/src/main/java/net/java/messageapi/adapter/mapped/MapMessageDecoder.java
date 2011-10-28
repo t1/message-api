@@ -57,7 +57,6 @@ public class MapMessageDecoder<T> implements MessageListener {
     private Map<String, String> convert(MapMessage message) {
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         try {
-            @SuppressWarnings("unchecked")
             Enumeration<String> mapNames = message.getMapNames();
             while (mapNames.hasMoreElements()) {
                 String name = mapNames.nextElement();

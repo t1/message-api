@@ -19,16 +19,14 @@ class XStreamAnnotationScanner {
 
 	private final Set<Class<?>> visited = new HashSet<Class<?>>();
 
-	private XStreamAnnotationScanner(XStream xStream) {
+	public XStreamAnnotationScanner(XStream xStream) {
 		this.xStream = xStream;
 	}
 
-	public XStreamAnnotationScanner(String contextPath,
-			ClassLoader classLoader, XStream xStream) {
-		this(xStream);
-
+	public void scanPath(String contextPath,
+			ClassLoader classLoader) {
 		try {
-			scanPath(contextPath, classLoader);
+			scanPathOrThrow(contextPath, classLoader);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (ClassNotFoundException e) {
@@ -36,15 +34,13 @@ class XStreamAnnotationScanner {
 		}
 	}
 
-	public XStreamAnnotationScanner(Class<?>[] classes, XStream xStream) {
-		this(xStream);
-
+	public void scanTypes(Class<?>[] classes) {
 		for (Class<?> type : classes) {
 			scanType(type);
 		}
 	}
 
-	private void scanPath(String contextPath, ClassLoader classLoader) throws IOException, ClassNotFoundException {
+	private void scanPathOrThrow(String contextPath, ClassLoader classLoader) throws IOException, ClassNotFoundException {
 		for (String pathElement : contextPath.split(":")) {
 			scanDirectory(pathElement, classLoader);
 		}
@@ -83,14 +79,13 @@ class XStreamAnnotationScanner {
 				}
 			}
 			Class<?> subType = field.getType();
-			if (mustBeVisited(subType, visited)) {
-				visited.add(subType);
+			if (visit(subType)) {
 				scanType(subType);
 			}
 		}
 	}
 
-	private boolean mustBeVisited(Class<?> type, Set<Class<?>> visited) {
-		return !type.isPrimitive() && !visited.contains(type);
+	private boolean visit(Class<?> type) {
+		return !type.isPrimitive() && !visited.add(type);
 	}
 }

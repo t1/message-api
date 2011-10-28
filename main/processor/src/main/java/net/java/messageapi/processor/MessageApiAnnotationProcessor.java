@@ -24,7 +24,7 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
     private ParameterMapGenerator propertyNameIndexGenerator;
 
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
+    public synchronized void init(@SuppressWarnings("hiding") ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         Messager messager = getMessager();
         Filer filer = processingEnv.getFiler();

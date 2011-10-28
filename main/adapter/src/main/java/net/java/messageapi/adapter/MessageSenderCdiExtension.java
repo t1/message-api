@@ -88,7 +88,7 @@ public class MessageSenderCdiExtension implements Extension {
         return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
     }
 
-    void step3_createBeans(@Observes AfterBeanDiscovery abd, BeanManager bm) {
+    void step3_createBeans(@Observes AfterBeanDiscovery abd) {
         log.info("create {} beans for {} message apis", beanIds.size(), messageApis.size());
         for (BeanId beanId : beanIds) {
             log.info("create bean for {}", beanId);

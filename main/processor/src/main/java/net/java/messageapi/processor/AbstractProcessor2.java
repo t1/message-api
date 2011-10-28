@@ -26,7 +26,7 @@ abstract class AbstractProcessor2 extends AbstractProcessor {
      * we are running in maven.
      */
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
+    public synchronized void init(@SuppressWarnings("hiding") ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         boolean isMaven = System.getProperty("maven.home") != null;
         messager = isMaven ? new ThrowOnErrorMessager(new StandardOutMessager())

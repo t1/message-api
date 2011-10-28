@@ -32,16 +32,16 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     @Override
     public String toPayload(Class<?> api, Method method, Object pojo) {
         Writer writer = new StringWriter();
-        convert(api, writer, jaxbProvider, pojo);
+        convert(api, writer, pojo);
         return writer.toString();
     }
 
-    public void convert(Class<?> api, Writer writer, JaxbProvider jaxbProvider, Object pojo) {
-        Marshaller marshaller = createMarshaller(api, jaxbProvider, pojo);
+    public void convert(Class<?> api, Writer writer, Object pojo) {
+        Marshaller marshaller = createMarshaller(api, pojo);
         marshalPojo(marshaller, pojo, writer);
     }
 
-    private <T> Marshaller createMarshaller(Class<T> api, JaxbProvider jaxbProvider, Object pojo) {
+    private <T> Marshaller createMarshaller(Class<T> api, Object pojo) {
         try {
             JAXBContext context = jaxbProvider.createJaxbContextFor(pojo.getClass());
             Marshaller marshaller = context.createMarshaller();

@@ -44,7 +44,7 @@ public class XmlMessageDecoder<T> implements MessageListener {
     public void onMessage(Message message) {
         String xml = getXml((TextMessage) message);
         Object pojo = decoder.decode(xml);
-        JmsProperty p = null;
+        JmsProperty p = null; // JmsPropertyScanner
         invoker.invoke(pojo);
     }
 

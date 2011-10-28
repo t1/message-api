@@ -14,10 +14,12 @@ public class MethodNameHelperTest {
         // intentionally left empty
     }
 
+    @SuppressWarnings("unused")
     public void oneArg(String foo) {
         // intentionally left empty
     }
 
+    @SuppressWarnings("unused")
     public void twoArgs(String foo, int bar) {
         // intentionally left empty
     }
@@ -29,6 +31,7 @@ public class MethodNameHelperTest {
     public abstract class AbstractClass {
         public abstract void abstractOneArg(String abs);
 
+        @SuppressWarnings("unused")
         public void concreteOneArg(String conc) {
             // intentionally left empty
         }

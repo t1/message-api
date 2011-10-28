@@ -81,7 +81,7 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
         addFullConstructor();
     }
 
-    private void addDefaultConstuctor() throws NotFoundException, CannotCompileException {
+    private void addDefaultConstuctor() throws CannotCompileException {
         CtConstructor constructor = new CtConstructor(new CtClass[0], ctClass);
         constructor.setBody("{ super(); }");
         constructor.setModifiers(Modifier.PRIVATE);

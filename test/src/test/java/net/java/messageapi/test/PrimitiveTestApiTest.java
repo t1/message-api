@@ -24,21 +24,21 @@ public class PrimitiveTestApiTest {
         testApi = ToXmlEncoderHelper.create(PrimitivesTestApi.class, writer, jaxbProvider);
     }
 
-    private String getLine(StringWriter writer, int lineNumber) {
+    private String getLine(int lineNumber) {
         return writer.toString().split("\n")[lineNumber];
     }
 
     private void matchFrame(String methodName, int lines) {
-        assertThat(getLine(writer, 0),
+        assertThat(getLine(0),
                 matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
-        assertThat(getLine(writer, 1), //
+        assertThat(getLine(1), //
                 matches("<(ns2:)?" + methodName + "( xmlns:ns2=\"" + NS + "\")?>"));
-        assertThat(getLine(writer, lines), //
+        assertThat(getLine(lines), //
                 matches("</(ns2:)?" + methodName + ">"));
     }
 
     private void matchElement(String name, String value, int line) {
-        assertThat(getLine(writer, line), matches("\\s*<" + name + ">" + value + "</" + name + ">"));
+        assertThat(getLine(line), matches("\\s*<" + name + ">" + value + "</" + name + ">"));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class PrimitiveTestApiTest {
         testApi.charCall('a');
 
         matchFrame("charCall", 3);
-        assertThat(getLine(writer, 2), matches("\\s*<" + "c" + ">" + "(97|a)" + "</" + "c" + ">"));
+        assertThat(getLine(2), matches("\\s*<" + "c" + ">" + "(97|a)" + "</" + "c" + ">"));
     }
 
     @Test

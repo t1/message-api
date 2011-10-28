@@ -14,22 +14,24 @@ class XStreamJaxbContext extends JAXBContext {
 	@SuppressWarnings("unused")
 	private final Map<String, Object> properties;
 	private final XStream xStream;
+	private final XStreamAnnotationScanner scanner;
 
 	private XStreamJaxbContext(Map<String, Object> properties) {
 		this.properties = properties;
 		this.xStream = new XStream();
 		xStream.autodetectAnnotations(true);
+		this.scanner = new XStreamAnnotationScanner(xStream);
 	}
 
 	public XStreamJaxbContext(String contextPath, ClassLoader classLoader,
 			Map<String, Object> properties) {
 		this(properties);
-		new XStreamAnnotationScanner(contextPath, classLoader, xStream);
+		scanner.scanPath(contextPath, classLoader);
 	}
 
 	public XStreamJaxbContext(Class<?>[] classes, Map<String, Object> properties) {
 		this(properties);
-		new XStreamAnnotationScanner(classes, xStream);
+		scanner.scanTypes(classes);
 	}
 
 	@Override

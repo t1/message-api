@@ -33,7 +33,7 @@ public abstract class AbstractJmsSenderFactoryTest {
     protected final MessageListener targetMDB = mock(MessageListener.class);
 
     @BeforeClass
-    public static void disableTestLogs() throws NamingException, JMSException {
+    public static void disableTestLogs() throws JMSException {
         Logger mockEjb = (Logger) LoggerFactory.getLogger("org.mockejb");
         mockEjb.setLevel(Level.WARN);
 
@@ -61,7 +61,6 @@ public abstract class AbstractJmsSenderFactoryTest {
     /** Helper for debugging */
     protected void printHeaders() {
         Message message = captureMessage();
-        @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
         while (propertyNames.hasMoreElements()) {
             String propertyName = propertyNames.nextElement();
