@@ -51,9 +51,18 @@ public class XmlMessageDecoder<T> implements MessageListener {
                     throws JMSException, IllegalAccessException {
                 JmsProperty jmsProperty = field.getAnnotation(JmsProperty.class);
                 if (jmsProperty != null && jmsProperty.headerOnly()) {
-                    String value = message.getStringProperty(propertyName);
+                    Class<?> type = field.getType();
+                    if (String.class.equals(type)) {
+                        String value = message.getStringProperty(propertyName);
+                        field.set(container, value);
+                    } else if (Integer.class.equals(type) || Integer.TYPE.equals(type)) {
+                        int value = message.getIntProperty(propertyName);
+                        field.set(container, value);
+                    } else {
+                        throw new RuntimeException("don't know how to set " + field
+                                + " to the header-only jms propery " + propertyName);
+                    }
                     // FIXME handle other types and collections
-                    field.set(container, value);
                 }
             }
         }).scan(pojo);

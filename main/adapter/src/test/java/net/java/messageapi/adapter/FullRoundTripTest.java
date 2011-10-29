@@ -98,16 +98,16 @@ public class FullRoundTripTest {
         verify(receiver).fullRoundTripMessage("fooo", 123);
     }
 
-    public interface TestInterfaceHeaderOnly {
+    public interface TestInterfaceHeaderOnlyString {
         public void testMethodHeaderOnly(@Optional String foo,
                 @JmsProperty(headerOnly = true) String bar);
     }
 
     @Mock
-    TestInterfaceHeaderOnly impl;
+    TestInterfaceHeaderOnlyString implString;
 
     @Test
-    public void shouldCopyJmsPropertyAnnotation() throws Exception {
+    public void shouldSetHeaderOnlyStringPropertyAnnotation() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
@@ -116,11 +116,63 @@ public class FullRoundTripTest {
         when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
         when(message.getStringProperty("arg1")).thenReturn("123");
 
-        MessageDecoder<TestInterfaceHeaderOnly> decoder = MessageDecoder.of(
-                TestInterfaceHeaderOnly.class, impl);
+        MessageDecoder<TestInterfaceHeaderOnlyString> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyString.class, implString);
 
         decoder.onMessage(message);
 
-        verify(impl).testMethodHeaderOnly("foo", "123");
+        verify(implString).testMethodHeaderOnly("foo", "123");
+    }
+
+    public interface TestInterfaceHeaderOnlyInteger {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Integer bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyInteger implInteger;
+
+    @Test
+    public void shouldSetHeaderOnlyIntegerPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        when(message.getIntProperty("arg1")).thenReturn(123);
+
+        MessageDecoder<TestInterfaceHeaderOnlyInteger> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyInteger.class, implInteger);
+
+        decoder.onMessage(message);
+
+        verify(implInteger).testMethodHeaderOnly("foo", 123);
+    }
+
+    public interface TestInterfaceHeaderOnlyInt {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) int bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyInt implInt;
+
+    @Test
+    public void shouldSetHeaderOnlyIntPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        when(message.getIntProperty("arg1")).thenReturn(123);
+
+        MessageDecoder<TestInterfaceHeaderOnlyInt> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyInt.class, implInt);
+
+        decoder.onMessage(message);
+
+        verify(implInt).testMethodHeaderOnly("foo", 123);
     }
 }
