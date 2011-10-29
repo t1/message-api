@@ -7,9 +7,6 @@ import java.util.Enumeration;
 
 import javax.xml.bind.*;
 
-import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
-import net.java.messageapi.adapter.mapped.Mapping;
-import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 
 /**
  * The central provider for the proxies to send messages.

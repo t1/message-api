@@ -1,7 +1,7 @@
 package net.java.messageapi.test;
 
 import static org.mockito.Mockito.*;
-import net.java.messageapi.adapter.xml.ForwardingSenderFactory;
+import net.java.messageapi.adapter.ForwardingSenderFactory;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.xml;
+package net.java.messageapi.adapter;
 
 import java.util.Arrays;
 

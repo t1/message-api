@@ -9,9 +9,7 @@ import java.util.Map;
 
 import javax.jms.*;
 
-import net.java.messageapi.adapter.JmsSenderFactory;
-import net.java.messageapi.adapter.MessageSender;
-import net.java.messageapi.adapter.mapped.*;
+import net.java.messageapi.adapter.*;
 import net.java.messageapi.converter.JodaLocalDateConverter;
 import net.java.messageapi.converter.StringToBooleanConverter;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;

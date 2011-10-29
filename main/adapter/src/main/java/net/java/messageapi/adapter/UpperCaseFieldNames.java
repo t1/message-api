@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.mapped;
+package net.java.messageapi.adapter;
 
 class UpperCaseFieldNames extends MappingDecorator {
 

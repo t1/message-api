@@ -1,10 +1,8 @@
-package net.java.messageapi.adapter.xml;
+package net.java.messageapi.adapter;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.*;
-
-import net.java.messageapi.adapter.*;
 
 /**
  * A {@link MessageSenderFactory} that produces a sender that -- when called -- serializes the call

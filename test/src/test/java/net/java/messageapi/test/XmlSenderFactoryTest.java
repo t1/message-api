@@ -9,10 +9,7 @@ import java.util.Properties;
 
 import javax.xml.bind.JAXB;
 
-import net.java.messageapi.adapter.JmsQueueConfig;
-import net.java.messageapi.adapter.JmsSenderFactory;
-import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
+import net.java.messageapi.adapter.*;
 import net.sf.twip.*;
 
 import org.junit.Test;

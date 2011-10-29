@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.mapped;
+package net.java.messageapi.adapter;
 
 /**
  * Use this class to change the names of the fields in a mapped message.

@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.xml;
+package net.java.messageapi.adapter;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -8,7 +8,6 @@ import java.util.List;
 import javax.xml.bind.*;
 
 import net.java.messageapi.MessageApi;
-import net.java.messageapi.adapter.MethodAsClassGenerator;
 
 import com.google.common.collect.Lists;
 

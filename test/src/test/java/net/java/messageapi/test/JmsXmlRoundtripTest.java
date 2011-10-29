@@ -5,10 +5,8 @@ import static org.mockito.Mockito.*;
 
 import javax.jms.*;
 
-import net.java.messageapi.adapter.MessageSender;
-import net.java.messageapi.adapter.PojoInvoker;
-import net.java.messageapi.adapter.xml.*;
-import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
+import net.java.messageapi.adapter.*;
+import net.java.messageapi.adapter.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
 import net.sf.twip.*;
 

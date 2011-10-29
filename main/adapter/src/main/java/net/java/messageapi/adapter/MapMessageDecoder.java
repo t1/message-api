@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.mapped;
+package net.java.messageapi.adapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -7,7 +7,6 @@ import java.util.*;
 import javax.jms.*;
 
 import net.java.messageapi.MessageApi;
-import net.java.messageapi.adapter.PojoInvoker;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

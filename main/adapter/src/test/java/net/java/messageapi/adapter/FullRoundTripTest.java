@@ -13,7 +13,6 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 
 import net.java.messageapi.*;
-import net.java.messageapi.adapter.xml.XmlStringDecoder;
 import net.sf.twip.TwiP;
 
 import org.junit.*;
@@ -101,7 +100,7 @@ public class FullRoundTripTest {
 
     public interface TestInterfaceHeaderOnly {
         public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Integer bar);
+                @JmsProperty(headerOnly = true) String bar);
     }
 
     @Mock
@@ -122,6 +121,6 @@ public class FullRoundTripTest {
 
         decoder.onMessage(message);
 
-        verify(impl).testMethodHeaderOnly("foo", null); // TODO 123
+        verify(impl).testMethodHeaderOnly("foo", "123");
     }
 }

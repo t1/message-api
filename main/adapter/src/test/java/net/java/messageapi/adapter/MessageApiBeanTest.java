@@ -10,8 +10,6 @@ import java.util.Properties;
 import javax.enterprise.util.AnnotationLiteral;
 
 import net.java.messageapi.*;
-import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
-import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;

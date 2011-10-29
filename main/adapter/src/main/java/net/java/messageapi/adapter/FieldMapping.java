@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.mapped;
+package net.java.messageapi.adapter;
 
 import net.java.messageapi.converter.Converter;
 import net.java.messageapi.converter.IdentityConverter;

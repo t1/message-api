@@ -5,9 +5,7 @@ import static org.mockito.Mockito.*;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import net.java.messageapi.adapter.MessageSender;
-import net.java.messageapi.adapter.PojoInvoker;
-import net.java.messageapi.adapter.xml.XmlStringDecoder;
+import net.java.messageapi.adapter.*;
 import net.sf.twip.TwiP;
 
 import org.junit.Test;

@@ -1,10 +1,11 @@
-package net.java.messageapi.adapter.xml;
+package net.java.messageapi.adapter;
+
+import java.lang.reflect.Field;
 
 import javax.jms.*;
 
 import net.java.messageapi.JmsProperty;
 import net.java.messageapi.MessageApi;
-import net.java.messageapi.adapter.PojoInvoker;
 
 /**
  * Takes a {@link TextMessage}, deserializes it and calls the corresponding method in an
@@ -41,10 +42,21 @@ public class XmlMessageDecoder<T> implements MessageListener {
     }
 
     @Override
-    public void onMessage(Message message) {
+    public void onMessage(final Message message) {
         String xml = getXml((TextMessage) message);
         Object pojo = decoder.decode(xml);
-        JmsProperty p = null; // JmsPropertyScanner
+        new JmsPropertyScanner(new JmsPropertyScanner.Visitor() {
+            @Override
+            public void visit(String propertyName, Object container, Field field, Object index)
+                    throws JMSException, IllegalAccessException {
+                JmsProperty jmsProperty = field.getAnnotation(JmsProperty.class);
+                if (jmsProperty != null && jmsProperty.headerOnly()) {
+                    String value = message.getStringProperty(propertyName);
+                    // FIXME handle other types and collections
+                    field.set(container, value);
+                }
+            }
+        }).scan(pojo);
         invoker.invoke(pojo);
     }
 

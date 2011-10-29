@@ -7,8 +7,6 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Method;
 
 import net.java.messageapi.*;
-import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
-import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 import net.java.messageapi.test.JmsPropertyApi;
 import net.sf.twip.TwiP;
 

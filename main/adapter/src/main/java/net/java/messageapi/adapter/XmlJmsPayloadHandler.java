@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.xml;
+package net.java.messageapi.adapter;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -10,7 +10,6 @@ import javax.xml.bind.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import net.java.messageapi.adapter.JmsPayloadHandler;
 
 /**
  * A {@link JmsPayloadHandler} that serializes calls as XML text messages.

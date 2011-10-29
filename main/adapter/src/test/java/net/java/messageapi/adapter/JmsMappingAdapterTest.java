@@ -1,4 +1,4 @@
-package net.java.messageapi.adapter.mapped;
+package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
 
@@ -9,8 +9,7 @@ import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.JaxbProvider.JaxbProviderMemento;
+import net.java.messageapi.adapter.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.converter.*;
 import net.sf.twip.*;
 

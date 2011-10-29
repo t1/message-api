@@ -276,6 +276,16 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
+    public void shouldNotIncludeNull() throws Exception {
+        JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
+
+        api.jmsPropertyMethod(null, null);
+
+        assertNull(captureMessage().getStringProperty("one"));
+        assertNull(captureMessage().getStringProperty("two"));
+    }
+
+    @Test
     public void shouldNotCycle() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
@@ -325,7 +335,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
 
     @Test
     public void shouldFoldCyclicValue() throws Exception {
-        // FIXME use non-collection cycle
+        // TODO test with a hand-made cycle; collections are sorted out before
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         LinkedList<String> list = new LinkedList<String>(); // has cycles!
@@ -336,6 +346,4 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
         assertEquals("one", captureMessage().getStringProperty("param[0]"));
         assertEquals("two", captureMessage().getStringProperty("param[1]"));
     }
-
-    // FIXME decode headerOnly parameters
 }

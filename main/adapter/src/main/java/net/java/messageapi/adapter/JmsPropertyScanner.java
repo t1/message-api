@@ -9,7 +9,6 @@ import javax.jms.JMSException;
 import net.java.messageapi.JmsProperty;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 class JmsPropertyScanner {
 
@@ -27,86 +26,79 @@ class JmsPropertyScanner {
     );
 
     interface Visitor {
-        void visit(String name, Object value) throws JMSException;
+        public void visit(String propertyName, Object container, Field field, Object index)
+                throws JMSException, IllegalAccessException;
     }
 
-    private final List<Object> visited = Lists.newArrayList();
     private final Visitor visitor;
 
     public JmsPropertyScanner(Visitor visitor) {
         this.visitor = visitor;
     }
 
-    public void scan(Object pojo) {
+    public void scan(Object object) {
         try {
-            scan(pojo, "", false);
+            scan(object, "", false, new ArrayList<Object>());
         } catch (JMSException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void scan(Object pojo, String prefix, boolean doAdd) throws JMSException {
-        for (Field field : pojo.getClass().getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers()))
-                continue;
-            Object value = getField(pojo, field);
-            if (value == null)
-                continue;
-            boolean alreadSeen = !shouldVisit(value);
-            if (alreadSeen)
-                continue;
-            boolean nestedDoAdd = doAdd || field.isAnnotationPresent(JmsProperty.class);
-            String fieldName = prefix + field.getName();
-            if (nestedDoAdd) {
-                scan(fieldName, value);
-            }
-        }
-    }
-
-    private Object getField(Object pojo, Field field) {
-        try {
-            field.setAccessible(true);
-            return field.get(pojo);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void scan(String name, Object value) throws JMSException {
-        if (JMS_PROPERTY_TYPES.contains(value.getClass())) {
-            visitor.visit(name, value);
-        } else if (value instanceof Collection) {
-            scan((Collection<?>) value, name);
-        } else if (value.getClass().isArray()) {
-            scan((Object[]) value, name);
-        } else {
-            scan(value, name + "/", true);
-        }
-    }
+    private void scan(Object object, String string, boolean nestedAdd, List<Object> visited)
+            throws JMSException, IllegalAccessException {
+        for (Field field : object.getClass().getDeclaredFields()) {
+            String subPrefix = string + field.getName();
+            boolean isAnnotated = field.isAnnotationPresent(JmsProperty.class);
+            if (Modifier.isStatic(field.getModifiers())) {
+                assert !isAnnotated : "field " + field + " is static but annotated as JmsProperty";
+                continue;
+            }
+            field.setAccessible(true);
 
-    private void scan(Collection<?> collection, String prefix) throws JMSException {
-        int i = 0;
-        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext(); i++) {
-            Object element = iterator.next();
-            scan(prefix + "[" + i + "]", element);
-        }
-    }
-
-    private void scan(Object[] list, String prefix) throws JMSException {
-        for (int i = 0; i < list.length; i++) {
-            Object element = list[i];
-            scan(prefix + "[" + i + "]", element);
-        }
-    }
-
-    private boolean shouldVisit(Object value) {
-        // IdentitySet would be nicer
-        for (Object element : visited) {
-            if (value == element) {
-                return false;
+            if (JMS_PROPERTY_TYPES.contains(field.getType())) {
+                if (nestedAdd || isAnnotated) {
+                    visitor.visit(subPrefix, object, field, null);
+                }
+            } else if (Collection.class.isAssignableFrom(field.getType())) {
+                if (nestedAdd || isAnnotated) {
+                    Collection<?> collection = (Collection<?>) field.get(object);
+                    for (int i = 0; i < collection.size(); i++) {
+                        visitor.visit(subPrefix + "[" + i + "]", object, field, i);
+                    }
+                }
+            } else if (field.getType().isArray()) {
+                if (nestedAdd || isAnnotated) {
+                    Object[] collection = (Object[]) field.get(object);
+                    for (int i = 0; i < collection.length; i++) {
+                        visitor.visit(subPrefix + "[" + i + "]", object, field, i);
+                    }
+                }
+            } else if (Map.class.isAssignableFrom(field.getType())) {
+                if (nestedAdd || isAnnotated) {
+                    Map<String, ?> map = (Map<String, ?>) field.get(object);
+                    for (String key : map.keySet()) {
+                        visitor.visit(subPrefix + "[" + key + "]", object, field, key);
+                    }
+                }
+            } else {
+                Object value = field.get(object);
+                if (value != null && !contains(visited, value)) {
+                    visited.add(value);
+                    scan(value, subPrefix + "/", nestedAdd || isAnnotated, visited);
+                }
             }
         }
-        visited.add(value);
-        return true;
+    }
+
+    private boolean contains(List<Object> visited, Object value) {
+        // a simple IdentitySet would be nicer
+        for (Object object : visited) {
+            if (object == value) {
+                return true;
+            }
+        }
+        return false;
     }
 }

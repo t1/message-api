@@ -1,8 +1,8 @@
-package net.java.messageapi.adapter.mapped;
+package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
-import net.java.messageapi.adapter.mapped.Mapping;
-import net.java.messageapi.adapter.mapped.MappingBuilder;
+import net.java.messageapi.adapter.Mapping;
+import net.java.messageapi.adapter.MappingBuilder;
 import net.sf.twip.TwiP;
 import net.sf.twip.Values;
 

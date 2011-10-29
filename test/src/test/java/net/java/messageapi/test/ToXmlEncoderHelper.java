@@ -3,9 +3,7 @@ package net.java.messageapi.test;
 import java.io.Writer;
 import java.lang.reflect.*;
 
-import net.java.messageapi.adapter.MessageCallFactory;
-import net.java.messageapi.adapter.xml.JaxbProvider;
-import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
+import net.java.messageapi.adapter.*;
 
 public class ToXmlEncoderHelper {
     public static <T> T create(Class<T> api, Writer writer) {

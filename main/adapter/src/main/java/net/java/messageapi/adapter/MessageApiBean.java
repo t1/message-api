@@ -11,9 +11,6 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import net.java.messageapi.*;
-import net.java.messageapi.adapter.mapped.MapJmsPayloadHandler;
-import net.java.messageapi.adapter.mapped.MappingBuilder;
-import net.java.messageapi.adapter.xml.XmlJmsPayloadHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

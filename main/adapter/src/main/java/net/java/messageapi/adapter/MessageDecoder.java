@@ -2,8 +2,6 @@ package net.java.messageapi.adapter;
 
 import javax.jms.*;
 
-import net.java.messageapi.adapter.mapped.MapMessageDecoder;
-import net.java.messageapi.adapter.xml.XmlMessageDecoder;
 
 /**
  * Automatically delegates to the proper {@link MapMessageDecoder} or {@link XmlMessageDecoder}

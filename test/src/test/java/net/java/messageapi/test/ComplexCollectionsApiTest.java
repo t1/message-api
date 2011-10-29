@@ -4,8 +4,8 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import net.java.messageapi.adapter.xml.ForwardingSenderFactory;
-import net.java.messageapi.adapter.xml.JaxbProvider;
+import net.java.messageapi.adapter.ForwardingSenderFactory;
+import net.java.messageapi.adapter.JaxbProvider;
 import net.sf.twip.*;
 
 import org.junit.Test;
