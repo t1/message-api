@@ -108,12 +108,7 @@ public class FullRoundTripTest {
 
     @Test
     public void shouldSetHeaderOnlyStringPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
-                + "    <arg0>foo</arg0>\n" //
-                + "</testMethodHeaderOnly>\n";
-        when(message.getText()).thenReturn(xml);
-        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        mockMessage();
         when(message.getStringProperty("arg1")).thenReturn("123");
 
         MessageDecoder<TestInterfaceHeaderOnlyString> decoder = MessageDecoder.of(
@@ -122,6 +117,15 @@ public class FullRoundTripTest {
         decoder.onMessage(message);
 
         verify(implString).testMethodHeaderOnly("foo", "123");
+    }
+
+    protected void mockMessage() {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
     }
 
     public interface TestInterfaceHeaderOnlyInteger {
@@ -134,12 +138,7 @@ public class FullRoundTripTest {
 
     @Test
     public void shouldSetHeaderOnlyIntegerPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
-                + "    <arg0>foo</arg0>\n" //
-                + "</testMethodHeaderOnly>\n";
-        when(message.getText()).thenReturn(xml);
-        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        mockMessage();
         when(message.getIntProperty("arg1")).thenReturn(123);
 
         MessageDecoder<TestInterfaceHeaderOnlyInteger> decoder = MessageDecoder.of(
@@ -160,12 +159,7 @@ public class FullRoundTripTest {
 
     @Test
     public void shouldSetHeaderOnlyIntPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
-                + "    <arg0>foo</arg0>\n" //
-                + "</testMethodHeaderOnly>\n";
-        when(message.getText()).thenReturn(xml);
-        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        mockMessage();
         when(message.getIntProperty("arg1")).thenReturn(123);
 
         MessageDecoder<TestInterfaceHeaderOnlyInt> decoder = MessageDecoder.of(
