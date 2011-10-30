@@ -26,8 +26,8 @@ class JmsPropertyScanner {
     );
 
     interface Visitor {
-        public void visit(String propertyName, Object container, Field field, Object index)
-                throws JMSException, IllegalAccessException;
+        public void visit(String propertyName, Object container, Field field) throws JMSException,
+                IllegalAccessException;
     }
 
     private final Visitor visitor;
@@ -59,28 +59,19 @@ class JmsPropertyScanner {
 
             if (JMS_PROPERTY_TYPES.contains(field.getType())) {
                 if (nestedAdd || isAnnotated) {
-                    visitor.visit(subPrefix, object, field, null);
+                    visitor.visit(subPrefix, object, field);
                 }
             } else if (Collection.class.isAssignableFrom(field.getType())) {
                 if (nestedAdd || isAnnotated) {
-                    Collection<?> collection = (Collection<?>) field.get(object);
-                    for (int i = 0; i < collection.size(); i++) {
-                        visitor.visit(subPrefix + "[" + i + "]", object, field, i);
-                    }
+                    visitor.visit(subPrefix, object, field);
                 }
             } else if (field.getType().isArray()) {
                 if (nestedAdd || isAnnotated) {
-                    Object[] collection = (Object[]) field.get(object);
-                    for (int i = 0; i < collection.length; i++) {
-                        visitor.visit(subPrefix + "[" + i + "]", object, field, i);
-                    }
+                    visitor.visit(subPrefix, object, field);
                 }
             } else if (Map.class.isAssignableFrom(field.getType())) {
                 if (nestedAdd || isAnnotated) {
-                    Map<String, ?> map = (Map<String, ?>) field.get(object);
-                    for (String key : map.keySet()) {
-                        visitor.visit(subPrefix + "[" + key + "]", object, field, key);
-                    }
+                    visitor.visit(subPrefix, object, field);
                 }
             } else {
                 Object value = field.get(object);

@@ -1,8 +1,7 @@
 package net.java.messageapi.adapter;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -18,8 +17,9 @@ class JmsPropertySupplier implements JmsHeaderSupplier {
     public void addTo(final Message message, Object pojo) throws JMSException {
         JmsPropertyScanner scanner = new JmsPropertyScanner(new JmsPropertyScanner.Visitor() {
             @Override
-            public void visit(String propertyName, Object container, Field field, Object index)
+            public void visit(String propertyName, Object container, Field field)
                     throws JMSException, IllegalAccessException {
+                // TODO something similar has to be done for mapped messages; refactor
                 Object value = field.get(container);
                 if (value == null) {
                     // do not add
@@ -44,21 +44,28 @@ class JmsPropertySupplier implements JmsHeaderSupplier {
                 } else if (value instanceof List) {
                     @SuppressWarnings("unchecked")
                     List<String> list = (List<String>) value;
-                    int i = (Integer) index;
-                    message.setStringProperty(propertyName, list.get(i));
+                    int i = 0;
+                    for (String element : list) {
+                        message.setStringProperty(propertyName + "[" + i++ + "]", element);
+                    }
                 } else if (value.getClass().isArray()) {
                     String[] array = (String[]) value;
-                    int i = (Integer) index;
-                    message.setStringProperty(propertyName, array[i]);
+                    for (int i = 0; i < array.length; i++) {
+                        message.setStringProperty(propertyName + "[" + i + "]", array[i]);
+                    }
                 } else if (value instanceof Set) {
                     @SuppressWarnings("unchecked")
                     Set<String> set = (Set<String>) value;
                     int i = 0;
                     for (String element : set) {
-                        if (i++ == (Integer) index) {
-                            message.setStringProperty(propertyName, element);
-                            break;
-                        }
+                        message.setStringProperty(propertyName + "[" + i++ + "]", element);
+                    }
+                } else if (value instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, String> map = (Map<String, String>) value;
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        String key = propertyName + "[" + entry.getKey() + "]";
+                        message.setStringProperty(key, entry.getValue());
                     }
                 } else {
                     throw new RuntimeException("don't know how to set property " + propertyName

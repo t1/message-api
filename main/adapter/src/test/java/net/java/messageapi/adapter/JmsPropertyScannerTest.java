@@ -54,7 +54,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("simple", pojo, Simple.class.getField("simple"), null);
+        verify(visitor).visit("simple", pojo, Simple.class.getField("simple"));
     }
 
     static class Private {
@@ -69,7 +69,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("priv", pojo, Private.class.getDeclaredField("priv"), null);
+        verify(visitor).visit("priv", pojo, Private.class.getDeclaredField("priv"));
     }
 
     @Test
@@ -84,11 +84,11 @@ public class JmsPropertyScannerTest {
                 value[0] = (String) field.get(object);
                 return null;
             }
-        }).when(visitor).visit("priv", pojo, Private.class.getDeclaredField("priv"), null);
+        }).when(visitor).visit("priv", pojo, Private.class.getDeclaredField("priv"));
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("priv", pojo, Private.class.getDeclaredField("priv"), null);
+        verify(visitor).visit("priv", pojo, Private.class.getDeclaredField("priv"));
         assertEquals("value", value[0]);
     }
 
@@ -99,7 +99,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("simple", pojo, Simple.class.getField("simple"), null);
+        verify(visitor).visit("simple", pojo, Simple.class.getField("simple"));
     }
 
     static class Two {
@@ -115,8 +115,8 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("one", pojo, Two.class.getField("one"), null);
-        verify(visitor).visit("two", pojo, Two.class.getField("two"), null);
+        verify(visitor).visit("one", pojo, Two.class.getField("one"));
+        verify(visitor).visit("two", pojo, Two.class.getField("two"));
     }
 
     static class SimpleInteger {
@@ -130,7 +130,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("integer", pojo, SimpleInteger.class.getField("integer"), null);
+        verify(visitor).visit("integer", pojo, SimpleInteger.class.getField("integer"));
     }
 
     static class SimpleInt {
@@ -144,7 +144,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("integer", pojo, SimpleInt.class.getField("integer"), null);
+        verify(visitor).visit("integer", pojo, SimpleInt.class.getField("integer"));
     }
 
     static class ArrayContainer {
@@ -158,9 +158,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("array[0]", pojo, ArrayContainer.class.getField("array"), 0);
-        verify(visitor).visit("array[1]", pojo, ArrayContainer.class.getField("array"), 1);
-        verify(visitor).visit("array[2]", pojo, ArrayContainer.class.getField("array"), 2);
+        verify(visitor).visit("array", pojo, ArrayContainer.class.getField("array"));
     }
 
     static class ListContainer {
@@ -174,9 +172,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("list[0]", pojo, ListContainer.class.getField("list"), 0);
-        verify(visitor).visit("list[1]", pojo, ListContainer.class.getField("list"), 1);
-        verify(visitor).visit("list[2]", pojo, ListContainer.class.getField("list"), 2);
+        verify(visitor).visit("list", pojo, ListContainer.class.getField("list"));
     }
 
     static class SetContainer {
@@ -190,9 +186,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("set[0]", pojo, SetContainer.class.getField("set"), 0);
-        verify(visitor).visit("set[1]", pojo, SetContainer.class.getField("set"), 1);
-        verify(visitor).visit("set[2]", pojo, SetContainer.class.getField("set"), 2);
+        verify(visitor).visit("set", pojo, SetContainer.class.getField("set"));
     }
 
     static class MapContainer {
@@ -206,9 +200,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("map[one]", pojo, MapContainer.class.getField("map"), "one");
-        verify(visitor).visit("map[two]", pojo, MapContainer.class.getField("map"), "two");
-        verify(visitor).visit("map[three]", pojo, MapContainer.class.getField("map"), "three");
+        verify(visitor).visit("map", pojo, MapContainer.class.getField("map"));
     }
 
     static class NestedNone {
@@ -222,7 +214,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("nested/none", pojo.nested, None.class.getField("none"), null);
+        verify(visitor).visit("nested/none", pojo.nested, None.class.getField("none"));
     }
 
     static class NestedSimple {
@@ -235,7 +227,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("nested/simple", pojo.nested, Simple.class.getField("simple"), null);
+        verify(visitor).visit("nested/simple", pojo.nested, Simple.class.getField("simple"));
     }
 
     static class NestedPrivate {
@@ -248,7 +240,7 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("nested/simple", pojo.nested, Simple.class.getField("simple"), null);
+        verify(visitor).visit("nested/simple", pojo.nested, Simple.class.getField("simple"));
     }
 
     static class Static {
@@ -292,7 +284,6 @@ public class JmsPropertyScannerTest {
 
         scanner.scan(pojo);
 
-        verify(visitor).visit("content/body", pojo.content,
-                RecursiveContent.class.getField("body"), null);
+        verify(visitor).visit("content/body", pojo.content, RecursiveContent.class.getField("body"));
     }
 }

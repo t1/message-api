@@ -4,8 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.jms.*;
 import javax.naming.Context;
@@ -19,6 +18,8 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+
+import com.google.common.collect.*;
 
 /**
  * This is actually an integration test within the adapter classes
@@ -128,6 +129,132 @@ public class FullRoundTripTest {
         when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
     }
 
+    public interface TestInterfaceHeaderOnlyBoolean {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Boolean bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyBoolean implBoolean;
+
+    @Test
+    public void shouldSetHeaderOnlyBooleanPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getBooleanProperty("arg1")).thenReturn(true);
+
+        MessageDecoder<TestInterfaceHeaderOnlyBoolean> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyBoolean.class, implBoolean);
+
+        decoder.onMessage(message);
+
+        verify(implBoolean).testMethodHeaderOnly("foo", true);
+    }
+
+    public interface TestInterfaceHeaderOnlyPrimitiveBoolean {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) boolean bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyPrimitiveBoolean implPrimitiveBoolean;
+
+    @Test
+    public void shouldSetHeaderOnlyPrimitiveBooleanPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getBooleanProperty("arg1")).thenReturn(true);
+
+        MessageDecoder<TestInterfaceHeaderOnlyPrimitiveBoolean> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyPrimitiveBoolean.class, implPrimitiveBoolean);
+
+        decoder.onMessage(message);
+
+        verify(implPrimitiveBoolean).testMethodHeaderOnly("foo", true);
+    }
+
+    public interface TestInterfaceHeaderOnlyByte {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Byte bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyByte implByte;
+
+    @Test
+    public void shouldSetHeaderOnlyBytePropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getByteProperty("arg1")).thenReturn((byte) 123);
+
+        MessageDecoder<TestInterfaceHeaderOnlyByte> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyByte.class, implByte);
+
+        decoder.onMessage(message);
+
+        verify(implByte).testMethodHeaderOnly("foo", (byte) 123);
+    }
+
+    public interface TestInterfaceHeaderOnlyPrimitiveByte {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) byte bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyPrimitiveByte implPrimitiveByte;
+
+    @Test
+    public void shouldSetHeaderOnlyPrimitiveBytePropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getByteProperty("arg1")).thenReturn((byte) 123);
+
+        MessageDecoder<TestInterfaceHeaderOnlyPrimitiveByte> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyPrimitiveByte.class, implPrimitiveByte);
+
+        decoder.onMessage(message);
+
+        verify(implPrimitiveByte).testMethodHeaderOnly("foo", (byte) 123);
+    }
+
+    public interface TestInterfaceHeaderOnlyShort {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Short bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyShort implShort;
+
+    @Test
+    public void shouldSetHeaderOnlyShortPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getShortProperty("arg1")).thenReturn((short) 123);
+
+        MessageDecoder<TestInterfaceHeaderOnlyShort> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyShort.class, implShort);
+
+        decoder.onMessage(message);
+
+        verify(implShort).testMethodHeaderOnly("foo", (short) 123);
+    }
+
+    public interface TestInterfaceHeaderOnlyPrimitiveShort {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) short bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyPrimitiveShort implPrimitiveShort;
+
+    @Test
+    public void shouldSetHeaderOnlyPrimitiveShortPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getShortProperty("arg1")).thenReturn((short) 123);
+
+        MessageDecoder<TestInterfaceHeaderOnlyPrimitiveShort> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyPrimitiveShort.class, implPrimitiveShort);
+
+        decoder.onMessage(message);
+
+        verify(implPrimitiveShort).testMethodHeaderOnly("foo", (short) 123);
+    }
+
     public interface TestInterfaceHeaderOnlyInteger {
         public void testMethodHeaderOnly(@Optional String foo,
                 @JmsProperty(headerOnly = true) Integer bar);
@@ -168,5 +295,244 @@ public class FullRoundTripTest {
         decoder.onMessage(message);
 
         verify(implInt).testMethodHeaderOnly("foo", 123);
+    }
+
+    public interface TestInterfaceHeaderOnlyLong {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Long bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyLong implLong;
+
+    @Test
+    public void shouldSetHeaderOnlyLongPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getLongProperty("arg1")).thenReturn(123L);
+
+        MessageDecoder<TestInterfaceHeaderOnlyLong> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyLong.class, implLong);
+
+        decoder.onMessage(message);
+
+        verify(implLong).testMethodHeaderOnly("foo", 123L);
+    }
+
+    public interface TestInterfaceHeaderOnlyPrimitiveLong {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) long bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyPrimitiveLong implPrimitiveLong;
+
+    @Test
+    public void shouldSetHeaderOnlyPrimitiveLongPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getLongProperty("arg1")).thenReturn(123L);
+
+        MessageDecoder<TestInterfaceHeaderOnlyPrimitiveLong> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyPrimitiveLong.class, implPrimitiveLong);
+
+        decoder.onMessage(message);
+
+        verify(implPrimitiveLong).testMethodHeaderOnly("foo", 123L);
+    }
+
+    public interface TestInterfaceHeaderOnlyFloat {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Float bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyFloat implFloat;
+
+    @Test
+    public void shouldSetHeaderOnlyFloatPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getFloatProperty("arg1")).thenReturn(12.3f);
+
+        MessageDecoder<TestInterfaceHeaderOnlyFloat> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyFloat.class, implFloat);
+
+        decoder.onMessage(message);
+
+        verify(implFloat).testMethodHeaderOnly("foo", 12.3f);
+    }
+
+    public interface TestInterfaceHeaderOnlyPrimitiveFloat {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) float bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyPrimitiveFloat implPrimitiveFloat;
+
+    @Test
+    public void shouldSetHeaderOnlyPrimitiveFloatPropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getFloatProperty("arg1")).thenReturn(12.3f);
+
+        MessageDecoder<TestInterfaceHeaderOnlyPrimitiveFloat> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyPrimitiveFloat.class, implPrimitiveFloat);
+
+        decoder.onMessage(message);
+
+        verify(implPrimitiveFloat).testMethodHeaderOnly("foo", 12.3f);
+    }
+
+    public interface TestInterfaceHeaderOnlyDouble {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Double bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyDouble implDouble;
+
+    @Test
+    public void shouldSetHeaderOnlyDoublePropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getDoubleProperty("arg1")).thenReturn(12.3);
+
+        MessageDecoder<TestInterfaceHeaderOnlyDouble> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyDouble.class, implDouble);
+
+        decoder.onMessage(message);
+
+        verify(implDouble).testMethodHeaderOnly("foo", 12.3);
+    }
+
+    public interface TestInterfaceHeaderOnlyPrimitiveDouble {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) double bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyPrimitiveDouble implPrimitiveDouble;
+
+    @Test
+    public void shouldSetHeaderOnlyPrimitiveDoublePropertyAnnotation() throws Exception {
+        mockMessage();
+        when(message.getDoubleProperty("arg1")).thenReturn(12.3);
+
+        MessageDecoder<TestInterfaceHeaderOnlyPrimitiveDouble> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyPrimitiveDouble.class, implPrimitiveDouble);
+
+        decoder.onMessage(message);
+
+        verify(implPrimitiveDouble).testMethodHeaderOnly("foo", 12.3);
+    }
+
+    public interface TestInterfaceHeaderOnlyList {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) List<String> bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyList implList;
+
+    @Test
+    public void shouldSetHeaderOnlyListPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1[0] arg1[1] arg1[2]"));
+        when(message.getStringProperty("arg1[0]")).thenReturn("one");
+        when(message.getStringProperty("arg1[1]")).thenReturn("two");
+        when(message.getStringProperty("arg1[2]")).thenReturn("three");
+
+        MessageDecoder<TestInterfaceHeaderOnlyList> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyList.class, implList);
+
+        decoder.onMessage(message);
+
+        verify(implList).testMethodHeaderOnly("foo", ImmutableList.of("one", "two", "three"));
+    }
+
+    public interface TestInterfaceHeaderOnlyArray {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) String[] bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyArray implArray;
+
+    @Test
+    public void shouldSetHeaderOnlyArrayPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1[0] arg1[1] arg1[2]"));
+        when(message.getStringProperty("arg1[0]")).thenReturn("one");
+        when(message.getStringProperty("arg1[1]")).thenReturn("two");
+        when(message.getStringProperty("arg1[2]")).thenReturn("three");
+
+        MessageDecoder<TestInterfaceHeaderOnlyArray> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyArray.class, implArray);
+
+        decoder.onMessage(message);
+
+        verify(implArray).testMethodHeaderOnly("foo", new String[] { "one", "two", "three" });
+    }
+
+    public interface TestInterfaceHeaderOnlySet {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Set<String> bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlySet implSet;
+
+    @Test
+    public void shouldSetHeaderOnlySetPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1[0] arg1[1] arg1[2]"));
+        when(message.getStringProperty("arg1[0]")).thenReturn("one");
+        when(message.getStringProperty("arg1[1]")).thenReturn("two");
+        when(message.getStringProperty("arg1[2]")).thenReturn("three");
+
+        MessageDecoder<TestInterfaceHeaderOnlySet> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlySet.class, implSet);
+
+        decoder.onMessage(message);
+
+        verify(implSet).testMethodHeaderOnly("foo", ImmutableSet.of("one", "two", "three"));
+    }
+
+    public interface TestInterfaceHeaderOnlyMap {
+        public void testMethodHeaderOnly(@Optional String foo,
+                @JmsProperty(headerOnly = true) Map<String, String> bar);
+    }
+
+    @Mock
+    TestInterfaceHeaderOnlyMap implMap;
+
+    @Test
+    public void shouldSetHeaderOnlyMapPropertyAnnotation() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<testMethodHeaderOnly>\n" //
+                + "    <arg0>foo</arg0>\n" //
+                + "</testMethodHeaderOnly>\n";
+        when(message.getText()).thenReturn(xml);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1[A] arg1[B] arg1[C]"));
+        when(message.getStringProperty("arg1[A]")).thenReturn("one");
+        when(message.getStringProperty("arg1[B]")).thenReturn("two");
+        when(message.getStringProperty("arg1[C]")).thenReturn("three");
+
+        MessageDecoder<TestInterfaceHeaderOnlyMap> decoder = MessageDecoder.of(
+                TestInterfaceHeaderOnlyMap.class, implMap);
+
+        decoder.onMessage(message);
+
+        verify(implMap).testMethodHeaderOnly("foo",
+                ImmutableMap.of("A", "one", "B", "two", "C", "three"));
     }
 }
