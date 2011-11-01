@@ -100,6 +100,34 @@ public class JmsMappingAdapterTest {
             + "    </mapping>\n"//
             + "</test-container>\n";
 
+    private static final String XML2 = ""//
+            + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
+            + "<test-container>\n" //
+            + "    <mapping methodName=\"method\" upperCase=\"true\">\n"//
+            + "        <mapField from=\"s1\" to=\"A\"/>\n"//
+            + "        <mapField from=\"s2\" to=\"B\">\n"//
+            + "            <jodaInstantConverter/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField from=\"s3\" to=\"C\">\n"//
+            + "            <jodaLocalDateConverter/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField from=\"s4\" to=\"D\">\n"//
+            + "            <jodaLocalDateConverter pattern=\"yyyy-MM-dd\"/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField from=\"s5\" to=\"E\">\n"//
+            + "            <stringToBooleanConverter true=\"yes\" false=\"no\"/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField from=\"s6\" to=\"F\">\n"//
+            + "            <simpleTypeConverter/>\n"//
+            + "            <default>\n"//
+            + "                <simpleType>FFF</simpleType>\n"//
+            + "            </default>\n"//
+            + "        </mapField>\n"//
+            + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
+            + "        <mapOperation from=\"m2\">o2</mapOperation>\n"//
+            + "    </mapping>\n"//
+            + "</test-container>\n";
+
     private static final SimpleType DEFAULT = new SimpleType("FFF");
     private static final Container CONTAINER = new Container();
     static {
@@ -142,7 +170,7 @@ public class JmsMappingAdapterTest {
         marshaller.marshal(CONTAINER, writer);
 
         String actual = writer.toString().replace(" standalone=\"yes\"", "");
-        assertEquals(XML, actual);
+        assertTrue(XML.equals(actual) || XML2.equals(actual));
     }
 
     @Test
