@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.lang.reflect.Field;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 import javax.jms.*;
 import javax.naming.Context;
@@ -24,7 +24,7 @@ import org.mockito.Mock;
  * This is actually an integration test within the adapter classes
  */
 @RunWith(TwiP.class)
-public class FullRoundTripTest {
+public class AdapterIntegrationTest {
 
     public interface FullRoundTripTestInterface {
         public void fullRoundTripMessage(String foo, @JmsProperty @Optional Integer bar);
@@ -92,16 +92,14 @@ public class FullRoundTripTest {
 
     @Test
     public void shouldReceive() throws Exception {
-        Object pojo = XmlStringDecoder.create(FullRoundTripTestInterface.class).decode(XML);
-        setField(pojo, "arg1", 123);
-        PojoInvoker.of(FullRoundTripTestInterface.class, receiver).invoke(pojo);
+        when(message.getText()).thenReturn(XML);
+        when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
+        when(message.getIntProperty("arg1")).thenReturn(123);
+
+        XmlMessageDecoder<FullRoundTripTestInterface> decoder = XmlMessageDecoder.of(
+                FullRoundTripTestInterface.class, receiver);
+        decoder.onMessage(message);
 
         verify(receiver).fullRoundTripMessage("fooo", 123);
-    }
-
-    private void setField(Object pojo, String fieldName, Object value) throws Exception {
-        Field field = pojo.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(pojo, value);
     }
 }
