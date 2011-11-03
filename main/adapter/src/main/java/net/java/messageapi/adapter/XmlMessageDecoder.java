@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import javax.jms.*;
 
-import net.java.messageapi.JmsProperty;
 import net.java.messageapi.MessageApi;
 
 import com.google.common.collect.*;
@@ -59,14 +58,6 @@ public class XmlMessageDecoder<T> implements MessageListener {
             @Override
             public void visit(String propertyName, Object container, Field field)
                     throws JMSException, IllegalAccessException {
-                JmsProperty jmsProperty = field.getAnnotation(JmsProperty.class);
-                if (jmsProperty != null && jmsProperty.headerOnly()) {
-                    addProperty(propertyName, container, field);
-                }
-            }
-
-            private void addProperty(String propertyName, Object container, Field field)
-                    throws IllegalAccessException, JMSException {
                 // TODO something similar has to be done for mapped messages; refactor
                 Class<?> type = field.getType();
                 if (String.class.equals(type)) {

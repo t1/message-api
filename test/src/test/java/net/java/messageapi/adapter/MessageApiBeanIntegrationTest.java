@@ -43,7 +43,6 @@ public class MessageApiBeanIntegrationTest {
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
                 + "<jmsPropertyMethod>\n" //
-                + "    <one>first</one>\n" //
                 + "    <two>second</two>\n" //
                 + "</jmsPropertyMethod>\n", payload);
     }

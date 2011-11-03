@@ -180,17 +180,10 @@ public class PojoGenerator extends AbstractGenerator {
             String name = getParameterName(parameter);
 
             Optional optional = parameter.getAnnotation(Optional.class);
-            JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
-
             PojoProperty property = pojo.addProperty(type, name);
 
-            if (jmsProperty != null) {
-                property.annotate(JmsProperty.class,
-                        ImmutableMap.of("headerOnly", jmsProperty.headerOnly()));
-            }
-
-            boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
-            if (xmlTransient) {
+            if (parameter.getAnnotation(JmsProperty.class) != null) {
+                property.annotate(JmsProperty.class);
                 property.annotate(XmlTransient.class);
             } else {
                 boolean required = (optional == null);

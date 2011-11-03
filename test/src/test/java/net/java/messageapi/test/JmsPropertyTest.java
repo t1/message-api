@@ -17,14 +17,13 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldIncludePropertiesInPayload() throws Exception {
+    public void shouldNotIncludePropertiesInPayload() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         api.jmsPropertyMethod("ooo", "ttt");
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
                 + "<jmsPropertyMethod>\n" //
-                + "    <one>ooo</one>\n" //
                 + "    <two>ttt</two>\n" //
                 + "</jmsPropertyMethod>\n" //
         , captureMessage().getText());
@@ -225,7 +224,7 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldIncludeNestedPropertiesInPayload() throws Exception {
+    public void shouldNotIncludeNestedPropertiesInPayload() throws Exception {
         JmsPropertyApi api = MessageSender.of(JmsPropertyApi.class);
 
         JmsPropertyApi.NestedAnnotated one = new JmsPropertyApi.NestedAnnotated();
@@ -234,9 +233,6 @@ public class JmsPropertyTest extends AbstractJmsSenderFactoryTest {
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
                 + "<jmsPropertyInNestedClass>\n" //
-                + "    <one>\n" //
-                + "        <nested>ooo</nested>\n" //
-                + "    </one>\n" //
                 + "    <two>ttt</two>\n" //
                 + "</jmsPropertyInNestedClass>\n" //
         , captureMessage().getText());

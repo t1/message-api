@@ -424,7 +424,7 @@ public class ApiToMessagePojoProcessorTest {
 
     @Test
     public void shouldAnnotateXmlElement() throws Exception {
-        convert(JmsPropertyApi.class);
+        convert(StringApi.class);
 
         PojoProperty property = popPojo().getProperty("arg0");
 
@@ -435,7 +435,7 @@ public class ApiToMessagePojoProcessorTest {
 
     @Test
     public void shouldKeepPropOrder() throws Exception {
-        convert(JmsPropertyApi.class);
+        convert(StringApi.class);
 
         Map<String, Object> xmlType = popPojo().getAnnotation(XmlType.class);
         String[] propOrder = (String[]) xmlType.get("propOrder");
@@ -444,14 +444,9 @@ public class ApiToMessagePojoProcessorTest {
         assertEquals("arg0", propOrder[0]);
     }
 
-    @MessageApi
-    public interface HeaderOnlyPropertyApi {
-        public void annotatedMethod(@JmsProperty(headerOnly = true) String arg0);
-    }
-
     @Test
-    public void shouldTurnHeaderOnlyPropertyToXmlTransient() throws Exception {
-        convert(HeaderOnlyPropertyApi.class);
+    public void shouldTurnJmsPropertyToXmlTransient() throws Exception {
+        convert(JmsPropertyApi.class);
 
         PojoProperty property = popPojo().getProperty("arg0");
 
@@ -460,7 +455,7 @@ public class ApiToMessagePojoProcessorTest {
 
     @Test
     public void shouldImportXmlTransient() throws Exception {
-        convert(HeaderOnlyPropertyApi.class);
+        convert(JmsPropertyApi.class);
 
         Set<String> imports = popPojo().getImports();
 
@@ -469,20 +464,11 @@ public class ApiToMessagePojoProcessorTest {
 
     @Test
     public void shouldSkipPropOrderForXmlTransient() throws Exception {
-        convert(HeaderOnlyPropertyApi.class);
+        convert(JmsPropertyApi.class);
 
         Map<String, Object> xmlType = popPojo().getAnnotation(XmlType.class);
         String[] propOrder = (String[]) xmlType.get("propOrder");
 
         assertEquals(0, propOrder.length);
-    }
-
-    @Test
-    public void shouldAddHeaderOnlyJmsPropertyAnnotationToPojo() throws Exception {
-        convert(HeaderOnlyPropertyApi.class);
-
-        PojoProperty property = popPojo().getProperty("arg0");
-
-        assertEquals(true, property.getAnnotationFieldsFor(JmsProperty.class).get("headerOnly"));
     }
 }

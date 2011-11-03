@@ -60,12 +60,11 @@ public interface JmsPropertyApi {
 
     public void jmsPropertyTwiceMethod(@JmsProperty String one, @JmsProperty String two);
 
-    public void jmsPropertyMethodWithHeaderOnly(@JmsProperty(headerOnly = true) String one,
-            String two);
+    public void jmsPropertyMethodWithHeaderOnly(@JmsProperty String one, String two);
 
     public void jmsPropertyInNestedClass(@JmsProperty NestedAnnotated one, String two);
 
-    public void jmsPropertyInCyclicClass(@JmsProperty(headerOnly = true) Cyclic one, String two);
+    public void jmsPropertyInCyclicClass(@JmsProperty Cyclic one, String two);
 
     public void jmsPropertyOnCollectionType(@JmsProperty Collection<String> param);
 

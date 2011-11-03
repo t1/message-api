@@ -43,7 +43,7 @@ public class MethodAsClassGeneratorTwoArgsTest {
     public void shouldAnnotateAsXmlTypeWithPropOrder() throws Exception {
         XmlType xmlType = generated.getAnnotation(XmlType.class);
         assertNotNull(xmlType);
-        assertArrayEquals(new String[] { "arg0", "arg1" }, xmlType.propOrder());
+        assertArrayEquals(new String[] { "arg0" }, xmlType.propOrder());
     }
 
     @Test
@@ -60,8 +60,10 @@ public class MethodAsClassGeneratorTwoArgsTest {
         assertEquals("arg" + index, field.getName());
         assertEquals(0, field.getModifiers()); // not public, etc.
         assertEquals(type, field.getType());
-        XmlElement element = field.getAnnotation(XmlElement.class);
-        assertEquals(required, element.required());
+        if (required) {
+            XmlElement element = field.getAnnotation(XmlElement.class);
+            assertEquals(true, element.required());
+        }
     }
 
     @Test
@@ -118,7 +120,6 @@ public class MethodAsClassGeneratorTwoArgsTest {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<testMethodTwo>\n" //
                 + "    <arg0>foo</arg0>\n" //
-                + "    <arg1>3</arg1>\n" //
                 + "</testMethodTwo>\n", writer.toString());
     }
 
@@ -129,8 +130,6 @@ public class MethodAsClassGeneratorTwoArgsTest {
 
         Field field = declaredFields[1];
         assertEquals("arg1", field.getName()); // just to make sure
-        JmsProperty jmsProperty = field.getAnnotation(JmsProperty.class);
-        assertNotNull(jmsProperty);
-        assertEquals(false, jmsProperty.headerOnly());
+        assertTrue(field.isAnnotationPresent(JmsProperty.class));
     }
 }

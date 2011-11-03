@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import javax.jms.*;
@@ -70,7 +71,6 @@ public class FullRoundTripTest {
     private static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<fullRoundTripMessage>\n" //
             + "    <arg0>fooo</arg0>\n" //
-            + "    <arg1>123</arg1>\n" //
             + "</fullRoundTripMessage>\n";
 
     @Test
@@ -89,19 +89,26 @@ public class FullRoundTripTest {
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(session).createTextMessage(argument.capture());
         assertEquals(XML, argument.getValue());
+        verify(message).setIntProperty("arg1", 123);
     }
 
     @Test
     public void shouldReceive() throws Exception {
         Object pojo = XmlStringDecoder.create(FullRoundTripTestInterface.class).decode(XML);
+        setField(pojo, "arg1", 123);
         PojoInvoker.of(FullRoundTripTestInterface.class, receiver).invoke(pojo);
 
         verify(receiver).fullRoundTripMessage("fooo", 123);
     }
 
+    private void setField(Object pojo, String fieldName, Object value) throws Exception {
+        Field field = pojo.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(pojo, value);
+    }
+
     public interface TestInterfaceHeaderOnlyString {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) String bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty String bar);
     }
 
     @Mock
@@ -130,8 +137,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyBoolean {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Boolean bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Boolean bar);
     }
 
     @Mock
@@ -151,8 +157,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveBoolean {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) boolean bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty boolean bar);
     }
 
     @Mock
@@ -172,8 +177,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyByte {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Byte bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Byte bar);
     }
 
     @Mock
@@ -193,8 +197,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveByte {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) byte bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty byte bar);
     }
 
     @Mock
@@ -214,8 +217,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyShort {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Short bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Short bar);
     }
 
     @Mock
@@ -235,8 +237,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveShort {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) short bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty short bar);
     }
 
     @Mock
@@ -256,8 +257,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyInteger {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Integer bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Integer bar);
     }
 
     @Mock
@@ -277,8 +277,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyInt {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) int bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty int bar);
     }
 
     @Mock
@@ -298,8 +297,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyLong {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Long bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Long bar);
     }
 
     @Mock
@@ -319,8 +317,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveLong {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) long bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty long bar);
     }
 
     @Mock
@@ -340,8 +337,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyFloat {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Float bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Float bar);
     }
 
     @Mock
@@ -361,8 +357,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveFloat {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) float bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty float bar);
     }
 
     @Mock
@@ -382,8 +377,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyDouble {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Double bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Double bar);
     }
 
     @Mock
@@ -403,8 +397,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveDouble {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) double bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty double bar);
     }
 
     @Mock
@@ -424,8 +417,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyList {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) List<String> bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty List<String> bar);
     }
 
     @Mock
@@ -452,8 +444,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyArray {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) String[] bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty String[] bar);
     }
 
     @Mock
@@ -480,8 +471,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlySet {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Set<String> bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Set<String> bar);
     }
 
     @Mock
@@ -508,8 +498,7 @@ public class FullRoundTripTest {
     }
 
     public interface TestInterfaceHeaderOnlyMap {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Map<String, String> bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Map<String, String> bar);
     }
 
     @Mock

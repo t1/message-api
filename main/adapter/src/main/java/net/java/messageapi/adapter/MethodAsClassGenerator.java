@@ -109,16 +109,10 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
         for (Parameter parameter : parameters) {
             Optional optional = parameter.getAnnotation(Optional.class);
-            JmsProperty jmsProperty = parameter.getAnnotation(JmsProperty.class);
-
             CtField field = addProperty(parameter);
 
-            if (jmsProperty != null) {
-                new CtFieldAnnotation(field, jmsProperty).set();
-            }
-
-            boolean xmlTransient = (jmsProperty != null && jmsProperty.headerOnly());
-            if (xmlTransient) {
+            if (parameter.isAnnotationPresent(JmsProperty.class)) {
+                new CtFieldAnnotation(field, JmsProperty.class).set();
                 new CtFieldAnnotation(field, XmlTransient.class).set();
             } else {
                 CtFieldAnnotation xmlElement = new CtFieldAnnotation(field, XmlElement.class);

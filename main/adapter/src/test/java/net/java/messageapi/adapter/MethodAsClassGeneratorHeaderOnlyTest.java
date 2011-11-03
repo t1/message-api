@@ -17,8 +17,7 @@ import org.junit.Test;
 public class MethodAsClassGeneratorHeaderOnlyTest {
 
     public interface TestInterfaceHeaderOnly {
-        public void testMethodHeaderOnly(@Optional String foo,
-                @JmsProperty(headerOnly = true) Integer bar);
+        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Integer bar);
     }
 
     private static Class<?> generated;
@@ -137,8 +136,6 @@ public class MethodAsClassGeneratorHeaderOnlyTest {
 
         Field field = declaredFields[1];
         assertEquals("arg1", field.getName()); // just to make sure
-        JmsProperty jmsProperty = field.getAnnotation(JmsProperty.class);
-        assertNotNull(jmsProperty);
-        assertEquals(true, jmsProperty.headerOnly());
+        assertTrue(field.isAnnotationPresent(JmsProperty.class));
     }
 }
