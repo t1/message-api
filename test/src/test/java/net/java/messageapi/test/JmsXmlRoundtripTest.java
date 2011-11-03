@@ -98,7 +98,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
         String xml = instantCallXml(now);
         TextMessage textMessage = new TextMessageImpl(xml);
         JodaTimeApi serviceImpl = mock(JodaTimeApi.class);
-        XmlMessageDecoder<JodaTimeApi> decoder = XmlMessageDecoder.create(JodaTimeApi.class,
+        XmlMessageDecoder<JodaTimeApi> decoder = XmlMessageDecoder.of(JodaTimeApi.class,
                 serviceImpl);
 
         // When

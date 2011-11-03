@@ -21,11 +21,11 @@ import com.google.common.collect.*;
  */
 public class XmlMessageDecoder<T> implements MessageListener {
 
-    public static <T> XmlMessageDecoder<T> create(Class<T> api, T impl) {
+    public static <T> XmlMessageDecoder<T> of(Class<T> api, T impl) {
         return new XmlMessageDecoder<T>(api, impl);
     }
 
-    public static <T> XmlMessageDecoder<T> create(Class<T> api, T impl, JaxbProvider jaxbProvider) {
+    public static <T> XmlMessageDecoder<T> of(Class<T> api, T impl, JaxbProvider jaxbProvider) {
         return new XmlMessageDecoder<T>(api, impl, jaxbProvider);
     }
 
