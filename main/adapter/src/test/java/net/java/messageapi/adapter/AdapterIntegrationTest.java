@@ -26,8 +26,8 @@ import org.mockito.Mock;
 @RunWith(TwiP.class)
 public class AdapterIntegrationTest {
 
-    public interface FullRoundTripTestInterface {
-        public void fullRoundTripMessage(String foo, @JmsProperty @Optional Integer bar);
+    public interface Interface {
+        public void method(String foo, @JmsProperty @Optional Integer bar);
     }
 
     public static class MockContextFactory implements InitialContextFactory {
@@ -49,7 +49,7 @@ public class AdapterIntegrationTest {
 
     private static final Context mockContext = mock(Context.class);
 
-    private final FullRoundTripTestInterface sender = MessageSender.of(FullRoundTripTestInterface.class);
+    private final Interface sender = MessageSender.of(Interface.class);
 
     @Mock
     private ConnectionFactory connectionFactory;
@@ -64,24 +64,24 @@ public class AdapterIntegrationTest {
     @Mock
     private TextMessage message;
     @Mock
-    private FullRoundTripTestInterface receiver;
+    private Interface receiver;
 
     private static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-            + "<fullRoundTripMessage>\n" //
+            + "<method>\n" //
             + "    <arg0>fooo</arg0>\n" //
-            + "</fullRoundTripMessage>\n";
+            + "</method>\n";
 
     @Test
     public void shouldSend() throws Exception {
         when(mockContext.lookup(ConnectionFactoryName.DEFAULT)).thenReturn(connectionFactory);
-        when(mockContext.lookup(FullRoundTripTestInterface.class.getName())).thenReturn(destination);
+        when(mockContext.lookup(Interface.class.getName())).thenReturn(destination);
 
         when(connectionFactory.createConnection(null, null)).thenReturn(connection);
         when(connection.createSession(true, Session.AUTO_ACKNOWLEDGE)).thenReturn(session);
         when(session.createProducer(destination)).thenReturn(messageProducer);
         when(session.createTextMessage(anyString())).thenReturn(message);
 
-        sender.fullRoundTripMessage("fooo", 123);
+        sender.method("fooo", 123);
 
         verify(messageProducer).send(message);
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
@@ -96,10 +96,9 @@ public class AdapterIntegrationTest {
         when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
         when(message.getIntProperty("arg1")).thenReturn(123);
 
-        XmlMessageDecoder<FullRoundTripTestInterface> decoder = XmlMessageDecoder.of(
-                FullRoundTripTestInterface.class, receiver);
+        MessageDecoder<Interface> decoder = MessageDecoder.of(Interface.class, receiver);
         decoder.onMessage(message);
 
-        verify(receiver).fullRoundTripMessage("fooo", 123);
+        verify(receiver).method("fooo", 123);
     }
 }
