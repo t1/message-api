@@ -26,7 +26,7 @@ import org.mockito.Mock;
 @RunWith(TwiP.class)
 public class AdapterIntegrationTest {
 
-    public interface Interface {
+    public interface MessageApiInterface {
         public void method(String foo, @JmsProperty @Optional Integer bar);
     }
 
@@ -49,8 +49,6 @@ public class AdapterIntegrationTest {
 
     private static final Context mockContext = mock(Context.class);
 
-    private final Interface sender = MessageSender.of(Interface.class);
-
     @Mock
     private ConnectionFactory connectionFactory;
     @Mock
@@ -64,7 +62,7 @@ public class AdapterIntegrationTest {
     @Mock
     private TextMessage message;
     @Mock
-    private Interface receiver;
+    private MessageApiInterface receiver;
 
     private static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<method>\n" //
@@ -72,15 +70,16 @@ public class AdapterIntegrationTest {
             + "</method>\n";
 
     @Test
-    public void shouldSend() throws Exception {
+    public void shouldSendViaMessageApi() throws Exception {
         when(mockContext.lookup(ConnectionFactoryName.DEFAULT)).thenReturn(connectionFactory);
-        when(mockContext.lookup(Interface.class.getName())).thenReturn(destination);
+        when(mockContext.lookup(MessageApiInterface.class.getName())).thenReturn(destination);
 
         when(connectionFactory.createConnection(null, null)).thenReturn(connection);
         when(connection.createSession(true, Session.AUTO_ACKNOWLEDGE)).thenReturn(session);
         when(session.createProducer(destination)).thenReturn(messageProducer);
         when(session.createTextMessage(anyString())).thenReturn(message);
 
+        MessageApiInterface sender = MessageSender.of(MessageApiInterface.class);
         sender.method("fooo", 123);
 
         verify(messageProducer).send(message);
@@ -91,14 +90,20 @@ public class AdapterIntegrationTest {
     }
 
     @Test
-    public void shouldReceive() throws Exception {
+    public void shouldReceiveViaMessageApi() throws Exception {
         when(message.getText()).thenReturn(XML);
         when(message.getPropertyNames()).thenReturn(new StringTokenizer("arg1"));
         when(message.getIntProperty("arg1")).thenReturn(123);
 
-        MessageDecoder<Interface> decoder = MessageDecoder.of(Interface.class, receiver);
+        MessageDecoder<MessageApiInterface> decoder = MessageDecoder.of(MessageApiInterface.class,
+                receiver);
         decoder.onMessage(message);
 
         verify(receiver).method("fooo", 123);
+    }
+
+    @Test
+    public void shouldSendViaCdiEvent() throws Exception {
+        // TODO implement
     }
 }

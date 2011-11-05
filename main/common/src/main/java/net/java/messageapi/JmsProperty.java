@@ -18,4 +18,5 @@ import javax.inject.Qualifier;
 @Target({ PARAMETER, FIELD })
 @Retention(RUNTIME)
 public @interface JmsProperty {
+    // intentionally empty
 }
