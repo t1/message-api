@@ -13,6 +13,7 @@ import net.java.messageapi.MessageApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class MessageSenderCdiExtension implements Extension {
@@ -40,16 +41,41 @@ public class MessageSenderCdiExtension implements Extension {
     }
 
     private <X> void vetoMessageApiImplementations(ProcessAnnotatedType<X> pat) {
-        // TODO what happens when the impl is scanned before the api?
         AnnotatedType<X> annotatedType = pat.getAnnotatedType();
-        final Set<Type> typeClosure = annotatedType.getTypeClosure();
-        Set<Type> intersection = Sets.intersection(typeClosure, messageApis);
-        if (!annotatedType.getJavaClass().isInterface() && !intersection.isEmpty()) {
+        Set<Type> implementedMessageApis = getImplementedMessageApis(annotatedType);
+        if (!implementedMessageApis.isEmpty()) {
             pat.veto();
             log.info(
                     "Preventing {} from being installed as bean, as it's a receiver for message api {}",
-                    annotatedType.getJavaClass(), intersection);
+                    annotatedType.getJavaClass(), implementedMessageApis);
         }
+    }
+
+    /**
+     * We can't simply look for all {@link #messageApis}, as the implementing type may be scanned
+     * before the {@link MessageApi} is.
+     */
+    private Set<Type> getImplementedMessageApis(AnnotatedType<?> type) {
+        if (type.getJavaClass().isInterface())
+            return ImmutableSet.of();
+        ImmutableSet.Builder<Type> result = ImmutableSet.builder();
+        for (Type implementedType : type.getTypeClosure()) {
+            if (isMessageApi(implementedType)) {
+                result.add(implementedType);
+            }
+        }
+        return result.build();
+    }
+
+    private boolean isMessageApi(Type implementedType) {
+        if (implementedType instanceof Class) {
+            Class<?> implementedClass = (Class<?>) implementedType;
+            if (implementedClass.isInterface()
+                    && implementedClass.isAnnotationPresent(MessageApi.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void step2_discoverInjectionTargets(@Observes ProcessInjectionTarget<?> pit) {
