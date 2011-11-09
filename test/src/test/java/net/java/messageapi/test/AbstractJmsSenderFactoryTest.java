@@ -28,7 +28,7 @@ public abstract class AbstractJmsSenderFactoryTest {
     protected static final String QUEUE_PASS = "MyQueuePass";
 
     protected final JmsQueueConfig CONFIG = new JmsQueueConfig(FACTORY, QUEUE, QUEUE_USER,
-            QUEUE_PASS, true, new Properties(), Collections.<String, Object> emptyMap());
+            QUEUE_PASS, false, new Properties(), Collections.<String, Object> emptyMap());
 
     protected final MessageListener targetMDB = mock(MessageListener.class);
 

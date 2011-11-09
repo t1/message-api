@@ -11,6 +11,11 @@ import com.google.common.collect.ImmutableMap;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JmsQueueConfig {
+    /**
+     * By default the first parameter of {@link javax.jms.Connection#createSession(boolean, int)
+     * createSession} must be FALSE in the Java EE environment.
+     */
+    private static final boolean DEFAULT_TRANSACTED = false;
 
     @XmlElement(name = "factory")
     private final String factoryName;
@@ -18,7 +23,7 @@ public class JmsQueueConfig {
     private final String destinationName;
     private final String user;
     private final String pass;
-    @XmlElement(defaultValue = "true")
+    @XmlElement(defaultValue = "false")
     private final boolean transacted;
 
     @XmlJavaTypeAdapter(PropertiesMapAdapter.class)
@@ -32,9 +37,13 @@ public class JmsQueueConfig {
         this.destinationName = null;
         this.user = null;
         this.pass = null;
-        this.transacted = true;
+        this.transacted = DEFAULT_TRANSACTED;
         this.contextProperties = null;
         this.header = null;
+    }
+
+    public JmsQueueConfig(String factoryName, String destinationName) {
+        this(factoryName, destinationName, null, null, DEFAULT_TRANSACTED, null, null);
     }
 
     public JmsQueueConfig(String factoryName, String destinationName, String user, String pass,

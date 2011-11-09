@@ -19,15 +19,22 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
     private final ReflectionAdapter<Method> reflectionAdapter;
     private final List<Parameter> parameters;
-    private final ClassPool classPool = ClassPool.getDefault();
+    private final ClassPool classPool;
     private CtClass ctClass;
     private final Class<?> result;
 
     public MethodAsClassGenerator(Method method) {
+        this.classPool = getClassPool(method);
         this.reflectionAdapter = ReflectionAdapter.of(method);
         this.parameters = Parameter.allOf(method);
 
         this.result = generate();
+    }
+
+    private ClassPool getClassPool(Method method) {
+        ClassPool pool = new ClassPool(true);
+        pool.insertClassPath(new LoaderClassPath(method.getDeclaringClass().getClassLoader()));
+        return pool;
     }
 
     protected Class<?> generate() {

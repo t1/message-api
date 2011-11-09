@@ -9,7 +9,6 @@ import net.java.messageapi.reflection.Parameter;
 
 import org.junit.Test;
 
-
 public class ParameterNameTest {
 
     @Test

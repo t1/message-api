@@ -40,8 +40,7 @@ final class MessageApiBean<T> implements Bean<T> {
     }
 
     private JmsSenderFactory getFactory() {
-        JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(), getDestinationName(),
-                null, null, true, null, null);
+        JmsQueueConfig config = new JmsQueueConfig(getConnectionFactory(), getDestinationName());
         return new JmsSenderFactory(config, getPayloadHandler());
     }
 

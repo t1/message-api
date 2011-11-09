@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public class MessageSenderCdiExtension implements Extension {
-    private final Logger log = LoggerFactory.getLogger(MessageSenderCdiExtension.class);
+public class MessageApiCdiExtension implements Extension {
+    private final Logger log = LoggerFactory.getLogger(MessageApiCdiExtension.class);
 
     // TODO provide the set of discovered message apis for injection
 

@@ -7,7 +7,6 @@ import java.util.Enumeration;
 
 import javax.xml.bind.*;
 
-
 /**
  * The central provider for the proxies to send messages.
  * <p>
@@ -69,8 +68,7 @@ public class MessageSender {
     }
 
     static MessageSenderFactory newDefaultConfigFor(Class<?> api) {
-        JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getName(), null, null,
-                true, null, null);
+        JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getName());
         return new JmsSenderFactory(config, new XmlJmsPayloadHandler());
     }
 

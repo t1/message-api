@@ -75,7 +75,7 @@ public class AdapterIntegrationTest {
         when(mockContext.lookup(MessageApiInterface.class.getName())).thenReturn(destination);
 
         when(connectionFactory.createConnection(null, null)).thenReturn(connection);
-        when(connection.createSession(true, Session.AUTO_ACKNOWLEDGE)).thenReturn(session);
+        when(connection.createSession(anyBoolean(), anyInt())).thenReturn(session);
         when(session.createProducer(destination)).thenReturn(messageProducer);
         when(session.createTextMessage(anyString())).thenReturn(message);
 

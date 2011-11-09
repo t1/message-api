@@ -157,22 +157,9 @@ public class ChatReceiver implements ChatApi {
 </pre></li>
 <li>create the <tt>chat.ChatMDB</tt>:<pre>
 @MessageDriven(mappedName = "Chat")
-public class ChatMDB implements MessageListener {
-
-	private final ChatApi receiver = new ChatReceiver();
-
-	@Override
-	public void onMessage(Message message) {
-		String xml = getText(message);
-		XmlStringDecoder.create(ChatApi.class, receiver).decode(xml);
-	}
-
-	private String getText(Message message) {
-		try {
-			return ((TextMessage) message).getText();
-		} catch (JMSException e) {
-			throw new RuntimeException("can't get text", e);
-		}
+public class ChatMDB extends MessageDecoder<ChatApi> {
+	public ChatMDB() {
+		super(ChatApi.class, new ChatReceiver());
 	}
 }
 </pre>

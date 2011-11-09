@@ -113,14 +113,16 @@ public class JmsSenderFactory implements MessageSenderFactory {
         Class<?> api = method.getDeclaringClass();
         Object pojo = new MessageCallFactory<Object>(method).apply(args);
         Object payload = payloadHandler.toPayload(api, method, pojo);
+        boolean transacted = config.isTransacted();
 
-        loggerFor(api).debug("sending to {} payload: {}", config.getDestinationName(), payload);
+        loggerFor(api).debug("sending {}transacted message to {}", transacted ? "" : "non-",
+                config.getDestinationName());
+        loggerFor(api).debug("payload:\n{}", payload);
 
         try {
             ConnectionFactory factory = getConnectionFactory();
             connection = factory.createConnection(config.getUser(), config.getPass());
-            Session session = connection.createSession(config.isTransacted(),
-                    Session.AUTO_ACKNOWLEDGE);
+            Session session = connection.createSession(transacted, Session.AUTO_ACKNOWLEDGE);
 
             getDestination();
             MessageProducer messageProducer = session.createProducer(destination);

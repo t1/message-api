@@ -1,1 +1,1 @@
-net.java.messageapi.adapter.MessageSenderCdiExtension
+net.java.messageapi.adapter.MessageApiCdiExtension

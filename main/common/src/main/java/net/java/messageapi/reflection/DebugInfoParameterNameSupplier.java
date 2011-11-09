@@ -55,7 +55,8 @@ public class DebugInfoParameterNameSupplier implements ParameterNameSupplier {
 
     private static LocalVariableAttribute getLocalVariableTable(Method method)
             throws NotFoundException {
-        ClassPool classPool = ClassPool.getDefault();
+        ClassPool classPool = new ClassPool(true);
+        classPool.insertClassPath(new LoaderClassPath(method.getDeclaringClass().getClassLoader()));
         CtClass ctClass = classPool.get(method.getDeclaringClass().getName());
 
         // FIXME take args into account

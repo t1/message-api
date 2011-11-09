@@ -71,7 +71,7 @@ public class MessageApiBeanTest {
         verifyThat(config.getDestinationName(), is(DummyApi.class.getCanonicalName()));
         verifyThat(config.getUser(), is(nullValue()));
         verifyThat(config.getPass(), is(nullValue()));
-        verifyThat(config.isTransacted(), is(true));
+        verifyThat(config.isTransacted(), is(false));
         verifyThat(config.getContextProperties(), is(new Properties()));
         verifyThat(config.getAdditionalProperties(), is(EMPTY_PROPS));
     }
