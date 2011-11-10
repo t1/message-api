@@ -82,7 +82,7 @@ public class AdapterIntegrationTest {
         MessageApiInterface sender = MessageSender.of(MessageApiInterface.class);
         sender.method("fooo", 123);
 
-        verify(messageProducer).send(message, 2, 4, 0);
+        verify(messageProducer).send(message, 2, 4, 0); // these are the defaults
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(session).createTextMessage(argument.capture());
         assertEquals(XML, argument.getValue());

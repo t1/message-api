@@ -7,7 +7,9 @@ import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
+import javax.enterprise.util.AnnotationLiteral;
 
+import net.java.messageapi.JmsReceiver;
 import net.java.messageapi.MessageApi;
 
 import org.slf4j.Logger;
@@ -26,7 +28,7 @@ public class MessageApiCdiExtension implements Extension {
 
     <X> void step1_discoverMessageApis(@Observes ProcessAnnotatedType<X> pat) {
         discoverMessageApi(pat);
-        vetoMessageApiImplementations(pat);
+        handleMessageApiImplementations(pat);
     }
 
     private <X> void discoverMessageApi(ProcessAnnotatedType<X> pat) {
@@ -40,13 +42,16 @@ public class MessageApiCdiExtension implements Extension {
         }
     }
 
-    private <X> void vetoMessageApiImplementations(ProcessAnnotatedType<X> pat) {
+    private <X> void handleMessageApiImplementations(ProcessAnnotatedType<X> pat) {
         AnnotatedType<X> annotatedType = pat.getAnnotatedType();
         Set<Type> implementedMessageApis = getImplementedMessageApis(annotatedType);
         if (!implementedMessageApis.isEmpty()) {
-            pat.veto();
-            log.info(
-                    "Preventing {} from being installed as bean, as it's a receiver for message api {}",
+            AnnotatedType<X> wrapped = new AnnotatedTypeAnnotationsWrapper<X>(annotatedType,
+                    new AnnotationLiteral<JmsReceiver>() {
+                        private static final long serialVersionUID = 1L;
+                    });
+            pat.setAnnotatedType(wrapped);
+            log.info("Marking {} as JmsReceiver, as it's a receiver for message api {}",
                     annotatedType.getJavaClass(), implementedMessageApis);
         }
     }
