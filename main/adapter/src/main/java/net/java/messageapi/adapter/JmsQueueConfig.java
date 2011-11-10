@@ -14,6 +14,8 @@ public class JmsQueueConfig {
     /**
      * By default the first parameter of {@link javax.jms.Connection#createSession(boolean, int)
      * createSession} must be FALSE in the Java EE environment.
+     * 
+     * TODO is this really correct?
      */
     private static final boolean DEFAULT_TRANSACTED = false;
 
