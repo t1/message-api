@@ -15,6 +15,12 @@ import net.java.messageapi.reflection.ReflectionAdapter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
+/**
+ * TODO some of the logic in here is duplicated in the annotation processor; it's not going to
+ * change much, so that's not a huge deal, but separating the concern of what has to go into the
+ * pojo, from the concern of how to put that into source resp. bytecode, would make everything
+ * easier to understand.
+ */
 public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
     private final ReflectionAdapter<Method> reflectionAdapter;
@@ -97,18 +103,23 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
     private void addFullConstructor() throws NotFoundException, CannotCompileException {
         List<CtClass> argTypes = Lists.newArrayList();
+        String constructorBody = constructorBody(argTypes);
+
+        CtClass[] argTypeArray = argTypes.toArray(new CtClass[argTypes.size()]);
+        CtConstructor constructor = new CtConstructor(argTypeArray, ctClass);
+        constructor.setBody(constructorBody.toString());
+        ctClass.addConstructor(constructor);
+    }
+
+    public String constructorBody(List<CtClass> argTypes) throws NotFoundException {
         StringBuilder constructorBody = new StringBuilder("{ super();");
         for (Parameter parameter : parameters) {
             argTypes.add(classPool.get(parameter.getType().getName()));
             constructorBody.append("this.").append(parameter.getName());
             constructorBody.append(" = $").append(parameter.getIndex() + 1).append(";");
         }
-
-        CtClass[] argTypeArray = argTypes.toArray(new CtClass[argTypes.size()]);
-        CtConstructor constructor = new CtConstructor(argTypeArray, ctClass);
         constructorBody.append("}");
-        constructor.setBody(constructorBody.toString());
-        ctClass.addConstructor(constructor);
+        return constructorBody.toString();
     }
 
     private List<String> addProperties() throws Exception {

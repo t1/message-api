@@ -50,8 +50,16 @@ public abstract class CtAbstractAnnotation {
         annotation.addMemberValue(name, value);
     }
 
+    public void addMemberValue(String name, Annotation value) {
+        addMemberValue(name, new AnnotationMemberValue(value, constPool));
+    }
+
     public void addMemberValue(String name, boolean value) {
         addMemberValue(name, new BooleanMemberValue(value, constPool));
+    }
+
+    public void addMemberValue(String name, Class<?> value) {
+        addMemberValue(name, new ClassMemberValue(value.getName(), constPool));
     }
 
     public void addMemberValue(String name, String value) {

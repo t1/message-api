@@ -24,6 +24,7 @@ public class MessageApiCdiExtension implements Extension {
     // TODO provide the set of discovered message apis for injection
 
     private final Set<Class<?>> messageApis = Sets.newHashSet();
+    private final Set<Class<?>> mdbs = Sets.newHashSet();
     private final Set<BeanId> beanIds = Sets.newHashSet();
 
     <X> void step1_discoverMessageApis(@Observes ProcessAnnotatedType<X> pat) {
@@ -46,6 +47,7 @@ public class MessageApiCdiExtension implements Extension {
         AnnotatedType<X> annotatedType = pat.getAnnotatedType();
         Set<Type> implementedMessageApis = getImplementedMessageApis(annotatedType);
         if (!implementedMessageApis.isEmpty()) {
+            // TODO only if it's not already annotated
             AnnotatedType<X> wrapped = new AnnotatedTypeAnnotationsWrapper<X>(annotatedType,
                     new AnnotationLiteral<JmsReceiver>() {
                         private static final long serialVersionUID = 1L;
@@ -53,6 +55,15 @@ public class MessageApiCdiExtension implements Extension {
             pat.setAnnotatedType(wrapped);
             log.info("Marking {} as JmsReceiver, as it's a receiver for message api {}",
                     annotatedType.getJavaClass(), implementedMessageApis);
+            // FIXME what if the bean implements multiple messageapis?
+            // FIXME how can we register the MDB?
+            MdbGenerator generator = new MdbGenerator(
+                    (Class<?>) implementedMessageApis.iterator().next());
+            if (generator.isGenerated()) {
+                Class<?> mdb = generator.get();
+                log.info("MDB {} was generated", mdb.getName());
+                mdbs.add(mdb);
+            }
         }
     }
 
@@ -93,9 +104,10 @@ public class MessageApiCdiExtension implements Extension {
                         "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
                         new Object[] { injectionPoint.getMember().getName(),
                                 getBeanName(injectionPoint), type.getSimpleName(), qualifiers });
-                boolean added = beanIds.add(new BeanId(type, qualifiers));
+                BeanId beanId = new BeanId(type, qualifiers);
+                boolean added = beanIds.add(beanId);
                 if (!added) {
-                    log.info("bean already defined");
+                    log.info("bean {} already defined", beanId);
                 }
             }
         }
@@ -125,6 +137,10 @@ public class MessageApiCdiExtension implements Extension {
             log.info("create bean for {}", beanId);
             MessageApiBean<?> bean = MessageApiBean.of(beanId.type, beanId.qualifiers);
             abd.addBean(bean);
+        }
+        for (Class<?> mdb : mdbs) {
+            log.info("register MDB {}", mdb);
+            abd.addBean(new MdbBean(mdb));
         }
     }
 }
