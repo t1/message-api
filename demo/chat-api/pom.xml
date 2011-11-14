@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>net.java.messageapi</groupId>
 		<artifactId>demo-container</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>2.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>chat</groupId>
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
 			<artifactId>processor</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>2.0-SNAPSHOT</version>
 			<!-- the annotation processor is required only at build time, -->
 			<!-- but there's no such scope -->
 			<!--scope>build</scope -->

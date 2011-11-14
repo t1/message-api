@@ -1,3 +1,4 @@
 <factorypath>
-    <factorypathentry kind="VARJAR" id="M2_REPO/net/java/messageapi/processor/1.2-SNAPSHOT/processor-1.2-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/net/java/messageapi/processor/2.0-SNAPSHOT/processor-2.0-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="false" runInBatchMode="false"/>
 </factorypath>
