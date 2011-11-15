@@ -3,9 +3,6 @@ package net.java.messageapi.adapter;
 import static net.sf.twip.verify.Verify.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-
-import java.lang.reflect.Method;
-
 import net.java.messageapi.*;
 import net.java.messageapi.test.JmsPropertyApi;
 import net.sf.twip.TwiP;
@@ -34,12 +31,10 @@ public class MessageApiBeanIntegrationTest {
     public void shouldCreatePropertyPayloadForJmsPropertyApi() throws Exception {
         MessageApiBean<JmsPropertyApi> bean = MessageApiBean.of(JmsPropertyApi.class);
         XmlJmsPayloadHandler handler = (XmlJmsPayloadHandler) bean.factory.getPayloadHandler();
-        Method method = JmsPropertyApi.class.getMethod("jmsPropertyMethod", new Class[] {
-                String.class, String.class });
         Object pojo = Class.forName("net.java.messageapi.test.JmsPropertyApi$JmsPropertyMethod").getConstructor(
                 String.class, String.class).newInstance("first", "second");
 
-        String payload = handler.toPayload(JmsPropertyApi.class, method, pojo);
+        String payload = handler.toPayload(JmsPropertyApi.class, pojo);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
                 + "<jmsPropertyMethod>\n" //

@@ -39,21 +39,21 @@ public class MessageSender {
     }
 
     public static <T> T of(Class<T> api) {
-        return getConfigFor(api).create(api);
+        return getFactoryFor(api).create(api);
     }
 
-    /** Assumes that the config for that api is a mapped jms config */
+    /** Assumes that the factory for that api is a mapped jms factory */
     public static Mapping getJmsMappingFor(Class<?> api) {
-        JmsSenderFactory config = (JmsSenderFactory) getConfigFor(api);
-        MapJmsPayloadHandler payloadHandler = (MapJmsPayloadHandler) config.getPayloadHandler();
+        JmsSenderFactory factory = (JmsSenderFactory) getFactoryFor(api);
+        MapJmsPayloadHandler payloadHandler = (MapJmsPayloadHandler) factory.getPayloadHandler();
         return payloadHandler.mapping;
     }
 
-    public static MessageSenderFactory getConfigFor(Class<?> api) {
+    public static MessageSenderFactory getFactoryFor(Class<?> api) {
         Reader reader = getReaderFor(api);
         if (reader == null)
-            return newDefaultConfigFor(api);
-        return readConfigFrom(reader);
+            return newDefaultFactoryFor(api);
+        return readFactoryFrom(reader);
     }
 
     static Reader getReaderFor(Class<?> api) {
@@ -67,9 +67,13 @@ public class MessageSender {
         return new InputStreamReader(stream, Charset.forName("utf-8"));
     }
 
-    static MessageSenderFactory newDefaultConfigFor(Class<?> api) {
-        JmsQueueConfig config = new JmsQueueConfig("ConnectionFactory", api.getName());
+    static MessageSenderFactory newDefaultFactoryFor(Class<?> api) {
+        JmsQueueConfig config = getDefaultConfig(api);
         return new JmsSenderFactory(config, new XmlJmsPayloadHandler());
+    }
+
+    public static JmsQueueConfig getDefaultConfig(Class<?> api) {
+        return new JmsQueueConfig(api.getName());
     }
 
     private static InputStream getSingleUrlFor(ClassLoader classLoader, String fileName) {
@@ -86,7 +90,7 @@ public class MessageSender {
         }
     }
 
-    public static MessageSenderFactory readConfigFrom(Reader reader) {
+    public static MessageSenderFactory readFactoryFrom(Reader reader) {
         try {
             Unmarshaller unmarshaller = getContext().createUnmarshaller();
             MessageSenderFactory factory = (MessageSenderFactory) unmarshaller.unmarshal(reader);

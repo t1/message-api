@@ -78,6 +78,9 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Mock
     private BoxedPrimitivesTestApi boxedPrimitivesServiceMock;
 
+    @Mock
+    private OneCharTestApi oneCharServiceMock;
+
     @Test
     public void shouldCallServiceWhenSendingAsMapMessage() {
         // Given
@@ -93,6 +96,22 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
         // Then
         verify(serviceMock).mappedCall("a", 0L);
+    }
+
+    @Test
+    public void shouldCallServiceOneCharMethod() {
+        // Given
+        JmsSenderFactory factory = new JmsSenderFactory(CONFIG, new MapJmsPayloadHandler());
+        OneCharTestApi sendProxy = factory.create(OneCharTestApi.class);
+        Mapping receiveMapping = new MappingBuilder("METHOD").build();
+
+        // When
+        sendProxy.a("content");
+        MapMessageDecoder.create(OneCharTestApi.class, oneCharServiceMock, receiveMapping) //
+        .onMessage(captureMessage());
+
+        // Then
+        verify(oneCharServiceMock).a("content");
     }
 
     @Test

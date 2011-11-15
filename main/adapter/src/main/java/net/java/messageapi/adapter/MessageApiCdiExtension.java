@@ -9,8 +9,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
 import javax.enterprise.util.AnnotationLiteral;
 
-import net.java.messageapi.JmsReceiver;
-import net.java.messageapi.MessageApi;
+import net.java.messageapi.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +23,17 @@ public class MessageApiCdiExtension implements Extension {
     // TODO provide the set of discovered message apis for injection
 
     private final Set<Class<?>> messageApis = Sets.newHashSet();
+    private final Set<Class<?>> messageEvents = Sets.newHashSet();
     private final Set<Class<?>> mdbs = Sets.newHashSet();
     private final Set<BeanId> beanIds = Sets.newHashSet();
 
     <X> void step1_discoverMessageApis(@Observes ProcessAnnotatedType<X> pat) {
-        discoverMessageApi(pat);
+        discoverMessageApis(pat);
         handleMessageApiImplementations(pat);
+        discoverMessageEvents(pat);
     }
 
-    private <X> void discoverMessageApi(ProcessAnnotatedType<X> pat) {
+    private <X> void discoverMessageApis(ProcessAnnotatedType<X> pat) {
         AnnotatedType<X> annotatedType = pat.getAnnotatedType();
 
         MessageApi annotation = annotatedType.getAnnotation(MessageApi.class);
@@ -64,6 +65,17 @@ public class MessageApiCdiExtension implements Extension {
                 log.info("MDB {} was generated", mdb.getName());
                 mdbs.add(mdb);
             }
+        }
+    }
+
+    private <X> void discoverMessageEvents(ProcessAnnotatedType<X> pat) {
+        AnnotatedType<X> annotatedType = pat.getAnnotatedType();
+
+        MessageEvent annotation = annotatedType.getAnnotation(MessageEvent.class);
+        if (annotation != null) {
+            Class<X> messageEvent = annotatedType.getJavaClass();
+            log.info("discovered message event {}", messageEvent.getName());
+            messageEvents.add(messageEvent);
         }
     }
 
@@ -129,6 +141,16 @@ public class MessageApiCdiExtension implements Extension {
     private Object getBeanName(InjectionPoint injectionPoint) {
         final Bean<?> bean = injectionPoint.getBean();
         return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
+    }
+
+    <T, X> void scanObserverMethod(@Observes ProcessObserverMethod<T, X> pom) {
+        ObserverMethod<T> observerMethod = pom.getObserverMethod();
+        Type observedType = observerMethod.getObservedType();
+        if (messageEvents.contains(observedType)) {
+            Class<?> observedClass = (Class<?>) observedType;
+            log.info("found observer {} for {}", observerMethod, observedClass.getName());
+            // TODO add JmsReceiver annotation... but how?!?
+        }
     }
 
     void step3_createBeans(@Observes AfterBeanDiscovery abd) {

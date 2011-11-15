@@ -1,6 +1,5 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -72,17 +71,16 @@ public class JmsSender {
         return config;
     }
 
-    protected void sendJms(Method method, Object[] args) {
-        Connection connection = null;
-        boolean sent = false;
-
-        Object pojo = new MessageCallFactory<Object>(method).apply(args);
-        Object payload = payloadHandler.toPayload(api, method, pojo);
+    public void sendJms(Object pojo) {
+        Object payload = payloadHandler.toPayload(api, pojo);
         boolean transacted = config.isTransacted();
 
         logger.debug("sending {}transacted message to {}", transacted ? "" : "non-",
                 config.getDestinationName());
         logger.debug("payload:\n{}", payload);
+
+        Connection connection = null;
+        boolean sent = false;
 
         try {
             ConnectionFactory factory = getConnectionFactory();

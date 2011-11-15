@@ -35,14 +35,18 @@ public class MdbGenerator implements Supplier<Class<?>> {
         String className = impl.getName() + "MDB";
         // try real class
         try {
-            return Class.forName(className);
+            Class<?> realClass = Class.forName(className);
+            logger.info("{} already exists... don't generate", className);
+            return realClass;
         } catch (ClassNotFoundException e) {
             logger.info("{} is not an existing class", className);
         }
 
         // try already generated class; can't generate twice
         try {
-            return classPool.get(className).getClass();
+            Class<? extends CtClass> alreadyGeneratedClass = classPool.get(className).getClass();
+            logger.info("{} already generated... don't generate again", className);
+            return alreadyGeneratedClass;
         } catch (NotFoundException e) {
             logger.info("{} is not an already generated class", className);
         }

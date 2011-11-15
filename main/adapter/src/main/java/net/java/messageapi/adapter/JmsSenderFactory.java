@@ -52,7 +52,8 @@ public class JmsSenderFactory implements MessageSenderFactory {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
-                sender.sendJms(method, args);
+                Object pojo = new MessageCallFactory<Object>(method).apply(args);
+                sender.sendJms(pojo);
                 return null;
             }
         };

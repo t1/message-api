@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 @Qualifier
-@Target({FIELD, PARAMETER})
+@Target({ FIELD, PARAMETER, TYPE })
 @Retention(RUNTIME)
 public @interface DestinationName {
     public String value();

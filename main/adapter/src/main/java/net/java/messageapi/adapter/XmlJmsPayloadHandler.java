@@ -2,7 +2,6 @@ package net.java.messageapi.adapter;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.Method;
 
 import javax.jms.JMSException;
 import javax.jms.Session;
@@ -10,6 +9,7 @@ import javax.xml.bind.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * A {@link JmsPayloadHandler} that serializes calls as XML text messages.
@@ -29,12 +29,13 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     @Override
-    public String toPayload(Class<?> api, Method method, Object pojo) {
+    public String toPayload(Class<?> api, Object pojo) {
         Writer writer = new StringWriter();
         convert(api, writer, pojo);
         return writer.toString();
     }
 
+    @VisibleForTesting
     public void convert(Class<?> api, Writer writer, Object pojo) {
         Marshaller marshaller = createMarshaller(api, pojo);
         marshalPojo(marshaller, pojo, writer);

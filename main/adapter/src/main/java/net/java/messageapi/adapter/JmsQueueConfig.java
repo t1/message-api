@@ -44,6 +44,10 @@ public class JmsQueueConfig {
         this.header = null;
     }
 
+    public JmsQueueConfig(String destinationName) {
+        this("ConnectionFactory", destinationName);
+    }
+
     public JmsQueueConfig(String factoryName, String destinationName) {
         this(factoryName, destinationName, null, null, DEFAULT_TRANSACTED, null, null);
     }
