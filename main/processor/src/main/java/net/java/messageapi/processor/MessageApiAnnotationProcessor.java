@@ -22,6 +22,7 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
 
     private PojoGenerator pojoGenerator;
     private ParameterMapGenerator propertyNameIndexGenerator;
+    private MdbGenerator mdbGenerator;
 
     @Override
     public synchronized void init(@SuppressWarnings("hiding") ProcessingEnvironment processingEnv) {
@@ -29,6 +30,7 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
         Messager messager = getMessager();
         Filer filer = processingEnv.getFiler();
         pojoGenerator = new PojoGenerator(messager, filer);
+        mdbGenerator = new MdbGenerator(messager, filer);
         propertyNameIndexGenerator = new ParameterMapGenerator(messager, filer);
     }
 
@@ -37,6 +39,7 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
         for (Element messageApi : roundEnv.getElementsAnnotatedWith(MessageApi.class)) {
             try {
                 pojoGenerator.process(messageApi);
+                mdbGenerator.process(messageApi);
                 propertyNameIndexGenerator.process(messageApi);
             } catch (Error e) {
                 getMessager().printMessage(Kind.ERROR, "Error while processing MessageApi: " + e,

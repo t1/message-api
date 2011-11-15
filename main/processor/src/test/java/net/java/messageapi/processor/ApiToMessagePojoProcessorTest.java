@@ -116,6 +116,7 @@ public class ApiToMessagePojoProcessorTest {
 
         verify(messager).printMessage(Kind.NOTE,
                 "Processing MessageApi [" + ReturnsApi.class.getName() + "]");
+        verify(messager).printMessage(Kind.NOTE, "Generating " + ReturnsApi.class.getName() + "MDB");
         verify(messager).printMessage(Kind.NOTE,
                 "Writing .parametermap for " + ReturnsApi.class.getName());
         verify(messager).printMessage(Kind.ERROR,

@@ -12,7 +12,7 @@ import javax.tools.*;
 
 import net.java.messageapi.reflection.ReflectionAdapter;
 
-public class AbstractGenerator {
+public abstract class AbstractGenerator {
 
     private final Messager messager;
     private final Filer filer;
@@ -65,4 +65,6 @@ public class AbstractGenerator {
     protected String getPackageOf(Element element) {
         return ReflectionAdapter.getPackageOf(element).getQualifiedName().toString();
     }
+
+    public abstract void process(Element element);
 }

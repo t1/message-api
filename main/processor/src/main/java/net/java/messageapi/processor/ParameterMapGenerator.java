@@ -25,6 +25,7 @@ public class ParameterMapGenerator extends AbstractGenerator {
         super(messager, filer);
     }
 
+    @Override
     public void process(Element element) {
         TypeElement type = (TypeElement) element;
         String fileName = type.getSimpleName() + ParameterMapNameSupplier.SUFFIX;

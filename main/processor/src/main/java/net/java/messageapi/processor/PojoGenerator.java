@@ -72,6 +72,7 @@ public class PojoGenerator extends AbstractGenerator {
         super(messager, filer);
     }
 
+    @Override
     public void process(Element messageApi) {
         TypeElement type = checkType(messageApi);
         if (type != null) {

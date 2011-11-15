@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,7 +22,9 @@ public class XmlRootElementAnnotationProcessor extends AbstractProcessor2 {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        generator.process(roundEnv.getElementsAnnotatedWith(XmlRootElement.class));
+        for (Element element : roundEnv.getElementsAnnotatedWith(XmlRootElement.class)) {
+            generator.process(element);
+        }
 
         if (roundEnv.processingOver()) {
             generator.finish();

@@ -2,7 +2,8 @@ package net.java.messageapi.processor;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -26,16 +27,12 @@ public class JaxbIndexGenerator extends AbstractGenerator {
         super(messager, filer);
     }
 
-    /**
-     * The packages mapped to all of the xml root elements contained
-     */
-    public void process(Set<? extends Element> elements) {
-        for (Element element : elements) {
-            // XmlRootElement can only annotated to type elements
-            TypeElement typeElement = (TypeElement) element;
-            String pkg = getPackageOf(typeElement);
-            packageMap.put(pkg, typeElement);
-        }
+    @Override
+    public void process(Element element) {
+        // XmlRootElement can only be annotated to type elements
+        TypeElement typeElement = (TypeElement) element;
+        String pkg = getPackageOf(typeElement);
+        packageMap.put(pkg, typeElement);
     }
 
     public void finish() {
