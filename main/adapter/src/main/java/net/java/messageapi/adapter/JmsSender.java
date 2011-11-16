@@ -75,9 +75,10 @@ public class JmsSender {
         Object payload = payloadHandler.toPayload(api, pojo);
         boolean transacted = config.isTransacted();
 
-        logger.debug("sending {}transacted message to {}", transacted ? "" : "non-",
+        // TODO back to debug level:
+        logger.info("sending {}transacted message to {}", transacted ? "" : "non-",
                 config.getDestinationName());
-        logger.debug("payload:\n{}", payload);
+        logger.info("payload:\n{}", payload);
 
         Connection connection = null;
         boolean sent = false;
@@ -106,8 +107,8 @@ public class JmsSender {
 
             messageProducer.send(message, deliveryMode, priority, timeToLive);
 
-            logger.info("sent message id {} to {}", message.getJMSMessageID(),
-                    message.getJMSDestination());
+            logger.info("sent {} message id {} to {}", new Object[] { payloadHandler.getName(),
+                    message.getJMSMessageID(), message.getJMSDestination() });
             sent = true;
         } catch (NamingException e) {
             throw new RuntimeException("can't send JMS", e);

@@ -20,6 +20,8 @@ public class Pojo {
     private final PojoAnnotations annotations = new PojoAnnotations();
     private final List<PojoProperty> properties = Lists.newArrayList();
     private boolean privateDefaultConstructor;
+    private String superClass;
+    private final List<String> interfaces = Lists.newArrayList();
 
     public Pojo(String pkg, String className) {
         this.pkg = pkg;
@@ -33,7 +35,12 @@ public class Pojo {
             appendImports(writer);
             writer.append("\n");
             annotations.writeTo(writer, 0);
-            writer.append("public class ").append(className).append(" {\n");
+            writer.append("public class ").append(className);
+            if (superClass != null)
+                writer.append(" extends ").append(superClass);
+            appendInterfaces(writer);
+            writer.append(" {\n");
+            appendSerializableId(writer);
             appendFields(writer);
             appendConstructors(writer);
             appendGetters(writer);
@@ -49,6 +56,21 @@ public class Pojo {
     private void appendImports(Writer writer) throws IOException {
         for (String type : imports) {
             writer.append("import ").append(type).append(";\n");
+        }
+    }
+
+    private void appendInterfaces(Writer writer) throws IOException {
+        if (interfaces.isEmpty())
+            return;
+        writer.append(" implements ");
+        for (String interface_ : interfaces) {
+            writer.append(interface_);
+        }
+    }
+
+    private void appendSerializableId(Writer writer) throws IOException {
+        if (interfaces.contains(Serializable.class)) {
+            writer.append("private static final long serialVersionUID = 1L;\n");
         }
     }
 
@@ -162,6 +184,16 @@ public class Pojo {
         }
         writer.append(")\";\n");
         writer.append("\t}\n");
+    }
+
+    public void setSuperclass(Class<?> superClass) {
+        this.imports.add(superClass.getName());
+        this.superClass = superClass.getSimpleName();
+    }
+
+    public void addInterface(Class<?> interface_) {
+        this.imports.add(interface_.getName());
+        this.interfaces.add(interface_.getSimpleName());
     }
 
     /** This is not the simple name for nested types */

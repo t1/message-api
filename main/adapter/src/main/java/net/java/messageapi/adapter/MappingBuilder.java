@@ -3,7 +3,7 @@ package net.java.messageapi.adapter;
 import java.lang.reflect.Method;
 
 import net.java.messageapi.JmsMappedName;
-import net.java.messageapi.JmsPayloadMapping;
+import net.java.messageapi.JmsMappedPayload;
 import net.java.messageapi.reflection.Parameter;
 
 import com.google.common.collect.ImmutableBiMap;
@@ -23,7 +23,7 @@ public class MappingBuilder {
     }
 
     public MappingBuilder(Class<?> api) {
-        JmsPayloadMapping annotation = api.getAnnotation(JmsPayloadMapping.class);
+        JmsMappedPayload annotation = api.getAnnotation(JmsMappedPayload.class);
         String operationName = (annotation == null) ? DEFAULT_OPERATION_FIELD
                 : annotation.operationName();
         this.mapping = new DefaultMapping(operationName);

@@ -14,7 +14,7 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({TYPE, METHOD, FIELD, PARAMETER})
 @Retention(RUNTIME)
-public @interface JmsPayloadMapping {
+public @interface JmsMappedPayload {
     /** The message field that contians the name of the operation/method to be performed */
     String operationName() default "OPERATION";
 

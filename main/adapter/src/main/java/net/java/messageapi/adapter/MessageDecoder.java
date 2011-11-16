@@ -2,7 +2,6 @@ package net.java.messageapi.adapter;
 
 import javax.jms.*;
 
-
 /**
  * Automatically delegates to the proper {@link MapMessageDecoder} or {@link XmlMessageDecoder}
  */
@@ -17,6 +16,7 @@ public class MessageDecoder<T> implements MessageListener {
 
     private XmlMessageDecoder<T> xmlMessageDecoder;
     private MapMessageDecoder<T> mapMessageDecoder;
+    private ObjectMessageDecoder<T> objectMessageDecoder;
 
     public MessageDecoder(Class<T> api, T impl) {
         this.api = api;
@@ -29,6 +29,8 @@ public class MessageDecoder<T> implements MessageListener {
             getXmlMessageDecoder().onMessage(message);
         } else if (message instanceof MapMessage) {
             getMapMessageDecoder().onMessage(message);
+        } else if (message instanceof ObjectMessage) {
+            getObjectMessageDecoder().onMessage(message);
         } else {
             throw new RuntimeException("can't handle " + message.getClass().getSimpleName() + "s");
         }
@@ -36,13 +38,19 @@ public class MessageDecoder<T> implements MessageListener {
 
     private MessageListener getXmlMessageDecoder() {
         if (xmlMessageDecoder == null)
-            xmlMessageDecoder = new XmlMessageDecoder<T>(api, impl);
+            xmlMessageDecoder = XmlMessageDecoder.of(api, impl);
         return xmlMessageDecoder;
     }
 
     private MessageListener getMapMessageDecoder() {
         if (mapMessageDecoder == null)
-            mapMessageDecoder = new MapMessageDecoder<T>(api, impl);
+            mapMessageDecoder = MapMessageDecoder.of(api, impl);
         return mapMessageDecoder;
+    }
+
+    private MessageListener getObjectMessageDecoder() {
+        if (objectMessageDecoder == null)
+            objectMessageDecoder = ObjectMessageDecoder.of(api, impl);
+        return objectMessageDecoder;
     }
 }

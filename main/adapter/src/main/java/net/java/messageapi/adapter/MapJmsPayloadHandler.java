@@ -120,4 +120,9 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
     public String toString() {
         return "MapJmsPayloadHandler [" + mapping + "]";
     }
+
+    @Override
+    public String getName() {
+        return "mapped";
+    }
 }

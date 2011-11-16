@@ -68,5 +68,10 @@
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>net.java.messageapi</groupId>
+			<artifactId>annotations</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -102,7 +102,7 @@ public class MessageApiBeanTest {
     }
 
     @MessageApi
-    @JmsPayloadMapping(operationName = "op")
+    @JmsMappedPayload(operationName = "op")
     public static interface MappedDummyApi {
         /* no parameter name is known here => use native arg0 */
         public void unconfiguredTestMethod(@JmsMappedName("aarg") String arg0);

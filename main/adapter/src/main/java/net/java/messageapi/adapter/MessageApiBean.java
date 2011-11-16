@@ -61,10 +61,20 @@ final class MessageApiBean<T> extends AbstractBean<T> {
     }
 
     private JmsPayloadHandler getPayloadHandler() {
-        JmsPayloadMapping mapping = type.getAnnotation(JmsPayloadMapping.class);
-        if (mapping == null)
+        if (type.isAnnotationPresent(JmsMappedPayload.class)) {
+            return new MapJmsPayloadHandler(buildMapping());
+        } else if (type.isAnnotationPresent(JmsSerializedPayload.class)) {
+            return new SerializedJmsPayloadHandler();
+        } else {
             return new XmlJmsPayloadHandler();
-        return new MapJmsPayloadHandler(new MappingBuilder(type).build());
+        }
+    }
+
+    public Mapping buildMapping() {
+        MappingBuilder builder = new MappingBuilder(type);
+        // JmsPayloadMapping mapping = type.getAnnotation(JmsMappedPayload.class);
+        // TODO pass annotation parameters into MappingBuilder
+        return builder.build();
     }
 
     @Override

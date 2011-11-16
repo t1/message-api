@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 import javax.annotation.Generated;
@@ -31,8 +32,12 @@ import com.google.common.collect.Iterables;
 @RunWith(TwiP.class)
 public class ApiToMessagePojoProcessorTest {
 
-    private static final Set<String> REQUIRED_IMPORTS = ImmutableSet.of(Generated.class.getName(),
-            XmlRootElement.class.getName(), XmlType.class.getName(), XmlElement.class.getName());
+    private static final Set<String> REQUIRED_IMPORTS = ImmutableSet.of( //
+            Generated.class.getName(), //
+            XmlRootElement.class.getName(), //
+            XmlType.class.getName(), //
+            XmlElement.class.getName(), //
+            Serializable.class.getName());
 
     private static final String PACKAGE = ApiToMessagePojoProcessorTest.class.getPackage().getName();
 
@@ -156,7 +161,8 @@ public class ApiToMessagePojoProcessorTest {
         convert(NoArgApi.class);
 
         Set<String> expected = ImmutableSet.of(Generated.class.getName(),
-                XmlRootElement.class.getName(), XmlType.class.getName());
+                XmlRootElement.class.getName(), XmlType.class.getName(),
+                Serializable.class.getName());
         assertEquals(expected, popPojo().getImports());
     }
 

@@ -24,21 +24,21 @@ import com.google.common.collect.ImmutableSet;
  */
 public class MapMessageDecoder<T> implements MessageListener {
 
-    public static <T> MapMessageDecoder<T> create(Class<T> api, T impl, String operationField) {
-        return create(api, impl, new DefaultMapping(operationField));
+    public static <T> MapMessageDecoder<T> of(Class<T> api, T impl) {
+        return of(api, impl, new MappingBuilder(api).build());
     }
 
-    public static <T> MapMessageDecoder<T> create(Class<T> api, T impl, Mapping mapping) {
+    public static <T> MapMessageDecoder<T> of(Class<T> api, T impl, String operationField) {
+        return of(api, impl, new DefaultMapping(operationField));
+    }
+
+    public static <T> MapMessageDecoder<T> of(Class<T> api, T impl, Mapping mapping) {
         return new MapMessageDecoder<T>(api, impl, mapping);
     }
 
     private final Class<T> api;
     private final PojoInvoker<T> invoker;
     private final Mapping mapping;
-
-    public MapMessageDecoder(Class<T> api, T impl) {
-        this(api, impl, new MappingBuilder(api).build());
-    }
 
     public MapMessageDecoder(Class<T> api, T impl, Mapping mapping) {
         if (mapping == null)

@@ -18,6 +18,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>net.java.messageapi</groupId>
+			<artifactId>annotations</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>6.0</version>

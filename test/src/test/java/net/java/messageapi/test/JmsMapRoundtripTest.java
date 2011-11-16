@@ -2,6 +2,7 @@ package net.java.messageapi.test;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -107,7 +108,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
         // When
         sendProxy.a("content");
-        MapMessageDecoder.create(OneCharTestApi.class, oneCharServiceMock, receiveMapping) //
+        MapMessageDecoder.of(OneCharTestApi.class, oneCharServiceMock, receiveMapping) //
         .onMessage(captureMessage());
 
         // Then
@@ -155,7 +156,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         // When
         String message = null;
         try {
-            MapMessageDecoder.create(MappedApi.class, serviceMock, receiveMapping).onMessage(
+            MapMessageDecoder.of(MappedApi.class, serviceMock, receiveMapping).onMessage(
                     captureMessage());
             fail("RuntimeException expected");
         } catch (RuntimeException e) {
@@ -232,7 +233,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
 
         // When
         JodaTimeApi mock = mock(JodaTimeApi.class);
-        MapMessageDecoder.create(JodaTimeApi.class, mock, mapping).onMessage(message);
+        MapMessageDecoder.of(JodaTimeApi.class, mock, mapping).onMessage(message);
 
         // Then
         verify(mock).localDateCall(today, flag);
@@ -258,7 +259,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         MapMessage message = createPayload("myop", "mappedNoArgCall");
 
         // When
-        MapMessageDecoder.create(MappedApi.class, serviceMock, myMapping.build()).onMessage(message);
+        MapMessageDecoder.of(MappedApi.class, serviceMock, myMapping.build()).onMessage(message);
 
         // Then
         verify(serviceMock).mappedNoArgCall();
@@ -367,7 +368,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
                 String.valueOf(value));
 
         // When
-        MapMessageDecoder.create(PrimitivesTestApi.class, primitivesServiceMock, mapping.build()).onMessage(
+        MapMessageDecoder.of(PrimitivesTestApi.class, primitivesServiceMock, mapping.build()).onMessage(
                 message);
 
         // Then
@@ -389,7 +390,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
                 String.valueOf(value));
 
         // When
-        MapMessageDecoder.create(BoxedPrimitivesTestApi.class, boxedPrimitivesServiceMock,
+        MapMessageDecoder.of(BoxedPrimitivesTestApi.class, boxedPrimitivesServiceMock,
                 mapping.build()).onMessage(message);
 
         // Then
@@ -431,7 +432,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     private void receive(Message message, Mapping mapping) {
-        MapMessageDecoder.create(MappedApi.class, serviceMock, mapping).onMessage(message);
+        MapMessageDecoder.of(MappedApi.class, serviceMock, mapping).onMessage(message);
     }
 
     private <T> void givenFieldMapping(Mapping receiveMapping, String attributeName,

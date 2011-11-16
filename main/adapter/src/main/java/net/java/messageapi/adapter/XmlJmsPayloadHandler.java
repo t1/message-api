@@ -83,4 +83,9 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
         }
         return true;
     }
+
+    @Override
+    public String getName() {
+        return "xml";
+    }
 }

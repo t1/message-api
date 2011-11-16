@@ -1,7 +1,6 @@
 package net.java.messageapi.processor;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 
 import javax.annotation.Generated;
@@ -160,6 +159,7 @@ public class PojoGenerator extends AbstractGenerator {
         container = container.replace('.', '$');
         String className = container + "$" + method.getMethodNameAsClassName();
         Pojo pojo = new Pojo(pkg, className);
+        pojo.addInterface(Serializable.class);
         addAnnotations(method, pojo);
         addProperties(method, pojo);
         pojo.addPrivateDefaultConstructor();

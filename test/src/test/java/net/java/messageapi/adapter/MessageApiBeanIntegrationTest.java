@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 public class MessageApiBeanIntegrationTest {
 
     @MessageApi
-    @JmsPayloadMapping
+    @JmsMappedPayload
     public static interface ConfiguredTestApi {
         public void configuredMethod(@JmsMappedName("aarg") String someArg);
     }
