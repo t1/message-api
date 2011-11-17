@@ -49,8 +49,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         }
     }
 
-    public static final Collection<SimpleServiceCall> PRIMITIVE_CALLS = ImmutableList.of(
-            new SimpleServiceCall("booleanCall", "b", Boolean.TYPE, false),//
+    public static final Collection<SimpleServiceCall> PRIMITIVE_CALLS = ImmutableList.of(new SimpleServiceCall(
+            "booleanCall", "b", Boolean.TYPE, false),//
             new SimpleServiceCall("byteCall", "b", Byte.TYPE, (byte) 0),//
             new SimpleServiceCall("charCall", "c", Character.TYPE, 'c'),//
             new SimpleServiceCall("shortCall", "s", Short.TYPE, (short) 0),//
@@ -59,8 +59,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
             new SimpleServiceCall("floatCall", "f", Float.TYPE, 0.0f),//
             new SimpleServiceCall("doubleCall", "d", Double.TYPE, 0.0));
 
-    public static final Collection<SimpleServiceCall> BOXED_PRIMITIVE_CALLS = ImmutableList.of(
-            new SimpleServiceCall("boxedBooleanCall", "b", Boolean.class, false),//
+    public static final Collection<SimpleServiceCall> BOXED_PRIMITIVE_CALLS = ImmutableList.of(new SimpleServiceCall(
+            "boxedBooleanCall", "b", Boolean.class, false),//
             new SimpleServiceCall("boxedByteCall", "b", Byte.class, (byte) 0),//
             new SimpleServiceCall("boxedCharCall", "c", Character.class, 'c'),//
             new SimpleServiceCall("boxedShortCall", "s", Short.class, (short) 0),//
@@ -145,8 +145,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void receiveShouldFailWithUnmappedName() {
         // Given
-        Mapping sendMapping = new MappingBuilder(OPERATION_FIELD_NAME).mapOperation("mappedCall",
-                "OP").build();
+        Mapping sendMapping = new MappingBuilder(OPERATION_FIELD_NAME).mapOperation("mappedCall", "OP").build();
         MappedApi service = service(sendMapping);
         service.mappedCall("a", 0L);
 
@@ -155,8 +154,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         // When
         String message = null;
         try {
-            MapMessageDecoder.of(MappedApi.class, serviceMock, receiveMapping).onMessage(
-                    captureMessage());
+            MapMessageDecoder.of(MappedApi.class, serviceMock, receiveMapping).onMessage(captureMessage());
             fail("RuntimeException expected");
         } catch (RuntimeException e) {
             message = e.getCause().getMessage();
@@ -185,8 +183,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         // Given
         Mapping mapping = MessageSender.getJmsMappingFor(MappedApi.class);
 
-        MapMessage message = createPayload(OPERATION_FIELD_NAME, "mappedCall", "A", "value1", "B",
-                0L);
+        MapMessage message = createPayload(OPERATION_FIELD_NAME, "mappedCall", "A", "value1", "B", 0L);
 
         // When
         receive(message, mapping);
@@ -205,8 +202,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
         .build();
         MapJmsPayloadHandler payloadHandler = new MapJmsPayloadHandler(mapping);
-        JodaTimeApi service = JmsSenderFactory.create(CONFIG, payloadHandler).create(
-                JodaTimeApi.class);
+        JodaTimeApi service = JmsSenderFactory.create(CONFIG, payloadHandler).create(JodaTimeApi.class);
 
         // When
         service.localDateCall(today, flag);
@@ -227,8 +223,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
         .build();
 
-        MapMessage message = createPayload(OPERATION_FIELD_NAME, "localDateCall", "date",
-                today.toString(pattern), "flag", flag ? "1" : "0");
+        MapMessage message = createPayload(OPERATION_FIELD_NAME, "localDateCall", "date", today.toString(pattern),
+                "flag", flag ? "1" : "0");
 
         // When
         JodaTimeApi mock = mock(JodaTimeApi.class);
@@ -353,8 +349,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     @Test
-    public void shouldMapReceivePrimitiveAttributesIfWrittenAsStrings(
-            @Values("PRIMITIVE_CALLS") SimpleServiceCall call) throws Exception {
+    public void shouldMapReceivePrimitiveAttributesIfWrittenAsStrings(@Values("PRIMITIVE_CALLS") SimpleServiceCall call)
+            throws Exception {
         // Given
         MappingBuilder mapping = new MappingBuilder(OPERATION_FIELD_NAME);
         String operation = call.operation;
@@ -363,12 +359,10 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         Object value = call.value;
         mapping.mapField(argument, FieldMapping.map(argument));
 
-        MapMessage message = createPayload(OPERATION_FIELD_NAME, operation, argument,
-                String.valueOf(value));
+        MapMessage message = createPayload(OPERATION_FIELD_NAME, operation, argument, String.valueOf(value));
 
         // When
-        MapMessageDecoder.of(PrimitivesTestApi.class, primitivesServiceMock, mapping.build()).onMessage(
-                message);
+        MapMessageDecoder.of(PrimitivesTestApi.class, primitivesServiceMock, mapping.build()).onMessage(message);
 
         // Then
         invoke(verify(primitivesServiceMock), operation, type, value);
@@ -385,12 +379,11 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         Object value = call.value;
         mapping.mapField(argument, FieldMapping.map(argument));
 
-        MapMessage message = createPayload(OPERATION_FIELD_NAME, operation, argument,
-                String.valueOf(value));
+        MapMessage message = createPayload(OPERATION_FIELD_NAME, operation, argument, String.valueOf(value));
 
         // When
-        MapMessageDecoder.of(BoxedPrimitivesTestApi.class, boxedPrimitivesServiceMock,
-                mapping.build()).onMessage(message);
+        MapMessageDecoder.of(BoxedPrimitivesTestApi.class, boxedPrimitivesServiceMock, mapping.build()).onMessage(
+                message);
 
         // Then
         invoke(verify(boxedPrimitivesServiceMock), operation, type, value);
@@ -414,29 +407,24 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         return newMapMessage(ImmutableMap.<String, Object> of(key, value));
     }
 
-    private MapMessage createPayload(String key1, Object value1, String key2, Object value2)
-            throws JMSException {
+    private MapMessage createPayload(String key1, Object value1, String key2, Object value2) throws JMSException {
         return newMapMessage(ImmutableMap.<String, Object> of(key1, value1, key2, value2));
     }
 
-    private MapMessage createPayload(String key1, Object value1, String key2, Object value2,
-            String key3, Object value3) throws JMSException {
-        return newMapMessage(ImmutableMap.<String, Object> of(key1, value1, key2, value2, key3,
-                value3));
+    private MapMessage createPayload(String key1, Object value1, String key2, Object value2, String key3, Object value3)
+            throws JMSException {
+        return newMapMessage(ImmutableMap.<String, Object> of(key1, value1, key2, value2, key3, value3));
     }
 
     private MappedApi service(Mapping mapping) {
-        return JmsSenderFactory.create(CONFIG, new MapJmsPayloadHandler(mapping)).create(
-                MappedApi.class);
+        return JmsSenderFactory.create(CONFIG, new MapJmsPayloadHandler(mapping)).create(MappedApi.class);
     }
 
     private void receive(Message message, Mapping mapping) {
         MapMessageDecoder.of(MappedApi.class, serviceMock, mapping).onMessage(message);
     }
 
-    private <T> void givenFieldMapping(Mapping receiveMapping, String attributeName,
-            FieldMapping<T> fieldMapping) {
-        given((FieldMapping<T>) receiveMapping.getMappingForField(attributeName)).willReturn(
-                fieldMapping);
+    private <T> void givenFieldMapping(Mapping receiveMapping, String attributeName, FieldMapping<T> fieldMapping) {
+        given((FieldMapping<T>) receiveMapping.getMappingForField(attributeName)).willReturn(fieldMapping);
     }
 }

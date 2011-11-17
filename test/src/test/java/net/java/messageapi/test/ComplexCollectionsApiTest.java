@@ -20,8 +20,7 @@ public class ComplexCollectionsApiTest {
     private final ComplexCollectionsApi sender;
 
     // TODO support: SUN_JDK
-    public ComplexCollectionsApiTest(
-            @NotNull @Assume("!= XSTREAM & != UNCHANGED & != SUN_JDK") JaxbProvider provider) {
+    public ComplexCollectionsApiTest(@NotNull @Assume("!= XSTREAM & != UNCHANGED & != SUN_JDK") JaxbProvider provider) {
         sender = ForwardingSenderFactory.create(ComplexCollectionsApi.class, service, provider);
     }
 

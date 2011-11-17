@@ -26,8 +26,7 @@ public class ToXmlEncoderTest {
 
         // Then
         String[] line = writer.toString().split("\n");
-        assertThat(line[0],
-                matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
+        assertThat(line[0], matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
         assertThat(line[1], is("<noArgCall/>"));
     }
 
@@ -42,8 +41,7 @@ public class ToXmlEncoderTest {
 
         // Then
         String[] line = writer.toString().split("\n");
-        assertThat(line[0],
-                matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
+        assertThat(line[0], matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
         assertThat(line[1], is("<noArgCall/>"));
     }
 }

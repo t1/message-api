@@ -23,8 +23,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     // TODO support ECLIPSE_LINK when this bug is fixed:
     // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
-    public JmsXmlRoundtripTest(
-            @NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
+    public JmsXmlRoundtripTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
         this.memento = jaxbProvider.setUp();
     }
 
@@ -35,8 +34,8 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private String instantCallXml(Instant now) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<ns2:instantCall xmlns:ns2=\"http://messageapi.java.net\">\n"
-                + "    <instantName>" + now + "</instantName>\n" //
+                + "<ns2:instantCall xmlns:ns2=\"http://messageapi.java.net\">\n" + "    <instantName>" + now
+                + "</instantName>\n" //
                 + "</ns2:instantCall>\n";
     }
 
@@ -98,8 +97,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
         String xml = instantCallXml(now);
         TextMessage textMessage = new TextMessageImpl(xml);
         JodaTimeApi serviceImpl = mock(JodaTimeApi.class);
-        XmlMessageDecoder<JodaTimeApi> decoder = XmlMessageDecoder.of(JodaTimeApi.class,
-                serviceImpl);
+        XmlMessageDecoder<JodaTimeApi> decoder = XmlMessageDecoder.of(JodaTimeApi.class, serviceImpl);
 
         // When
         decoder.onMessage(textMessage);

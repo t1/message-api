@@ -14,13 +14,11 @@ public class ToXmlEncoderHelper {
      * @param jaxbProvider
      *            pass <code>null</code> to indicate that it should not be changed.
      */
-    public static <T> T create(final Class<T> api, final Writer writer,
-            final JaxbProvider jaxbProvider) {
+    public static <T> T create(final Class<T> api, final Writer writer, final JaxbProvider jaxbProvider) {
         if (api == null)
             throw new NullPointerException("api must not be null");
         if (jaxbProvider == null)
-            throw new NullPointerException(
-                    "jaxbProvider must not be null; eventually pass JaxbProvider.UNCHANGED");
+            throw new NullPointerException("jaxbProvider must not be null; eventually pass JaxbProvider.UNCHANGED");
         if (writer == null)
             throw new NullPointerException("writer must not be null");
 

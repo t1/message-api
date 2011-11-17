@@ -29,8 +29,7 @@ public class PrimitiveTestApiTest {
     }
 
     private void matchFrame(String methodName, int lines) {
-        assertThat(getLine(0),
-                matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
+        assertThat(getLine(0), matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
         assertThat(getLine(1), //
                 matches("<(ns2:)?" + methodName + "( xmlns:ns2=\"" + NS + "\")?>"));
         assertThat(getLine(lines), //

@@ -39,9 +39,8 @@ public class XmlSenderFactoryTest {
         public final Properties contextProperties;
         public final ImmutableMap<String, ?> header;
 
-        Params(String factory, String destination, String user, String password,
-                boolean transacted, ImmutableMap<String, String> contextProperties,
-                ImmutableMap<String, ?> header) {
+        Params(String factory, String destination, String user, String password, boolean transacted,
+                ImmutableMap<String, String> contextProperties, ImmutableMap<String, ?> header) {
             this.factory = factory;
             this.destination = destination;
             this.user = user;
@@ -65,19 +64,17 @@ public class XmlSenderFactoryTest {
     private final JmsQueueConfig config;
     private final JmsSenderFactory factory;
 
-    public XmlSenderFactoryTest(Params params,
-            @NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) {
+    public XmlSenderFactoryTest(Params params, @NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) {
         @SuppressWarnings("unchecked")
         Map<String, Object> headerMap = (Map<String, Object>) params.header;
-        this.config = new JmsQueueConfig(params.factory, params.destination, params.user,
-                params.password, params.transacted, params.contextProperties, headerMap);
+        this.config = new JmsQueueConfig(params.factory, params.destination, params.user, params.password,
+                params.transacted, params.contextProperties, headerMap);
         XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler(jaxbProvider);
         this.factory = JmsSenderFactory.create(config, payloadHandler);
     }
 
     private String xml() {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<jmsSenderFactory>\n" //
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<jmsSenderFactory>\n" //
                 + "    <destination name=\"" + config.getDestinationName() + "\">\n" //
                 + "        <factory>" + config.getFactoryName() + "</factory>\n" //
                 + "        <user>" + config.getUser() + "</user>\n" //

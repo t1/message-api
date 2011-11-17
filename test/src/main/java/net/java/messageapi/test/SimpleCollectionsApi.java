@@ -5,7 +5,6 @@ import java.util.Set;
 
 import net.java.messageapi.MessageApi;
 
-
 @MessageApi
 public interface SimpleCollectionsApi {
     public void stringListCall(List<String> listArg);

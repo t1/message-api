@@ -30,8 +30,7 @@ public class TestApiSendTest {
     }
 
     private void matchFrame(String methodName, int lines) {
-        assertThat(getLine(0),
-                matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
+        assertThat(getLine(0), matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"( standalone=\"yes\")?\\?>"));
         String elementStart = "<(ns2:)?" + methodName + "( xmlns:ns2=\"" + NS + "\")?";
         if (lines == 2) {
             assertThat(getLine(1), matches(elementStart + "/>"));
@@ -86,8 +85,7 @@ public class TestApiSendTest {
         TestType t = new TestType("someValue");
         testApi.namespaceCall(t);
 
-        assertEquals("<ns2:namespaceCall xmlns:ns2=\"" + NS + "\" xmlns:ns3=\"test-ns\">",
-                getLine(1));
+        assertEquals("<ns2:namespaceCall xmlns:ns2=\"" + NS + "\" xmlns:ns3=\"test-ns\">", getLine(1));
         assertEquals("    <theType>", getLine(2));
         assertEquals("        <ns3:value>someValue</ns3:value>", getLine(3));
         assertEquals("    </theType>", getLine(4));

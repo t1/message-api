@@ -27,8 +27,8 @@ public abstract class AbstractJmsSenderFactoryTest {
     protected static final String QUEUE_USER = "MyQueueUser";
     protected static final String QUEUE_PASS = "MyQueuePass";
 
-    protected final JmsQueueConfig CONFIG = new JmsQueueConfig(FACTORY, QUEUE, QUEUE_USER,
-            QUEUE_PASS, false, new Properties(), Collections.<String, Object> emptyMap());
+    protected final JmsQueueConfig CONFIG = new JmsQueueConfig(FACTORY, QUEUE, QUEUE_USER, QUEUE_PASS, false,
+            new Properties(), Collections.<String, Object> emptyMap());
 
     protected final MessageListener targetMDB = mock(MessageListener.class);
 
@@ -48,8 +48,7 @@ public abstract class AbstractJmsSenderFactoryTest {
         InitialContext context = new InitialContext();
         MockContainer mockContainer = new MockContainer(context);
 
-        mockContainer.deploy(new MDBDescriptor(CONFIG.getFactoryName(),
-                CONFIG.getDestinationName(), targetMDB));
+        mockContainer.deploy(new MDBDescriptor(CONFIG.getFactoryName(), CONFIG.getDestinationName(), targetMDB));
     }
 
     protected Message captureMessage() {
