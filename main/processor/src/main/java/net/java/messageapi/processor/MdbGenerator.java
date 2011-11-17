@@ -46,6 +46,8 @@ public class MdbGenerator extends AbstractGenerator {
         String destination = fqcn;
         String mdbName = simple + "MDB";
 
+        // TODO add messageSelector on the version!
+
         return ""
                 + ("package " + pkg + ";\n")
                 + "\n" //

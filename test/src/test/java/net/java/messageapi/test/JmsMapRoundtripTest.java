@@ -2,7 +2,6 @@ package net.java.messageapi.test;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
 import java.util.Collection;

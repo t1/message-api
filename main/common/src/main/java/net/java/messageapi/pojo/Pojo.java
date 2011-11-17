@@ -69,8 +69,8 @@ public class Pojo {
     }
 
     private void appendSerializableId(Writer writer) throws IOException {
-        if (interfaces.contains(Serializable.class)) {
-            writer.append("private static final long serialVersionUID = 1L;\n");
+        if (interfaces.contains(Serializable.class.getSimpleName())) {
+            writer.append("\tprivate static final long serialVersionUID = 1L;\n");
         }
     }
 
@@ -177,6 +177,8 @@ public class Pojo {
         writer.append("\t\treturn \"" + className + "(");
         DelimiterWriter comma = new DelimiterWriter(writer, ", ");
         for (PojoProperty property : properties) {
+            if (property.isTransient())
+                continue;
             comma.write();
             writer.append("\" + ");
             property.writeToStringTo(writer);

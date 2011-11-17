@@ -122,6 +122,8 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
         return constructorBody.toString();
     }
 
+    // TODO generate toString, hashCode and equals
+
     private List<String> addProperties() throws Exception {
         List<String> propOrder = Lists.newArrayList();
 
@@ -131,7 +133,7 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
             if (parameter.isAnnotationPresent(JmsProperty.class)) {
                 new CtFieldAnnotation(field, JmsProperty.class).set();
-                new CtFieldAnnotation(field, XmlTransient.class).set();
+                field.setModifiers(field.getModifiers() | Modifier.TRANSIENT);
             } else {
                 CtFieldAnnotation xmlElement = new CtFieldAnnotation(field, XmlElement.class);
                 xmlElement.addMemberValue("required", (optional == null));

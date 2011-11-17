@@ -452,21 +452,12 @@ public class ApiToMessagePojoProcessorTest {
     }
 
     @Test
-    public void shouldTurnJmsPropertyToXmlTransient() throws Exception {
+    public void shouldMakeJmsPropertyTransient() throws Exception {
         convert(JmsPropertyApi.class);
 
         PojoProperty property = popPojo().getProperty("arg0");
 
-        assertTrue(property.isAnnotatedAs(XmlTransient.class));
-    }
-
-    @Test
-    public void shouldImportXmlTransient() throws Exception {
-        convert(JmsPropertyApi.class);
-
-        Set<String> imports = popPojo().getImports();
-
-        assertTrue(imports.contains(XmlTransient.class.getName()));
+        assertTrue(property.isTransient());
     }
 
     @Test

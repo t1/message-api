@@ -39,6 +39,7 @@ public abstract class PojoProperty {
     private final Pojo pojo;
     private final String type;
     private final TypeMatcher matcher;
+    private boolean transient_;
     protected final String name;
 
     protected PojoProperty(Pojo pojo, String type, String name) {
@@ -50,7 +51,10 @@ public abstract class PojoProperty {
 
     public void writeFieldTo(Writer writer) throws IOException {
         annotations.writeTo(writer, 1);
-        writer.append("\tprivate final ").append(type).append(" ");
+        writer.append("\tprivate final ");
+        if (transient_)
+            writer.append("transient ");
+        writer.append(type).append(" ");
         writer.append(name).append(";\n");
     }
 
@@ -113,5 +117,13 @@ public abstract class PojoProperty {
     public void annotate(Class<? extends Annotation> annotationType, Map<String, ?> fields) {
         annotations.add(annotationType, fields);
         pojo.addImport(annotationType.getName());
+    }
+
+    public void setTransient() {
+        this.transient_ = true;
+    }
+
+    public boolean isTransient() {
+        return transient_;
     }
 }

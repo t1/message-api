@@ -1,7 +1,6 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 import java.util.*;
 
 import javax.jms.*;
@@ -50,7 +49,7 @@ public class MapMessageDecoder<T> implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        receive(convert((MapMessage) message));
+        receive(convert((MapMessage) message), message);
     }
 
     private Map<String, String> convert(MapMessage message) {
@@ -70,11 +69,12 @@ public class MapMessageDecoder<T> implements MessageListener {
         }
     }
 
-    private void receive(Map<String, String> source) {
+    private void receive(Map<String, String> source, Message message) {
         String methodName = getMethodName(source);
         try {
             Object pojo = constructPojo(methodName);
             populatePojo(pojo, source);
+            JmsPropertiesFromMessageToPojo.scan(message, pojo);
             invoker.invoke(pojo);
         } catch (Exception e) {
             throw new RuntimeException("Could not receive " + source + " for " + api.getName()
@@ -108,6 +108,8 @@ public class MapMessageDecoder<T> implements MessageListener {
 
     private void populatePojo(Object pojo, Map<String, String> body) throws Exception {
         for (Field argumentField : getFields(pojo)) {
+            if (Modifier.isStatic(argumentField.getModifiers()))
+                continue;
             String fieldName = argumentField.getName();
             FieldMapping<?> fieldMapping = mapping.getMappingForField(fieldName);
             if (body.containsKey(fieldMapping.getAttributeName())) {

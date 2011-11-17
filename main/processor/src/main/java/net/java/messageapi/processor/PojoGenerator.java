@@ -185,7 +185,7 @@ public class PojoGenerator extends AbstractGenerator {
 
             if (parameter.getAnnotation(JmsProperty.class) != null) {
                 property.annotate(JmsProperty.class);
-                property.annotate(XmlTransient.class);
+                property.setTransient();
             } else {
                 boolean required = (optional == null);
                 property.annotate(XmlElement.class, ImmutableMap.of("required", required));

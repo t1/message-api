@@ -6,20 +6,16 @@ import java.util.*;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import net.java.messageapi.JmsProperty;
-
 /**
- * Provides the header fields that are annotated as {@link JmsProperty}
+ * Provides the header fields that are annotated as {@link net.java.messageapi.JmsProperty}
  */
 class JmsPropertySupplier implements JmsHeaderSupplier {
-
     @Override
     public void addTo(final Message message, Object pojo) throws JMSException {
         JmsPropertyScanner scanner = new JmsPropertyScanner(new JmsPropertyScanner.Visitor() {
             @Override
             public void visit(String propertyName, Object container, Field field)
                     throws JMSException, IllegalAccessException {
-                // TODO something similar has to be done for mapped messages; refactor
                 Object value = field.get(container);
                 if (value == null) {
                     // do not add

@@ -59,7 +59,6 @@ public class DebugInfoParameterNameSupplier implements ParameterNameSupplier {
         classPool.insertClassPath(new LoaderClassPath(method.getDeclaringClass().getClassLoader()));
         CtClass ctClass = classPool.get(method.getDeclaringClass().getName());
 
-        // FIXME take args into account
         CtMethod ctMethod = ctClass.getDeclaredMethod(method.getName());
         CodeAttribute code = (CodeAttribute) ctMethod.getMethodInfo().getAttribute("Code");
         // TODO log a warning: missing debug information; once per jar only!

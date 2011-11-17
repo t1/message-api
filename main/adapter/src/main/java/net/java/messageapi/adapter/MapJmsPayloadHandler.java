@@ -1,12 +1,15 @@
 package net.java.messageapi.adapter;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import javax.jms.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.java.messageapi.JmsProperty;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -30,12 +33,19 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
 
     @Override
     public Object toPayload(Class<?> api, Object pojo) {
-        String operationName = mapping.getOperationForMethod(getSimpleTypeName(pojo));
-        String operationField = mapping.getOperationMessageAttibute();
-        return buildPayload(pojo, operationName, operationField);
+        ImmutableMap.Builder<String, Object> result = ImmutableMap.builder();
+        addOperation(pojo, result);
+        result.putAll(readFields(pojo));
+        return result.build();
     }
 
-    public String getSimpleTypeName(Object pojo) {
+    public void addOperation(Object pojo, ImmutableMap.Builder<String, Object> result) {
+        String operationName = mapping.getOperationForMethod(getSimpleTypeName(pojo));
+        String operationField = mapping.getOperationMessageAttibute();
+        result.put(operationField, operationName);
+    }
+
+    private String getSimpleTypeName(Object pojo) {
         String simpleName = pojo.getClass().getSimpleName();
         if (simpleName.contains("$"))
             simpleName = simpleName.substring(simpleName.indexOf('$') + 1);
@@ -43,16 +53,12 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
         return simpleName;
     }
 
-    public Object buildPayload(Object pojo, String operationName, String operationField) {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        builder.put(operationField, operationName);
-        builder.putAll(readFields(pojo));
-        return builder.build();
-    }
-
     private Map<String, Object> readFields(Object pojo) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         for (Field field : pojo.getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(JmsProperty.class)
+                    || Modifier.isStatic(field.getModifiers()))
+                continue;
             String fieldName = field.getName();
             FieldMapping<Object> fieldMapping = (FieldMapping<Object>) mapping.getMappingForField(fieldName);
             Object value = getField(pojo, field);

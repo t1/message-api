@@ -51,19 +51,20 @@ public class MethodAsClassGeneratorTwoArgsTest {
         Field[] declaredFields = generated.getDeclaredFields();
         assertEquals(2, declaredFields.length);
 
-        verify(declaredFields, 0, String.class, true);
-        verify(declaredFields, 1, Integer.class, false);
+        verify(declaredFields, 0, String.class, true, 0);
+        verify(declaredFields, 1, Integer.class, false, Modifier.TRANSIENT);
     }
 
-    private void verify(Field[] declaredFields, int index, Class<?> type, boolean required) {
+    private void verify(Field[] declaredFields, int index, Class<?> type, boolean required,
+            int expectedModifiers) {
         Field field = declaredFields[index];
         assertEquals("arg" + index, field.getName());
-        assertEquals(0, field.getModifiers()); // not public, etc.
         assertEquals(type, field.getType());
         if (required) {
             XmlElement element = field.getAnnotation(XmlElement.class);
             assertEquals(true, element.required());
         }
+        assertEquals(expectedModifiers, field.getModifiers());
     }
 
     @Test

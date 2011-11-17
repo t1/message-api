@@ -1,11 +1,13 @@
 package net.java.messageapi.adapter;
 
-import java.util.List;
-import java.util.Map;
+import java.io.StringWriter;
+import java.util.*;
 
 import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.NamingException;
+
+import net.java.messageapi.reflection.DelimiterWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +103,10 @@ public class JmsSender {
                         additionalProperty.getValue());
             }
 
+            // TODO back to debug level:
+            if (logger.isInfoEnabled())
+                logger.info("properties: {}", properties(message));
+
             int deliveryMode = Message.DEFAULT_DELIVERY_MODE;
             int priority = Message.DEFAULT_PRIORITY;
             long timeToLive = Message.DEFAULT_TIME_TO_LIVE;
@@ -126,6 +132,23 @@ public class JmsSender {
                 }
             }
         }
+    }
+
+    private String properties(Message message) throws JMSException {
+        Enumeration<String> names = message.getPropertyNames();
+        if (names == null)
+            return "none";
+        StringWriter result = new StringWriter();
+        result.write("{ ");
+        DelimiterWriter comma = new DelimiterWriter(result, ", ");
+        while (names.hasMoreElements()) {
+            comma.write();
+            String name = names.nextElement();
+            String value = message.getStringProperty(name);
+            result.append(name).append("=").append(value);
+        }
+        result.append(" }");
+        return result.toString();
     }
 
     @Override
