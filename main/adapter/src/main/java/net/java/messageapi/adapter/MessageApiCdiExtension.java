@@ -18,6 +18,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class MessageApiCdiExtension implements Extension {
+    private static final VersionSupplier versionSupplier = new VersionSupplier();
+
     private final Logger log = LoggerFactory.getLogger(MessageApiCdiExtension.class);
 
     // TODO provide the set of discovered message apis for injection
@@ -39,7 +41,7 @@ public class MessageApiCdiExtension implements Extension {
         MessageApi annotation = annotatedType.getAnnotation(MessageApi.class);
         if (annotation != null) {
             Class<X> messageApi = annotatedType.getJavaClass();
-            log.info("discovered message api {}", messageApi.getName());
+            log.info("discovered message api {}@{}", messageApi.getName(), versionSupplier.getVersion(messageApi));
             messageApis.add(messageApi);
         }
     }
@@ -54,12 +56,11 @@ public class MessageApiCdiExtension implements Extension {
                         private static final long serialVersionUID = 1L;
                     });
             pat.setAnnotatedType(wrapped);
-            log.info("Marking {} as JmsReceiver, as it's a receiver for message api {}",
-                    annotatedType.getJavaClass(), implementedMessageApis);
+            log.info("Marking {} as JmsReceiver, as it's a receiver for message api {}", annotatedType.getJavaClass(),
+                    implementedMessageApis);
             // FIXME what if the bean implements multiple messageapis?
             // FIXME how can we register the MDB?
-            MdbGenerator generator = new MdbGenerator(
-                    (Class<?>) implementedMessageApis.iterator().next());
+            MdbGenerator generator = new MdbGenerator((Class<?>) implementedMessageApis.iterator().next());
             if (generator.isGenerated()) {
                 Class<?> mdb = generator.get();
                 log.info("MDB {} was generated", mdb.getName());
@@ -80,8 +81,8 @@ public class MessageApiCdiExtension implements Extension {
     }
 
     /**
-     * We can't simply look for all {@link #messageApis}, as the implementing type may be scanned
-     * before the {@link MessageApi} is.
+     * We can't simply look for all {@link #messageApis}, as the implementing type may be scanned before the
+     * {@link MessageApi} is.
      */
     private Set<Type> getImplementedMessageApis(AnnotatedType<?> type) {
         if (type.getJavaClass().isInterface())
@@ -98,8 +99,7 @@ public class MessageApiCdiExtension implements Extension {
     private boolean isMessageApi(Type implementedType) {
         if (implementedType instanceof Class) {
             Class<?> implementedClass = (Class<?>) implementedType;
-            if (implementedClass.isInterface()
-                    && implementedClass.isAnnotationPresent(MessageApi.class)) {
+            if (implementedClass.isInterface() && implementedClass.isAnnotationPresent(MessageApi.class)) {
                 return true;
             }
         }
@@ -114,8 +114,8 @@ public class MessageApiCdiExtension implements Extension {
                 final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
                 log.info(
                         "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
-                        new Object[] { injectionPoint.getMember().getName(),
-                                getBeanName(injectionPoint), type.getSimpleName(), qualifiers });
+                        new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
+                                type.getSimpleName(), qualifiers });
                 BeanId beanId = new BeanId(type, qualifiers);
                 boolean added = beanIds.add(beanId);
                 if (!added) {

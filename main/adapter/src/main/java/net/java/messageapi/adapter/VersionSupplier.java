@@ -4,18 +4,19 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 class VersionSupplier implements JmsHeaderSupplier {
-    private String getValue(Class<?> api) {
+    String getVersion(Class<?> api) {
         String version = api.getPackage().getSpecificationVersion();
         if (version == null)
             version = api.getPackage().getImplementationVersion();
-        if (version == null)
-            version = "?";
         return version;
     }
 
     @Override
     public void addTo(Message message, Object pojo) throws JMSException {
-        message.setStringProperty("VERSION", getValue(pojo.getClass()));
+        String version = getVersion(pojo.getClass());
+        if (version != null) {
+            message.setStringProperty("VERSION", version);
+        }
     }
 
     @Override

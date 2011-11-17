@@ -75,7 +75,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
         // Then
         Message message = captureMessage();
-        assertEquals("?", message.getStringProperty("VERSION"));
+        assertNull(message.getStringProperty("VERSION"));
     }
 
     @Test
