@@ -32,7 +32,7 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     @Override
-    public Object toPayload(Class<?> api, Object pojo) {
+    public Object toPayload(Object pojo) {
         ImmutableMap.Builder<String, Object> result = ImmutableMap.builder();
         addOperation(pojo, result);
         result.putAll(readFields(pojo));
@@ -56,8 +56,7 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
     private Map<String, Object> readFields(Object pojo) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         for (Field field : pojo.getClass().getDeclaredFields()) {
-            if (field.isAnnotationPresent(JmsProperty.class)
-                    || Modifier.isStatic(field.getModifiers()))
+            if (field.isAnnotationPresent(JmsProperty.class) || Modifier.isStatic(field.getModifiers()))
                 continue;
             String fieldName = field.getName();
             FieldMapping<Object> fieldMapping = (FieldMapping<Object>) mapping.getMappingForField(fieldName);

@@ -29,26 +29,27 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     @Override
-    public String toPayload(Class<?> api, Object pojo) {
+    public String toPayload(Object pojo) {
         Writer writer = new StringWriter();
-        convert(api, writer, pojo);
+        convert(writer, pojo);
         return writer.toString();
     }
 
     @VisibleForTesting
-    public void convert(Class<?> api, Writer writer, Object pojo) {
-        Marshaller marshaller = createMarshaller(api, pojo);
+    public void convert(Writer writer, Object pojo) {
+        Marshaller marshaller = createMarshaller(pojo);
         marshalPojo(marshaller, pojo, writer);
     }
 
-    private <T> Marshaller createMarshaller(Class<T> api, Object pojo) {
+    private <T> Marshaller createMarshaller(Object pojo) {
+        Class<? extends Object> type = pojo.getClass();
         try {
-            JAXBContext context = jaxbProvider.createJaxbContextFor(pojo.getClass());
+            JAXBContext context = jaxbProvider.createJaxbContextFor(type);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             return marshaller;
         } catch (JAXBException e) {
-            throw new RuntimeException("can't create marshaller for " + api, e);
+            throw new RuntimeException("can't create marshaller for " + type, e);
         }
     }
 

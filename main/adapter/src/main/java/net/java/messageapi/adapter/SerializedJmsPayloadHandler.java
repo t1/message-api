@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class SerializedJmsPayloadHandler extends JmsPayloadHandler {
 
     @Override
-    public Object toPayload(Class<?> api, Object pojo) {
+    public Object toPayload(Object pojo) {
         return pojo;
     }
 

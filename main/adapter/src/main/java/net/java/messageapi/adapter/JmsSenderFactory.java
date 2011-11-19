@@ -4,10 +4,12 @@ import java.lang.reflect.*;
 
 import javax.xml.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A {@link MessageSenderFactory} that transfers calls using JMS. A {@link JmsQueueConfig} specifies
- * the JMS destination to use and a {@link JmsPayloadHandler} specifies the message type and handles
- * the message payload.
+ * A {@link MessageSenderFactory} that transfers calls using JMS. A {@link JmsQueueConfig} specifies the JMS destination
+ * to use and a {@link JmsPayloadHandler} specifies the message type and handles the message payload.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,7 +50,8 @@ public class JmsSenderFactory implements MessageSenderFactory {
 
     @Override
     public <T> T create(final Class<T> api) {
-        final JmsSender sender = new JmsSender(config, payloadHandler, api);
+        Logger logger = LoggerFactory.getLogger(api);
+        final JmsSender sender = new JmsSender(config, payloadHandler, logger);
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {

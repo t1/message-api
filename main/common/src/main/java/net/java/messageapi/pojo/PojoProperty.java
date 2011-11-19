@@ -10,6 +10,7 @@ import net.java.messageapi.reflection.TypeMatcher;
 
 import com.google.common.annotations.VisibleForTesting;
 
+/** TODO check why String properties add to the imports */
 @VisibleForTesting
 public abstract class PojoProperty {
 
@@ -30,8 +31,7 @@ public abstract class PojoProperty {
     }
 
     private static boolean isOtherPrimitive(String type) {
-        return "byte".equals(type) || "char".equals(type) || "short".equals(type)
-                || "int".equals(type);
+        return "byte".equals(type) || "char".equals(type) || "short".equals(type) || "int".equals(type);
     }
 
     private final PojoAnnotations annotations = new PojoAnnotations();
@@ -60,8 +60,7 @@ public abstract class PojoProperty {
 
     public void writeGetterTo(Writer writer) throws IOException {
         writer.append("\tpublic ").append(type);
-        writer.append(" get").append(Character.toUpperCase(name.charAt(0))).append(
-                name.substring(1)).append("() {\n");
+        writer.append(" get").append(Character.toUpperCase(name.charAt(0))).append(name.substring(1)).append("() {\n");
         writer.append("\t\treturn ").append(name).append(";\n");
         writer.append("\t}\n");
     }

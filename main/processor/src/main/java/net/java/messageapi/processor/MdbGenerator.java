@@ -57,7 +57,7 @@ public class MdbGenerator extends AbstractGenerator {
                 + "import javax.jms.MessageListener;\n" //
                 + "\n" //
                 + ("import " + fqcn + ";\n")
-                + "import net.java.messageapi.JmsReceiver;\n"
+                + "import net.java.messageapi.JmsIncoming;\n"
                 + "import net.java.messageapi.adapter.MessageDecoder;\n"
                 + "\n"
                 + "@MessageDriven(messageListenerInterface = MessageListener.class, //\n"
@@ -69,7 +69,7 @@ public class MdbGenerator extends AbstractGenerator {
                 + "        throw new UnsupportedOperationException(\n"
                 + "                \"default consturctor required by MDB lifecycle, but never called\");\n"
                 + "    }\n" + "\n" + "    @Inject\n"
-                + ("    public " + mdbName + "(@JmsReceiver " + simple + " impl) {\n")
+                + ("    public " + mdbName + "(@JmsIncoming " + simple + " impl) {\n")
                 + ("        super(" + simple + ".class, impl);\n" + "    }\n") //
                 + "}\n";
     }

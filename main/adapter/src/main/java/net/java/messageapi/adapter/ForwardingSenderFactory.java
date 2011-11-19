@@ -5,9 +5,9 @@ import java.io.Writer;
 import java.lang.reflect.*;
 
 /**
- * A {@link MessageSenderFactory} that produces a sender that -- when called -- serializes the call
- * to xml, deserializes it again and calls the receiver implementation of the same api. Quite handy
- * to test the complete serialization round trip, but without JMS itself.
+ * A {@link MessageSenderFactory} that produces a sender that -- when called -- serializes the call to xml, deserializes
+ * it again and calls the receiver implementation of the same api. Quite handy to test the complete serialization round
+ * trip, but without JMS itself.
  */
 public class ForwardingSenderFactory implements MessageSenderFactory {
 
@@ -55,7 +55,7 @@ public class ForwardingSenderFactory implements MessageSenderFactory {
     private <T> void forward(Method method, Object[] args) {
         Writer writer = new StringWriter();
         Object pojo = new MessageCallFactory<Object>(method).apply(args);
-        payloadHandler.convert(api, writer, pojo);
+        payloadHandler.convert(writer, pojo);
 
         XmlStringDecoder<?> decoder = XmlStringDecoder.create(api, jaxbProvider);
         Object decoded = decoder.decode(writer.toString());

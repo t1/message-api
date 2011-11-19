@@ -81,8 +81,7 @@ public class PojoGenerator extends AbstractGenerator {
 
     private TypeElement checkType(Element element) {
         if (ElementKind.INTERFACE != element.getKind()) {
-            error("The MessageApi annotation can only be put on an interface, not on a "
-                    + element.getKind(), element);
+            error("The MessageApi annotation can only be put on an interface, not on a " + element.getKind(), element);
             return null;
         }
         if (element.getEnclosedElements().isEmpty()) {
@@ -114,8 +113,7 @@ public class PojoGenerator extends AbstractGenerator {
             return false;
         }
         if (!executable.getThrownTypes().isEmpty()) {
-            error("MessageApi methods must not declare an exception; they are asynchronous!",
-                    executable);
+            error("MessageApi methods must not declare an exception; they are asynchronous!", executable);
             return false;
         }
         return true;
@@ -168,8 +166,7 @@ public class PojoGenerator extends AbstractGenerator {
     }
 
     private void addAnnotations(MethodAdapter method, Pojo pojo) {
-        pojo.annotate(Generated.class,
-                ImmutableMap.of("value", MessageApiAnnotationProcessor.class.getName()));
+        pojo.annotate(Generated.class, ImmutableMap.of("value", MessageApiAnnotationProcessor.class.getName()));
         pojo.annotate(XmlRootElement.class, ImmutableMap.of("name", method.getMethodName()));
     }
 
@@ -183,6 +180,7 @@ public class PojoGenerator extends AbstractGenerator {
             Optional optional = parameter.getAnnotation(Optional.class);
             PojoProperty property = pojo.addProperty(type, name);
 
+            // TODO check required parameters in the constructor
             if (parameter.getAnnotation(JmsProperty.class) != null) {
                 property.annotate(JmsProperty.class);
                 property.setTransient();

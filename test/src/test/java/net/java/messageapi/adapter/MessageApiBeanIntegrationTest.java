@@ -34,7 +34,7 @@ public class MessageApiBeanIntegrationTest {
         Object pojo = Class.forName("net.java.messageapi.test.JmsPropertyApi$JmsPropertyMethod").getConstructor(
                 String.class, String.class).newInstance("first", "second");
 
-        String payload = handler.toPayload(JmsPropertyApi.class, pojo);
+        String payload = handler.toPayload(pojo);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
                 + "<jmsPropertyMethod>\n" //

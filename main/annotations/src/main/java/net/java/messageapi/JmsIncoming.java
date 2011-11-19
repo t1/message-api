@@ -18,6 +18,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({ TYPE, METHOD, FIELD, PARAMETER })
 @Retention(RUNTIME)
-public @interface JmsReceiver {
+public @interface JmsIncoming {
 	// intentionally empty
 }

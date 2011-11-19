@@ -83,7 +83,7 @@ public class MdbGenerator implements Supplier<Class<?>> {
 
     private void addInjectingConstructor(Class<?> impl, CtClass ctClass) throws Exception {
         // @Inject
-        // public ReceiverMdb(@JmsReceiver CustomerServiceImpl impl) {
+        // public ReceiverMdb(@JmsIncoming CustomerServiceImpl impl) {
         // super(CustomerService.class, impl);
         // }
         List<CtClass> argTypes = Lists.newArrayList();

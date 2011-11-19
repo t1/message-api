@@ -10,7 +10,6 @@ import javax.naming.NamingException;
 import net.java.messageapi.reflection.DelimiterWriter;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -18,28 +17,24 @@ public class JmsSender {
 
     private final JmsQueueConfig config;
     private final JmsPayloadHandler payloadHandler;
-    private final Class<?> api;
     private final Logger logger;
 
     private Context jndiContext = null;
     private ConnectionFactory connectionFactory = null;
     private Destination destination = null;
 
-    private final List<JmsHeaderSupplier> headers = Lists.<JmsHeaderSupplier> newArrayList(
+    private final List<JmsHeaderSupplier> headers = Lists.<JmsHeaderSupplier> newArrayList(//
             new VersionSupplier(), new JmsPropertySupplier());
 
-    public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Class<?> api) {
+    public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger) {
         if (config == null)
             throw new NullPointerException();
         this.config = config;
         if (payloadHandler == null)
             throw new NullPointerException();
         this.payloadHandler = payloadHandler;
-        if (api == null)
-            throw new NullPointerException();
-        this.api = api;
 
-        this.logger = LoggerFactory.getLogger(api);
+        this.logger = logger;
     }
 
     protected void resetLookupCache() {
@@ -48,23 +43,42 @@ public class JmsSender {
         destination = null;
     }
 
-    private Context getJNDIContext() throws NamingException {
+    private Context getJNDIContext() {
         if (jndiContext == null) {
-            jndiContext = config.getContext();
+            try {
+                jndiContext = config.getContext();
+            } catch (NamingException e) {
+                logger.error("can't get jndi context");
+                throw new RuntimeException("can't get jndi context", e);
+            }
         }
         return jndiContext;
     }
 
-    protected ConnectionFactory getConnectionFactory() throws NamingException {
+    protected ConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
-            connectionFactory = (ConnectionFactory) getJNDIContext().lookup(config.getFactoryName());
+            String factoryName = config.getFactoryName();
+            try {
+                connectionFactory = (ConnectionFactory) getJNDIContext().lookup(factoryName);
+            } catch (NamingException e) {
+                String msg = "can't get connection factory " + factoryName;
+                logger.error(msg);
+                throw new RuntimeException(msg, e);
+            }
         }
         return connectionFactory;
     }
 
-    protected Destination getDestination() throws NamingException {
+    protected Destination getDestination() {
         if (destination == null) {
-            destination = (Destination) getJNDIContext().lookup(config.getDestinationName());
+            String destinationName = config.getDestinationName();
+            try {
+                destination = (Destination) getJNDIContext().lookup(destinationName);
+            } catch (NamingException e) {
+                String msg = "can't get destination " + destinationName;
+                logger.error(msg);
+                throw new RuntimeException(msg, e);
+            }
         }
         return destination;
     }
@@ -74,12 +88,11 @@ public class JmsSender {
     }
 
     public void sendJms(Object pojo) {
-        Object payload = payloadHandler.toPayload(api, pojo);
+        Object payload = payloadHandler.toPayload(pojo);
         boolean transacted = config.isTransacted();
 
         // TODO back to debug level:
-        logger.info("sending {}transacted message to {}", transacted ? "" : "non-",
-                config.getDestinationName());
+        logger.info("sending {}transacted message to {}", transacted ? "" : "non-", config.getDestinationName());
         logger.info("payload:\n{}", payload);
 
         Connection connection = null;
@@ -99,8 +112,7 @@ public class JmsSender {
             }
 
             for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {
-                message.setObjectProperty(additionalProperty.getKey(),
-                        additionalProperty.getValue());
+                message.setObjectProperty(additionalProperty.getKey(), additionalProperty.getValue());
             }
 
             // TODO back to debug level:
@@ -113,11 +125,9 @@ public class JmsSender {
 
             messageProducer.send(message, deliveryMode, priority, timeToLive);
 
-            logger.info("sent {} message id {} to {}", new Object[] { payloadHandler.getName(),
-                    message.getJMSMessageID(), message.getJMSDestination() });
+            logger.info("sent {} message id {} to {}",
+                    new Object[] { payloadHandler.getName(), message.getJMSMessageID(), message.getJMSDestination() });
             sent = true;
-        } catch (NamingException e) {
-            throw new RuntimeException("can't send JMS", e);
         } catch (JMSException e) {
             throw new RuntimeException("can't send JMS", e);
         } finally {

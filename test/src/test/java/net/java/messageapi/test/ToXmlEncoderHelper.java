@@ -26,7 +26,7 @@ public class ToXmlEncoderHelper {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
                 Object pojo = new MessageCallFactory<Object>(method).apply(args);
-                new XmlJmsPayloadHandler(jaxbProvider).convert(api, writer, pojo);
+                new XmlJmsPayloadHandler(jaxbProvider).convert(writer, pojo);
                 return null;
             }
         };

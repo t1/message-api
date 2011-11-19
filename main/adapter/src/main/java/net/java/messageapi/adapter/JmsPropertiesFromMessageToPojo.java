@@ -22,8 +22,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     }
 
     @Override
-    public void visit(String propertyName, Object container, Field field) throws JMSException,
-            IllegalAccessException {
+    public void visit(String propertyName, Object container, Field field) throws JMSException, IllegalAccessException {
         Class<?> type = field.getType();
         if (String.class.equals(type)) {
             String value = message.getStringProperty(propertyName);
@@ -62,8 +61,8 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
             Map<String, String> map = getMapProperty(propertyName);
             field.set(container, map);
         } else {
-            throw new RuntimeException("don't know how to set " + field
-                    + " to the header-only jms propery " + propertyName);
+            throw new RuntimeException("don't know how to set " + field + " to the header-only jms propery "
+                    + propertyName);
         }
     }
 

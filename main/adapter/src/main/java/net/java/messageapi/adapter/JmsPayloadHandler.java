@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 XmlJmsPayloadHandler.class, MapJmsPayloadHandler.class, SerializedJmsPayloadHandler.class })
 public abstract class JmsPayloadHandler {
 
-    public abstract Object toPayload(Class<?> api, Object pojo);
+    public abstract Object toPayload(Object pojo);
 
     public abstract Message createJmsMessage(Object payload, Session session) throws JMSException;
 

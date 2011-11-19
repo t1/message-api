@@ -18,6 +18,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class MessageApiCdiExtension implements Extension {
+    /** If there are lots of beans, it's useful to log the sum. */
+    private static final int BEANCOUNT_SUM_LOG_THRESHOLD = 5;
+
     private static final VersionSupplier versionSupplier = new VersionSupplier();
 
     private final Logger log = LoggerFactory.getLogger(MessageApiCdiExtension.class);
@@ -28,6 +31,7 @@ public class MessageApiCdiExtension implements Extension {
     private final Set<Class<?>> messageEvents = Sets.newHashSet();
     private final Set<Class<?>> mdbs = Sets.newHashSet();
     private final Set<BeanId> beanIds = Sets.newHashSet();
+    private final Set<ObserverMethod<?>> observers = Sets.newHashSet();
 
     <X> void step1_discoverMessageApis(@Observes ProcessAnnotatedType<X> pat) {
         discoverMessageApis(pat);
@@ -41,7 +45,9 @@ public class MessageApiCdiExtension implements Extension {
         MessageApi annotation = annotatedType.getAnnotation(MessageApi.class);
         if (annotation != null) {
             Class<X> messageApi = annotatedType.getJavaClass();
-            log.info("discovered message api {}@{}", messageApi.getName(), versionSupplier.getVersion(messageApi));
+            String version = versionSupplier.getVersion(messageApi);
+            log.info("discovered message api {} version {}", messageApi.getName(), (version == null) ? "unknown"
+                    : version);
             messageApis.add(messageApi);
         }
     }
@@ -50,13 +56,13 @@ public class MessageApiCdiExtension implements Extension {
         AnnotatedType<X> annotatedType = pat.getAnnotatedType();
         Set<Type> implementedMessageApis = getImplementedMessageApis(annotatedType);
         if (!implementedMessageApis.isEmpty()) {
-            // TODO only if it's not already annotated
+            // TODO only if it's not already qualified
             AnnotatedType<X> wrapped = new AnnotatedTypeAnnotationsWrapper<X>(annotatedType,
-                    new AnnotationLiteral<JmsReceiver>() {
+                    new AnnotationLiteral<JmsIncoming>() {
                         private static final long serialVersionUID = 1L;
                     });
             pat.setAnnotatedType(wrapped);
-            log.info("Marking {} as JmsReceiver, as it's a receiver for message api {}", annotatedType.getJavaClass(),
+            log.info("Marking {} as JmsIncoming, as it's a receiver for message api {}", annotatedType.getJavaClass(),
                     implementedMessageApis);
             // FIXME what if the bean implements multiple messageapis?
             // FIXME how can we register the MDB?
@@ -109,23 +115,13 @@ public class MessageApiCdiExtension implements Extension {
     void step2_discoverInjectionTargets(@Observes ProcessInjectionTarget<?> pit) {
         for (InjectionPoint injectionPoint : pit.getInjectionTarget().getInjectionPoints()) {
             log.debug("scan injection point {}", injectionPoint);
-            Class<?> type = getMessageApi(injectionPoint);
-            if (messageApis.contains(type)) {
-                final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
-                log.info(
-                        "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
-                        new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
-                                type.getSimpleName(), qualifiers });
-                BeanId beanId = new BeanId(type, qualifiers);
-                boolean added = beanIds.add(beanId);
-                if (!added) {
-                    log.info("bean {} already defined", beanId);
-                }
-            }
+            Class<?> type = getType(injectionPoint);
+            discoverMessageApiInjectionPoint(injectionPoint, type);
+            discoverMessageEventInjectionPoint(injectionPoint, type);
         }
     }
 
-    private Class<?> getMessageApi(InjectionPoint injectionPoint) {
+    private Class<?> getType(InjectionPoint injectionPoint) {
         Type type = injectionPoint.getType();
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -138,9 +134,37 @@ public class MessageApiCdiExtension implements Extension {
         return (type instanceof Class) ? (Class<?>) type : null;
     }
 
+    private void discoverMessageApiInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {
+        if (messageApis.contains(type)) {
+            final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
+            log.info(
+                    "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
+                    new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
+                            type.getSimpleName(), qualifiers });
+            BeanId beanId = new BeanId(type, qualifiers);
+            boolean added = beanIds.add(beanId);
+            if (!added) {
+                log.info("bean {} already defined", beanId);
+            }
+        }
+    }
+
     private Object getBeanName(InjectionPoint injectionPoint) {
         final Bean<?> bean = injectionPoint.getBean();
         return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
+    }
+
+    private void discoverMessageEventInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {
+        if (messageEvents.contains(type)) {
+            final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
+            log.info(
+                    "discovered injection point named \"{}\" in {} for message event {} qualified as {}",
+                    new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
+                            type.getSimpleName(), qualifiers });
+            // TODO qualify injection point as JmsOutgoing
+            EventObserverSendAdapter<?> adapter = new EventObserverSendAdapter<Object>(type);
+            observers.add(adapter);
+        }
     }
 
     <T, X> void scanObserverMethod(@Observes ProcessObserverMethod<T, X> pom) {
@@ -149,12 +173,13 @@ public class MessageApiCdiExtension implements Extension {
         if (messageEvents.contains(observedType)) {
             Class<?> observedClass = (Class<?>) observedType;
             log.info("found observer {} for {}", observerMethod, observedClass.getName());
-            // TODO add JmsReceiver annotation... but how?!?
+            // TODO add JmsIncoming annotation... but how?!?
         }
     }
 
     void step3_createBeans(@Observes AfterBeanDiscovery abd) {
-        log.info("create {} beans for {} message apis", beanIds.size(), messageApis.size());
+        if (beanIds.size() > BEANCOUNT_SUM_LOG_THRESHOLD)
+            log.info("create {} beans for {} message apis", beanIds.size(), messageApis.size());
         for (BeanId beanId : beanIds) {
             log.info("create bean for {}", beanId);
             MessageApiBean<?> bean = MessageApiBean.of(beanId.type, beanId.qualifiers);
@@ -163,6 +188,9 @@ public class MessageApiCdiExtension implements Extension {
         for (Class<?> mdb : mdbs) {
             log.info("register MDB {}", mdb);
             abd.addBean(new MdbBean(mdb));
+        }
+        for (ObserverMethod<?> observer : observers) {
+            abd.addObserverMethod(observer);
         }
     }
 }
