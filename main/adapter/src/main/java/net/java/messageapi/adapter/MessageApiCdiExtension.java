@@ -117,7 +117,7 @@ public class MessageApiCdiExtension implements Extension {
             log.debug("scan injection point {}", injectionPoint);
             Class<?> type = getType(injectionPoint);
             discoverMessageApiInjectionPoint(injectionPoint, type);
-            discoverMessageEventInjectionPoint(injectionPoint, type);
+            handleMessageEventInjectionPoint(injectionPoint, type, pit);
         }
     }
 
@@ -154,17 +154,48 @@ public class MessageApiCdiExtension implements Extension {
         return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
     }
 
-    private void discoverMessageEventInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {
+    private void handleMessageEventInjectionPoint(InjectionPoint injectionPoint, Class<?> type,
+            ProcessInjectionTarget<?> pit) {
         if (messageEvents.contains(type)) {
             final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
             log.info(
-                    "discovered injection point named \"{}\" in {} for message event {} qualified as {}",
+                    "discovered injection point named \"{}\" in {} for message event {} qualified as {}; "
+                            + "qualifying as JmsOutgoing and generating observer",
                     new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
                             type.getSimpleName(), qualifiers });
-            // TODO qualify injection point as JmsOutgoing
-            EventObserverSendAdapter<?> adapter = new EventObserverSendAdapter<Object>(type);
-            observers.add(adapter);
+            annotateAsOutgoing(injectionPoint, pit);
+            generateOutgoingAdapter(type);
         }
+    }
+
+    private <T> void annotateAsOutgoing(final InjectionPoint injectionPoint, ProcessInjectionTarget<T> pit) {
+        // TODO this doesn't work... why?
+        InjectionTarget<T> target = pit.getInjectionTarget();
+        log.debug("wrapping {} in {}", injectionPoint, target);
+        InjectionTargetWrapper<T> wrapper = new InjectionTargetWrapper<T>(target) {
+            @Override
+            public Set<InjectionPoint> getInjectionPoints() {
+                Set<InjectionPoint> injectionPoints = Sets.newHashSet(super.getInjectionPoints());
+                boolean removed = injectionPoints.remove(injectionPoint);
+                log.debug("removed {}: {}", injectionPoint, removed);
+                injectionPoints.add(new InjectionPointWrapper(injectionPoint) {
+                    @Override
+                    public Set<Annotation> getQualifiers() {
+                        Set<Annotation> qualifiers = Sets.newHashSet(super.getQualifiers());
+                        qualifiers.add(EventObserverSendAdapter.OUTGOING);
+                        log.debug("adding @JmsOutgoing to {} -> {}", injectionPoint, qualifiers);
+                        return qualifiers;
+                    }
+                });
+                return injectionPoints;
+            }
+        };
+        pit.setInjectionTarget(wrapper);
+    }
+
+    private void generateOutgoingAdapter(Class<?> type) {
+        EventObserverSendAdapter<?> adapter = new EventObserverSendAdapter<Object>(type);
+        observers.add(adapter);
     }
 
     <T, X> void scanObserverMethod(@Observes ProcessObserverMethod<T, X> pom) {
@@ -172,7 +203,8 @@ public class MessageApiCdiExtension implements Extension {
         Type observedType = observerMethod.getObservedType();
         if (messageEvents.contains(observedType)) {
             Class<?> observedClass = (Class<?>) observedType;
-            log.info("found observer {} for {}", observerMethod, observedClass.getName());
+            log.info("found observer {} for {} qualified as {}", new Object[] { observerMethod,
+                    observedClass.getName(), observerMethod.getObservedQualifiers() });
             // TODO add JmsIncoming annotation... but how?!?
         }
     }

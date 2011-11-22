@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableSet;
 
 public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
 
-    private static final AnnotationLiteral<JmsOutgoing> OUTGOING = new AnnotationLiteral<JmsOutgoing>() {
+    static final AnnotationLiteral<JmsOutgoing> OUTGOING = new AnnotationLiteral<JmsOutgoing>() {
         private static final long serialVersionUID = 1L;
     };
     private static final ImmutableSet<Annotation> QUALIFIERS = ImmutableSet.<Annotation> of(OUTGOING);
