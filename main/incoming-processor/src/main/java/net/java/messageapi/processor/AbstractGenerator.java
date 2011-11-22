@@ -12,6 +12,7 @@ import javax.tools.*;
 
 import net.java.messageapi.reflection.ReflectionAdapter;
 
+/** FIXME this and some other classes are copied in the api-processor */
 public abstract class AbstractGenerator {
 
     private final Messager messager;
@@ -46,8 +47,7 @@ public abstract class AbstractGenerator {
         return filer.createSourceFile(name, elements);
     }
 
-    protected FileObject createResourceFile(String pkg, String name, List<TypeElement> rootElements)
-            throws IOException {
+    protected FileObject createResourceFile(String pkg, String name, List<TypeElement> rootElements) throws IOException {
         Element[] elements = toArray(rootElements);
         return filer.createResource(StandardLocation.CLASS_OUTPUT, pkg, name, elements);
     }
