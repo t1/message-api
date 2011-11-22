@@ -9,25 +9,63 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 
+import net.java.messageapi.MessageApi;
+
 public class MdbGenerator extends AbstractGenerator {
+    private enum AdapterType {
+        API {
+            @Override
+            public String getSuffix() {
+                return "MDB";
+            }
+
+            @Override
+            public String getDecoderClass() {
+                return "MessageDecoder";
+            }
+        },
+        EVENT {
+            @Override
+            public String getSuffix() {
+                return "$MDB";
+            }
+
+            @Override
+            public String getDecoderClass() {
+                return "EventDecoder";
+            }
+        };
+
+        public static AdapterType of(TypeElement type) {
+            MessageApi messageApi = type.getAnnotation(MessageApi.class);
+            AdapterType adapterType = messageApi == null ? AdapterType.EVENT : AdapterType.API;
+            return adapterType;
+        }
+
+        public abstract String getSuffix();
+
+        public abstract String getDecoderClass();
+    }
+
     public MdbGenerator(Messager messager, Filer filer) {
         super(messager, filer);
     }
 
     @Override
     public void process(Element element) {
-        TypeElement api = (TypeElement) element;
-        String fileName = api.getQualifiedName() + "MDB";
+        TypeElement type = (TypeElement) element;
+        AdapterType adapterType = AdapterType.of(type);
+        String fileName = type.getQualifiedName() + adapterType.getSuffix();
         note("Generating " + fileName);
 
-        String mdbSource = generate(api);
+        String mdbSource = generate(type, adapterType);
         Writer writer = null;
         try {
-            JavaFileObject sourceFile = createSourceFile(fileName, api);
+            JavaFileObject sourceFile = createSourceFile(fileName, type);
             writer = sourceFile.openWriter();
             writer.write(mdbSource);
         } catch (IOException e) {
-            error("Can't write MDB\n" + e, api);
+            error("Can't write MDB\n" + e, type);
         } finally {
             if (writer != null) {
                 try {
@@ -39,38 +77,50 @@ public class MdbGenerator extends AbstractGenerator {
         }
     }
 
-    private String generate(TypeElement api) {
-        String fqcn = api.getQualifiedName().toString();
-        String simple = api.getSimpleName().toString();
-        String pkg = getPackageOf(api);
+    private String generate(TypeElement type, AdapterType adapterType) {
+        String fqcn = type.getQualifiedName().toString();
+        String simple = type.getSimpleName().toString();
+        String pkg = getPackageOf(type);
         String destination = fqcn;
-        String mdbName = simple + "MDB";
+        String mdbName = simple + adapterType.getSuffix();
 
-        // TODO add messageSelector on the version!
+        // TODO add messageSelector on the version
 
-        return ""
-                + ("package " + pkg + ";\n")
-                + "\n" //
-                + "import javax.ejb.ActivationConfigProperty;\n"
-                + "import javax.ejb.MessageDriven;\n" //
-                + "import javax.inject.Inject;\n" //
-                + "import javax.jms.MessageListener;\n" //
-                + "\n" //
-                + ("import " + fqcn + ";\n")
-                + "import net.java.messageapi.JmsIncoming;\n"
-                + "import net.java.messageapi.adapter.MessageDecoder;\n"
-                + "\n"
-                + "@MessageDriven(messageListenerInterface = MessageListener.class, //\n"
-                + "activationConfig = { @ActivationConfigProperty(\n"
-                + ("propertyName = \"destination\", propertyValue = \"" + destination + "\") })\n")
-                + ("public class " + mdbName + " extends MessageDecoder<" + simple + "> {\n")
-                + ("    public " + mdbName + "() {\n")
-                + "        super(null, null);\n"
-                + "        throw new UnsupportedOperationException(\n"
-                + "                \"default consturctor required by MDB lifecycle, but never called\");\n"
-                + "    }\n" + "\n" + "    @Inject\n"
-                + ("    public " + mdbName + "(@JmsIncoming " + simple + " impl) {\n")
-                + ("        super(" + simple + ".class, impl);\n" + "    }\n") //
-                + "}\n";
+        StringBuilder source = new StringBuilder();
+        source.append("package ").append(pkg).append(";\n");
+        source.append("\n");
+        source.append("import javax.ejb.ActivationConfigProperty;\n");
+        source.append("import javax.ejb.MessageDriven;\n");
+        if (adapterType == AdapterType.EVENT)
+            source.append("import javax.enterprise.event.Event;\n");
+        source.append("import javax.inject.Inject;\n");
+        source.append("import javax.jms.MessageListener;\n");
+        source.append("\n");
+        source.append("import ").append(fqcn).append(";\n");
+        source.append("import net.java.messageapi.JmsIncoming;\n");
+        source.append("import net.java.messageapi.adapter.").append(adapterType.getDecoderClass()).append(";\n");
+        source.append("\n");
+        source.append("@MessageDriven(messageListenerInterface = MessageListener.class, //\n");
+        source.append("activationConfig = { @ActivationConfigProperty(\n");
+        source.append("propertyName = \"destination\", propertyValue = \"").append(destination).append("\") })\n");
+        source.append("public class ").append(mdbName).append(" extends ") //
+        .append(adapterType.getDecoderClass()).append("<").append(simple).append("> {\n");
+        source.append("    public ").append(mdbName).append("() {\n");
+        source.append("        super(null, null);\n");
+        source.append("        throw new UnsupportedOperationException(\n");
+        source.append("                \"default consturctor required by MDB lifecycle, but never called\");\n");
+        source.append("    }\n");
+        source.append("\n");
+        source.append("    @Inject\n");
+        source.append("    public ").append(mdbName).append("(@JmsIncoming ");
+        if (adapterType == AdapterType.EVENT)
+            source.append("Event<");
+        source.append(simple);
+        if (adapterType == AdapterType.EVENT)
+            source.append(">");
+        source.append(" payload) {\n");
+        source.append("        super(").append(simple).append(".class, payload);\n").append("    }\n");
+        source.append("}\n");
+        return source.toString();
     }
 }
