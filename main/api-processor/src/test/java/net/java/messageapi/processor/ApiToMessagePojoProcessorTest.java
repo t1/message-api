@@ -106,8 +106,7 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldNotProcessEmptyApi() throws Exception {
         convert(EmptyApi.class);
 
-        verify(messager).printMessage(Kind.ERROR, "MessageApi must have methods",
-                new TypeElementImpl(EmptyApi.class));
+        verify(messager).printMessage(Kind.ERROR, "MessageApi must have methods", new TypeElementImpl(EmptyApi.class));
     }
 
     @MessageApi
@@ -119,13 +118,9 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldNotAcceptReturningMethod() throws Exception {
         convert(ReturnsApi.class);
 
-        verify(messager).printMessage(Kind.NOTE,
-                "Processing MessageApi [" + ReturnsApi.class.getName() + "]");
-        verify(messager).printMessage(Kind.NOTE, "Generating " + ReturnsApi.class.getName() + "MDB");
-        verify(messager).printMessage(Kind.NOTE,
-                "Writing .parametermap for " + ReturnsApi.class.getName());
-        verify(messager).printMessage(Kind.ERROR,
-                "MessageApi methods must return void; they are asynchronous!",
+        verify(messager).printMessage(Kind.NOTE, "Processing MessageApi [" + ReturnsApi.class.getName() + "]");
+        verify(messager).printMessage(Kind.NOTE, "Writing .parametermap for " + ReturnsApi.class.getName());
+        verify(messager).printMessage(Kind.ERROR, "MessageApi methods must return void; they are asynchronous!",
                 new MethodElementImpl(ReturnsApi.class.getMethod("returningCall")));
         verifyNoMoreInteractions(messager);
     }
@@ -160,9 +155,8 @@ public class ApiToMessagePojoProcessorTest {
     public void noArgPojoShouldImportOnlyRequiredClasses() throws Exception {
         convert(NoArgApi.class);
 
-        Set<String> expected = ImmutableSet.of(Generated.class.getName(),
-                XmlRootElement.class.getName(), XmlType.class.getName(),
-                Serializable.class.getName());
+        Set<String> expected = ImmutableSet.of(Generated.class.getName(), XmlRootElement.class.getName(),
+                XmlType.class.getName(), Serializable.class.getName());
         assertEquals(expected, popPojo().getImports());
     }
 
@@ -183,8 +177,7 @@ public class ApiToMessagePojoProcessorTest {
     }
 
     /**
-     * Extract the name of the class without the package prefix. This is not the simple name if it
-     * is a nested class.
+     * Extract the name of the class without the package prefix. This is not the simple name if it is a nested class.
      */
     private String name(Class<?> type) {
         String pkg = type.getPackage().getName();
@@ -262,8 +255,7 @@ public class ApiToMessagePojoProcessorTest {
         convert(StringAndInstantApi.class);
 
         Pojo pojo = popPojo();
-        assertEquals(name(StringAndInstantApi.class) + "$StringAndInstantCall",
-                pojo.getSimplifiedClassName());
+        assertEquals(name(StringAndInstantApi.class) + "$StringAndInstantCall", pojo.getSimplifiedClassName());
         assertEquals(2, pojo.getProperties().size());
         assertEquals(String.class.getName(), pojo.getProperty("arg0").getType());
         assertEquals(Instant.class.getName(), pojo.getProperty("arg1").getType());
@@ -338,8 +330,7 @@ public class ApiToMessagePojoProcessorTest {
     public void shouldAcceptAmbiguousMethodName() throws Exception {
         convert(AmbiguousMethodNamesApi.class);
 
-        verify(messager, times(3)).printMessage(eq(Kind.WARNING), anyString(),
-                (Element) anyObject());
+        verify(messager, times(3)).printMessage(eq(Kind.WARNING), anyString(), (Element) anyObject());
 
         String prefix = name(AmbiguousMethodNamesApi.class) + "$";
         assertEquals(prefix + "MethodString", popPojo().getSimplifiedClassName());

@@ -42,7 +42,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
-			<artifactId>processor</artifactId>
+			<artifactId>api-processor</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.messageapi</groupId>
+			<artifactId>incoming-processor</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

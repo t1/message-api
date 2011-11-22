@@ -13,8 +13,7 @@ import net.java.messageapi.MessageApi;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * Annotation processor that generates message POJOs for all methods in an interface annotated as
- * {@link MessageApi}.
+ * Annotation processor that generates message POJOs for all methods in an interface annotated as {@link MessageApi}.
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 @SupportedAnnotationClasses(MessageApi.class)
@@ -22,7 +21,6 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
 
     private PojoGenerator pojoGenerator;
     private ParameterMapGenerator propertyNameIndexGenerator;
-    private MdbGenerator mdbGenerator;
 
     @Override
     public synchronized void init(@SuppressWarnings("hiding") ProcessingEnvironment processingEnv) {
@@ -30,7 +28,6 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
         Messager messager = getMessager();
         Filer filer = processingEnv.getFiler();
         pojoGenerator = new PojoGenerator(messager, filer);
-        mdbGenerator = new MdbGenerator(messager, filer);
         propertyNameIndexGenerator = new ParameterMapGenerator(messager, filer);
     }
 
@@ -39,16 +36,14 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
         for (Element messageApi : roundEnv.getElementsAnnotatedWith(MessageApi.class)) {
             try {
                 pojoGenerator.process(messageApi);
-                mdbGenerator.process(messageApi);
                 propertyNameIndexGenerator.process(messageApi);
             } catch (Error e) {
-                getMessager().printMessage(Kind.ERROR, "Error while processing MessageApi: " + e,
-                        messageApi);
+                getMessager().printMessage(Kind.ERROR, "Error while processing MessageApi: " + e, messageApi);
             } catch (RuntimeException e) {
                 getMessager().printMessage(Kind.ERROR, "can't process MessageApi: " + e, messageApi);
             }
         }
-        return true;
+        return false;
     }
 
     @VisibleForTesting

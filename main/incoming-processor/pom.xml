@@ -6,7 +6,7 @@
 		<version>2.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>processor</artifactId>
+	<artifactId>incoming-processor</artifactId>
 	<name>Annotation Processor</name>
 	<description>The annotation processors for MessageApis</description>
 

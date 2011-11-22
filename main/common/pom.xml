@@ -11,7 +11,7 @@
 	<name>Common</name>
 	<description>
 		DO NOT DEPEND DIRECTLY ON THIS MODULE!
-		Please use the annotation processor module for your APIs instead;
+		Please use the api annotation processor module for your APIs instead;
 		and/or use the adapter module at runtime.
 		This module contains annotations and classes common to the adapter and processor modules.
 	</description>
