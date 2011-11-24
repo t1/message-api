@@ -17,5 +17,7 @@
 		<module>chat-api</module>
 		<module>chat-receive</module>
 		<module>chat-send</module>
+		
+		<module>stockquote</module>
 	</modules>
 </project>
