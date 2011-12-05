@@ -1,22 +1,18 @@
 package net.java.messageapi.adapter;
 
-import static net.sf.twip.verify.Verify.*;
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import net.java.messageapi.*;
 import net.java.messageapi.test.JmsPropertyApi;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
+//@RunWith(TwiP.class)
 public class MessageApiBeanIntegrationTest {
 
     @MessageApi
     @JmsMappedPayload
     public static interface ConfiguredTestApi {
-        public void configuredMethod(@JmsMappedName("aarg") String someArg);
+        public void configuredMethod(@JmsMappedName("aarg") String onlyAtCompileTime);
     }
 
     @Test
@@ -24,7 +20,7 @@ public class MessageApiBeanIntegrationTest {
         MessageApiBean<ConfiguredTestApi> bean = MessageApiBean.of(ConfiguredTestApi.class);
 
         MapJmsPayloadHandler handler = (MapJmsPayloadHandler) bean.factory.getPayloadHandler();
-        verifyThat(handler.mapping.getMappingForField("someArg").getAttributeName(), is("aarg"));
+        assertEquals("aarg", handler.mapping.getMappingForField("arg0").getAttributeName());
     }
 
     @Test
