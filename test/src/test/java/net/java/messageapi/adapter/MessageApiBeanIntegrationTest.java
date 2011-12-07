@@ -6,13 +6,13 @@ import net.java.messageapi.test.JmsPropertyApi;
 
 import org.junit.Test;
 
-//@RunWith(TwiP.class)
 public class MessageApiBeanIntegrationTest {
 
     @MessageApi
     @JmsMappedPayload
     public static interface ConfiguredTestApi {
-        public void configuredMethod(@JmsMappedName("aarg") String onlyAtCompileTime);
+        // must be arg0, so it runs without the api annotation processor as well as with it
+        public void configuredMethod(@JmsMappedName("aarg") String arg0);
     }
 
     @Test

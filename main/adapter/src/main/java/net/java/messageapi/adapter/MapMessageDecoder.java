@@ -11,15 +11,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Takes a {@link MapMessage}, deserializes it and calls the corresponding method in an
- * implementation of some {@link MessageApi}. If a parameter is missing in the map, zero or @code
- * null is used (depending on the type).
+ * Takes a {@link MapMessage}, deserializes it and calls the corresponding method in an implementation of some
+ * {@link MessageApi}. If a parameter is missing in the map, zero or @code null is used (depending on the type).
  * 
  * TODO optionally fail when message fields are missing and/or unexpected
  * 
  * @param <T>
- *            the {@link MessageApi} interface that the calls are for and the <code>impl</code>
- *            implements.
+ *            the {@link MessageApi} interface that the calls are for and the <code>impl</code> implements.
  */
 public class MapMessageDecoder<T> implements MessageListener {
 
@@ -77,16 +75,15 @@ public class MapMessageDecoder<T> implements MessageListener {
             JmsPropertiesFromMessageToPojo.scan(message, pojo);
             invoker.invoke(pojo);
         } catch (Exception e) {
-            throw new RuntimeException("Could not receive " + source + " for " + api.getName()
-                    + " at " + methodName, e);
+            throw new RuntimeException("Could not receive " + source + " for " + api.getName() + " at " + methodName, e);
         }
     }
 
     private String getMethodName(Map<String, String> body) {
         String operationMessageAttibute = mapping.getOperationMessageAttibute();
         if (!body.containsKey(operationMessageAttibute)) {
-            throw new IllegalArgumentException("Body does not contain field '"
-                    + operationMessageAttibute + "' for operation name!");
+            throw new IllegalArgumentException("Body does not contain field '" + operationMessageAttibute
+                    + "' for operation name!");
         }
         String operationName = body.get(operationMessageAttibute).toString();
         return mapping.getMethodForOperation(operationName);

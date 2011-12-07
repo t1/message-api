@@ -21,9 +21,9 @@ import com.google.common.collect.ImmutableMap;
 public class MessageApiBeanTest {
 
     @SuppressWarnings("all")
-    private static class ConnectionFactoryNameBinding extends
-            AnnotationLiteral<ConnectionFactoryName> implements ConnectionFactoryName {
-
+    private static class ConnectionFactoryNameBinding extends AnnotationLiteral<ConnectionFactoryName> implements
+            ConnectionFactoryName {
+        private static final long serialVersionUID = 1L;
         private final String factoryName;
 
         public ConnectionFactoryNameBinding(String factoryName) {
@@ -37,8 +37,7 @@ public class MessageApiBeanTest {
     }
 
     @SuppressWarnings("all")
-    private static class DestinationNameBinding extends AnnotationLiteral<DestinationName>
-            implements DestinationName {
+    private static class DestinationNameBinding extends AnnotationLiteral<DestinationName> implements DestinationName {
 
         private final String destinationName;
 
@@ -85,8 +84,8 @@ public class MessageApiBeanTest {
 
     @Test
     public void shouldRecognizeConnectionFactoryNameAnnotation() throws Exception {
-        MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class,
-                new ConnectionFactoryNameBinding("foo"));
+        ConnectionFactoryNameBinding binding = new ConnectionFactoryNameBinding("foo");
+        MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class, binding);
         JmsQueueConfig config = bean.factory.getConfig();
 
         assertEquals(config.getFactoryName(), "foo");
@@ -94,8 +93,7 @@ public class MessageApiBeanTest {
 
     @Test
     public void shouldRecognizeDestinationNameAnnotation() throws Exception {
-        MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class,
-                new DestinationNameBinding("bar"));
+        MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class, new DestinationNameBinding("bar"));
         JmsQueueConfig config = bean.factory.getConfig();
 
         assertEquals(config.getDestinationName(), "bar");

@@ -7,8 +7,8 @@
 	</parent>
 
 	<artifactId>api-processor</artifactId>
-	<name>Annotation Processor</name>
-	<description>The annotation processors for MessageApis</description>
+	<name>Api Annotation Processor</name>
+	<description>The annotation processors for MessageApis; generates Pojos for the methods and parametermaps</description>
 
 	<build>
 		<plugins>

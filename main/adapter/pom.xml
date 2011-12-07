@@ -14,37 +14,31 @@
 	</description>
 
 	<dependencies>
-		<!-- this dependency must be before the javaee api artifact -->
-		<dependency>
-			<groupId>net.java.messageapi</groupId>
-			<artifactId>test-dummies</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>net.java.messageapi</groupId>
+			<artifactId>test-dummies</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.google.collections</groupId>
 			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-se</artifactId>
-			<version>1.0.1-Final</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<!-- actually we'd only need 5.0 -->
-			<!-- but that's not available -->
-			<version>6.0</version>
+			<artifactId>weld-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
@@ -59,6 +53,18 @@
 			<artifactId>twip</artifactId>
 			<version>3.3</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

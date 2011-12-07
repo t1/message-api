@@ -47,6 +47,11 @@
 		</dependency>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
+			<artifactId>test-dummies</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.messageapi</groupId>
 			<artifactId>incoming-processor</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -57,14 +62,8 @@
 		</dependency>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
-                        <artifactId>annotations</artifactId>
-                        <version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
-			<scope>test</scope>
+			<artifactId>annotations</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
@@ -72,12 +71,22 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.11.0.GA</version>
 		</dependency>
-
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
@@ -113,8 +122,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>0.9.26</version>
-			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

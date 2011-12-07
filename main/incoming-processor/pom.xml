@@ -7,8 +7,8 @@
 	</parent>
 
 	<artifactId>incoming-processor</artifactId>
-	<name>Annotation Processor</name>
-	<description>The annotation processors for MessageApis</description>
+	<name>Incoming Annotation Processor</name>
+	<description>The incoming annotation processors for MessageApis generating MDBs</description>
 
 	<build>
 		<plugins>

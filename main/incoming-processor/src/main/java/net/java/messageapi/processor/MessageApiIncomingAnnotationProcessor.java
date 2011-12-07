@@ -13,6 +13,8 @@ import net.java.messageapi.MessageEvent;
 
 /**
  * Annotation processor that generates message MDBs for all {@link MessageApi}s and {@link MessageEvent}s.
+ * 
+ * TODO extract shared code between this and the API annotation processor
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 @SupportedAnnotationClasses({ MessageApi.class, MessageEvent.class })
