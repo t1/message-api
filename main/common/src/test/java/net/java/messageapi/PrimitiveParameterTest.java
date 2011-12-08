@@ -20,8 +20,8 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveBooleanParameter.class.getMethod("method", Boolean.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable(Boolean.TRUE));
-        assertTrue(parameter.isCallable(true));
+        assertTrue(parameter.isAssignable(Boolean.TRUE));
+        assertTrue(parameter.isAssignable(true));
     }
 
     public interface PrimitiveByteParameter {
@@ -33,7 +33,7 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveByteParameter.class.getMethod("method", Byte.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable((byte) 123));
+        assertTrue(parameter.isAssignable((byte) 123));
     }
 
     public interface PrimitiveCharacterParameter {
@@ -45,7 +45,7 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveCharacterParameter.class.getMethod("method", Character.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable('a'));
+        assertTrue(parameter.isAssignable('a'));
     }
 
     public interface PrimitiveShortParameter {
@@ -57,7 +57,7 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveShortParameter.class.getMethod("method", Short.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable((short) 123));
+        assertTrue(parameter.isAssignable((short) 123));
     }
 
     public interface PrimitiveIntegerParameter {
@@ -69,7 +69,7 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveIntegerParameter.class.getMethod("method", Integer.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable(123));
+        assertTrue(parameter.isAssignable(123));
     }
 
     public interface PrimitiveLongParameter {
@@ -81,7 +81,7 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveLongParameter.class.getMethod("method", Long.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable(123L));
+        assertTrue(parameter.isAssignable(123L));
     }
 
     public interface PrimitiveFloatParameter {
@@ -93,7 +93,7 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveFloatParameter.class.getMethod("method", Float.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable(12.3f));
+        assertTrue(parameter.isAssignable(12.3f));
     }
 
     public interface PrimitiveDoubleParameter {
@@ -105,6 +105,6 @@ public class PrimitiveParameterTest {
         Method method = PrimitiveDoubleParameter.class.getMethod("method", Double.TYPE);
         Parameter parameter = Parameter.allOf(method).get(0);
 
-        assertTrue(parameter.isCallable(12.34d));
+        assertTrue(parameter.isAssignable(12.34d));
     }
 }

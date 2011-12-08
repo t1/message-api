@@ -8,11 +8,11 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 /**
- * Read the debug info from the class file of the method, if the class was compiled with debug
- * information and is not an interface.
+ * Read the debug info from the class file of the method, if the class was compiled with debug information and is not an
+ * interface.
  * <p>
- * This class must remain separate from {@link Parameter}, so that class can run, even when
- * javassist is not on the classpath.
+ * This class must remain separate from {@link Parameter}, so that class can run, even when javassist is not on the
+ * classpath.
  */
 public class DebugInfoParameterNameSupplier implements ParameterNameSupplier {
     private final ParameterNameSupplier delegate;
@@ -33,8 +33,7 @@ public class DebugInfoParameterNameSupplier implements ParameterNameSupplier {
         }
     }
 
-    private static String getParameterNameOrThrow(Method method, int index)
-            throws NotFoundException {
+    private static String getParameterNameOrThrow(Method method, int index) throws NotFoundException {
         checkIndex(method, index);
 
         LocalVariableAttribute localVariables = getLocalVariableTable(method);
@@ -48,20 +47,18 @@ public class DebugInfoParameterNameSupplier implements ParameterNameSupplier {
             throw new RuntimeException("invalid negative method parameter index: " + index);
         int numberOfParameters = method.getParameterTypes().length;
         if (index >= numberOfParameters)
-            throw new RuntimeException("invalid method parameter index [" + index
-                    + "] for method [" + method + "] which has [" + numberOfParameters
-                    + "] parameters.");
+            throw new RuntimeException("invalid method parameter index [" + index + "] for method [" + method
+                    + "] which has [" + numberOfParameters + "] parameters.");
     }
 
-    private static LocalVariableAttribute getLocalVariableTable(Method method)
-            throws NotFoundException {
+    private static LocalVariableAttribute getLocalVariableTable(Method method) throws NotFoundException {
         ClassPool classPool = new ClassPool(true);
         classPool.insertClassPath(new LoaderClassPath(method.getDeclaringClass().getClassLoader()));
         CtClass ctClass = classPool.get(method.getDeclaringClass().getName());
 
         CtMethod ctMethod = ctClass.getDeclaredMethod(method.getName());
         CodeAttribute code = (CodeAttribute) ctMethod.getMethodInfo().getAttribute("Code");
-        // TODO log a warning: missing debug information; once per jar only!
+        // TODO if it's not an interface: log a warning: missing debug information; once per jar only!
         if (code == null)
             return null;
         return (LocalVariableAttribute) code.getAttribute("LocalVariableTable");

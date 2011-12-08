@@ -1,32 +1,29 @@
-package net.java.messageapi.processor;
+package net.java.messageapi.processor.mock;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.*;
 import javax.tools.Diagnostic.Kind;
 
-/**
- * Prints messages to standard out
- */
-public class StandardOutMessager implements Messager {
+public class PrintMessager implements Messager {
 
     @Override
     public void printMessage(Kind kind, CharSequence msg) {
-        System.out.println("[" + kind + "] " + msg);
+        System.out.println(kind + ": " + msg);
     }
 
     @Override
     public void printMessage(Kind kind, CharSequence msg, Element e) {
-        System.out.println("[" + kind + "] " + msg + " [" + e + "]");
+        System.out.println(kind + ": " + msg + ": " + e);
     }
 
     @Override
     public void printMessage(Kind kind, CharSequence msg, Element e, AnnotationMirror a) {
-        System.out.println("[" + kind + "] " + msg + " [" + e + "][" + a + "]");
+        System.out.println(kind + ": " + msg + ": " + e + ": " + a);
     }
 
     @Override
     public void printMessage(Kind kind, CharSequence msg, Element e, AnnotationMirror a,
             AnnotationValue v) {
-        System.out.println("[" + kind + "] " + msg + " [" + e + "][" + a + "][" + v + "]");
+        System.out.println(kind + ": " + msg + ": " + e + ": " + a + ": " + v);
     }
 }

@@ -21,6 +21,7 @@
 		<module>test-dummies</module>
 		<module>annotations</module>
 		<module>common</module>
+		<module>processor-common</module>
 		<module>api-processor</module>
 		<module>incoming-processor</module>
 		<module>adapter</module>

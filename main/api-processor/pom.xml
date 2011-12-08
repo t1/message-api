@@ -38,6 +38,7 @@
 									<include>com.google.collections:google-collections</include>
 									<include>net.java.messageapi.collections:consumer-collection-tools</include>
 									<include>net.java.messageapi:common</include>
+									<include>net.java.messageapi:annotations</include>
 								</includes>
 							</artifactSet>
 							<filters>
@@ -65,12 +66,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
-			<artifactId>common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.java.messageapi</groupId>
-			<artifactId>annotations</artifactId>
+			<artifactId>processor-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

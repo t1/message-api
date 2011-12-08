@@ -104,7 +104,7 @@ public class Parameter {
      * it's not really primitive) <code>null</code>; correctly handles primitive types where
      * {@link Class#isInstance(Object)} returns <code>false</code> for.
      */
-    public boolean isCallable(Object value) {
+    public boolean isAssignable(Object value) {
         Class<?> parameterType = getType();
         if (parameterType.isPrimitive()) {
             if (parameterType == Boolean.TYPE)

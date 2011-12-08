@@ -10,8 +10,8 @@ import net.java.messageapi.reflection.Parameter;
 import com.google.common.collect.Lists;
 
 /**
- * Calls methods from an implementation of an {@link MessageApi} by converting instances of the
- * generated POJOs back to method calls.
+ * Calls methods from an implementation of an {@link MessageApi} by converting instances of the generated POJOs back to
+ * method calls.
  */
 public class PojoInvoker<T> {
 
@@ -28,8 +28,7 @@ public class PojoInvoker<T> {
         if (impl == null)
             throw new RuntimeException("impl must not be null");
         if (!api.isInstance(impl))
-            throw new IllegalArgumentException(api.getName() + " is not implemented by "
-                    + impl.getClass());
+            throw new IllegalArgumentException(api.getName() + " is not implemented by " + impl.getClass());
         this.api = api;
         this.impl = impl;
     }
@@ -48,8 +47,8 @@ public class PojoInvoker<T> {
                 }
             }
         }
-        throw new RuntimeException("method " + methodName + " with properties " + pojoProperties
-                + " not found in " + api);
+        throw new RuntimeException("method " + methodName + " with properties " + pojoProperties + " not found in "
+                + api);
     }
 
     private String getMethodNameFor(Object pojo) {
@@ -66,15 +65,14 @@ public class PojoInvoker<T> {
             if (!pojoProperties.hasProperty(name))
                 return false;
             Object propertyValue = pojoProperties.getValue(name);
-            if (!parameter.isCallable(propertyValue)) { // is not isValidValue more readable?
+            if (!parameter.isAssignable(propertyValue)) {
                 return false;
             }
         }
         return true;
     }
 
-    private void invoke(Method method, List<Parameter> methodParameters,
-            PojoProperties pojoProperties) {
+    private void invoke(Method method, List<Parameter> methodParameters, PojoProperties pojoProperties) {
         try {
             method.invoke(impl, getArgs(methodParameters, pojoProperties));
         } catch (IllegalAccessException e) {
