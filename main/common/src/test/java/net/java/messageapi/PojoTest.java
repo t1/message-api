@@ -1,4 +1,4 @@
-package net.java.messageapi.processor;
+package net.java.messageapi;
 
 import static org.junit.Assert.*;
 
