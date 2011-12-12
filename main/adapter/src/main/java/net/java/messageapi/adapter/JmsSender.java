@@ -11,7 +11,7 @@ import net.java.messageapi.reflection.DelimiterWriter;
 
 import org.slf4j.Logger;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 public class JmsSender {
 
@@ -23,17 +23,20 @@ public class JmsSender {
     private ConnectionFactory connectionFactory = null;
     private Destination destination = null;
 
-    private final List<JmsHeaderSupplier> headers = Lists.<JmsHeaderSupplier> newArrayList(//
+    private final List<JmsHeaderSupplier> headers = ImmutableList.<JmsHeaderSupplier> of(//
             new VersionSupplier(), new JmsPropertySupplier());
 
     public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger) {
         if (config == null)
             throw new NullPointerException();
         this.config = config;
+
         if (payloadHandler == null)
             throw new NullPointerException();
         this.payloadHandler = payloadHandler;
 
+        if (logger == null)
+            throw new NullPointerException();
         this.logger = logger;
     }
 

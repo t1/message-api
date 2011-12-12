@@ -1,19 +1,11 @@
 package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
-import net.java.messageapi.*;
 import net.java.messageapi.test.JmsPropertyApi;
 
 import org.junit.Test;
 
 public class MessageApiBeanIntegrationTest {
-
-    @MessageApi
-    @JmsMappedPayload
-    public static interface ConfiguredTestApi {
-        // must be arg0, so it runs without the api annotation processor as well as with it
-        public void configuredMethod(@JmsMappedName("aarg") String arg0);
-    }
 
     @Test
     public void shouldMapArgument() throws Exception {

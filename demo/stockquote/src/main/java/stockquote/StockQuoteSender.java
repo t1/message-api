@@ -1,21 +1,21 @@
 package stockquote;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.math.BigDecimal;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
+
+import net.java.messageapi.JmsOutgoing;
 
 @WebServlet("/sender")
-public class StockQuoteSend extends HttpServlet {
+public class StockQuoteSender extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Inject
+    @JmsOutgoing
     Event<StockQuote> send;
 
     @Override
@@ -33,7 +33,8 @@ public class StockQuoteSend extends HttpServlet {
     private void request(HttpServletRequest request) {
         String symbol = request.getParameter("symbol");
         BigDecimal price = new BigDecimal(request.getParameter("price"));
-        send.fire(new StockQuote(symbol, price));
+        StockQuote stockQuote = new StockQuote(symbol, price);
+        send.fire(stockQuote);
     }
 
     private void response(HttpServletResponse response) throws IOException {
