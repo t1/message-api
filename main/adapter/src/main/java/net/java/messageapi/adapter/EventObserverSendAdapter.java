@@ -25,10 +25,22 @@ public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
 
     private final Class<?> eventType;
     private final Logger logger;
+    private final JmsSender sender;
 
     public EventObserverSendAdapter(Class<?> eventType) {
         this.eventType = eventType;
         this.logger = LoggerFactory.getLogger(eventType);
+
+        this.sender = createSender();
+    }
+
+    private JmsSender createSender() {
+        // TODO add jms properties
+        // TODO read other configs
+        JmsQueueConfig config = MessageSender.getDefaultConfig(eventType);
+        // TODO allow other payload handlers
+        XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler();
+        return new JmsSender(config, payloadHandler, logger);
     }
 
     @Override
@@ -58,12 +70,6 @@ public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
 
     @Override
     public void notify(T event) {
-        // TODO add jms properties
-        // TODO read other configs
-        JmsQueueConfig config = MessageSender.getDefaultConfig(eventType);
-        // TODO allow other payload handlers
-        XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler();
-        JmsSender sender = new JmsSender(config, payloadHandler, logger);
         sender.sendJms(event);
     }
 }

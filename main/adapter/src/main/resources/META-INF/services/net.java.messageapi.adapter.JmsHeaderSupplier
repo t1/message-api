@@ -1,0 +1,2 @@
+net.java.messageapi.adapter.VersionSupplier
+net.java.messageapi.adapter.JmsPropertySupplier

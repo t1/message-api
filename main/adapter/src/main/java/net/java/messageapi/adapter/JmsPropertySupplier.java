@@ -9,13 +9,13 @@ import javax.jms.Message;
 /**
  * Provides the header fields that are annotated as {@link net.java.messageapi.JmsProperty}
  */
-class JmsPropertySupplier implements JmsHeaderSupplier {
+public class JmsPropertySupplier implements JmsHeaderSupplier {
     @Override
     public void addTo(final Message message, Object pojo) throws JMSException {
         JmsPropertyScanner scanner = new JmsPropertyScanner(new JmsPropertyScanner.Visitor() {
             @Override
-            public void visit(String propertyName, Object container, Field field)
-                    throws JMSException, IllegalAccessException {
+            public void visit(String propertyName, Object container, Field field) throws JMSException,
+                    IllegalAccessException {
                 Object value = field.get(container);
                 if (value == null) {
                     // do not add
@@ -64,21 +64,11 @@ class JmsPropertySupplier implements JmsHeaderSupplier {
                         message.setStringProperty(key, entry.getValue());
                     }
                 } else {
-                    throw new RuntimeException("don't know how to set property " + propertyName
-                            + " to the " + value.getClass().getName() + " [" + value + "]");
+                    throw new RuntimeException("don't know how to set property " + propertyName + " to the "
+                            + value.getClass().getName() + " [" + value + "]");
                 }
             }
         });
         scanner.scan(pojo);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return other != null && other.getClass().equals(this.getClass());
-    }
-
-    @Override
-    public int hashCode() {
-        return 1; // that's okay... all JmsPropertySuppliers are equal!
     }
 }

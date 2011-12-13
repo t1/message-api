@@ -23,8 +23,7 @@ public class JmsSender {
     private ConnectionFactory connectionFactory = null;
     private Destination destination = null;
 
-    private final List<JmsHeaderSupplier> headers = ImmutableList.<JmsHeaderSupplier> of(//
-            new VersionSupplier(), new JmsPropertySupplier());
+    private final List<JmsHeaderSupplier> headerSuppliers;
 
     public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger) {
         if (config == null)
@@ -38,6 +37,17 @@ public class JmsSender {
         if (logger == null)
             throw new NullPointerException();
         this.logger = logger;
+
+        this.headerSuppliers = loadHeaderSuppliers();
+    }
+
+    private List<JmsHeaderSupplier> loadHeaderSuppliers() {
+        ImmutableList.Builder<JmsHeaderSupplier> builder = ImmutableList.builder();
+        for (JmsHeaderSupplier service : ServiceLoader.load(JmsHeaderSupplier.class)) {
+            logger.info("loading " + service.getClass().getName());
+            builder.add(service);
+        }
+        return builder.build();
     }
 
     protected void resetLookupCache() {
@@ -110,8 +120,9 @@ public class JmsSender {
 
             Message message = payloadHandler.createJmsMessage(payload, session);
 
-            for (JmsHeaderSupplier header : headers) {
-                header.addTo(message, pojo);
+            for (JmsHeaderSupplier supplier : headerSuppliers) {
+                logger.info("adding " + supplier.getClass().getName());
+                supplier.addTo(message, pojo);
             }
 
             for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {
@@ -174,7 +185,7 @@ public class JmsSender {
         final int prime = 31;
         int result = 1;
         result = prime * result + config.hashCode();
-        result = prime * result + headers.hashCode();
+        result = prime * result + headerSuppliers.hashCode();
         result = prime * result + payloadHandler.hashCode();
         return result;
     }
@@ -194,7 +205,7 @@ public class JmsSender {
         if (!config.equals(other.config)) {
             return false;
         }
-        if (!headers.equals(other.headers)) {
+        if (!headerSuppliers.equals(other.headerSuppliers)) {
             return false;
         }
         if (!payloadHandler.equals(other.payloadHandler)) {
