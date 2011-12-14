@@ -44,7 +44,7 @@ public class JmsSender {
     private List<JmsHeaderSupplier> loadHeaderSuppliers() {
         ImmutableList.Builder<JmsHeaderSupplier> builder = ImmutableList.builder();
         for (JmsHeaderSupplier service : ServiceLoader.load(JmsHeaderSupplier.class)) {
-            logger.info("loading " + service.getClass().getName());
+            logger.debug("add header supplier " + service.getClass().getName());
             builder.add(service);
         }
         return builder.build();
@@ -121,7 +121,7 @@ public class JmsSender {
             Message message = payloadHandler.createJmsMessage(payload, session);
 
             for (JmsHeaderSupplier supplier : headerSuppliers) {
-                logger.info("adding " + supplier.getClass().getName());
+                logger.debug("adding header of " + supplier.getClass().getName());
                 supplier.addTo(message, pojo);
             }
 
