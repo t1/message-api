@@ -11,7 +11,7 @@ import javax.servlet.http.*;
 import net.java.messageapi.JmsOutgoing;
 
 @WebServlet("/sender")
-public class StockQuoteSender extends HttpServlet {
+public class QuoteEntry extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Inject

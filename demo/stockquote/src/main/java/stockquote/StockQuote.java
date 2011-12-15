@@ -3,19 +3,18 @@ package stockquote;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
-import net.java.messageapi.MessageEvent;
+import net.java.messageapi.*;
 
 @XmlRootElement
-@XmlType(propOrder = { "symbol", "price" })
 @MessageEvent
+@DestinationName("testination")
 public class StockQuote implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlElement(required = true)
+    @JmsProperty
+    @XmlTransient
     private final String symbol;
     @XmlElement(required = true)
     private final BigDecimal price;

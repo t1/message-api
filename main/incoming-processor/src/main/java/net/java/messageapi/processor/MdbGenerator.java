@@ -9,7 +9,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 
-import net.java.messageapi.MessageApi;
+import net.java.messageapi.*;
 
 public class MdbGenerator extends AbstractGenerator {
     private enum AdapterType {
@@ -38,8 +38,12 @@ public class MdbGenerator extends AbstractGenerator {
 
         public static AdapterType of(TypeElement type) {
             MessageApi messageApi = type.getAnnotation(MessageApi.class);
-            AdapterType adapterType = messageApi == null ? AdapterType.EVENT : AdapterType.API;
-            return adapterType;
+            if (messageApi != null)
+                return AdapterType.API;
+            MessageEvent messageEvent = type.getAnnotation(MessageEvent.class);
+            if (messageEvent != null)
+                return AdapterType.EVENT;
+            throw new RuntimeException("can't determine AdapterType for " + type);
         }
 
         public abstract String getSuffix();
@@ -81,7 +85,7 @@ public class MdbGenerator extends AbstractGenerator {
         String fqcn = type.getQualifiedName().toString();
         String simple = type.getSimpleName().toString();
         String pkg = getPackageOf(type);
-        String destination = fqcn;
+        String destination = getDestinationName(type);
         String mdbName = simple + adapterType.getSuffix();
 
         // TODO add messageSelector on the version
@@ -122,5 +126,16 @@ public class MdbGenerator extends AbstractGenerator {
         source.append("        super(").append(simple).append(".class, payload);\n").append("    }\n");
         source.append("}\n");
         return source.toString();
+    }
+
+    private String getDestinationName(TypeElement type) {
+        DestinationName destinationNameAnnotation = type.getAnnotation(DestinationName.class);
+        String qualifiedName = type.getQualifiedName().toString();
+        if (destinationNameAnnotation == null)
+            return qualifiedName;
+        String destination = destinationNameAnnotation.value();
+        if (DestinationName.DEFAULT.equals(destination))
+            return qualifiedName;
+        return destination;
     }
 }
