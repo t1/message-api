@@ -79,8 +79,8 @@ public class MessageApiEventScanner {
         pit.setInjectionTarget(wrapper);
     }
 
-    private void generateOutgoingAdapter(Class<?> type) {
-        EventObserverSendAdapter<?> adapter = new EventObserverSendAdapter<Object>(type);
+    private <T> void generateOutgoingAdapter(Class<T> type) {
+        EventObserverSendAdapter<T> adapter = new EventObserverSendAdapter<T>(type);
         observers.add(adapter);
     }
 

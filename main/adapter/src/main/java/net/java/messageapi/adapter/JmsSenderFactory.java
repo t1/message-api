@@ -51,7 +51,8 @@ public class JmsSenderFactory implements MessageSenderFactory {
     @Override
     public <T> T create(final Class<T> api) {
         Logger logger = LoggerFactory.getLogger(api);
-        final JmsSender sender = new JmsSender(config, payloadHandler, logger);
+        // TODO implement destinationNameFunction for MessageApis
+        final JmsSender sender = new JmsSender(config, payloadHandler, logger, null);
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {

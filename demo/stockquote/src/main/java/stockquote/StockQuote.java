@@ -12,9 +12,10 @@ import net.java.messageapi.*;
 public class StockQuote implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @JmsProperty
     @XmlTransient
+    @DynamicDestinationName
     private final String symbol;
+
     @XmlElement(required = true)
     private final BigDecimal price;
 

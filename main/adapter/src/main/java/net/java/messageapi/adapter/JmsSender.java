@@ -11,6 +11,7 @@ import net.java.messageapi.reflection.DelimiterWriter;
 
 import org.slf4j.Logger;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 public class JmsSender {
@@ -21,11 +22,12 @@ public class JmsSender {
 
     private Context jndiContext = null;
     private ConnectionFactory connectionFactory = null;
-    private Destination destination = null;
 
     private final List<JmsHeaderSupplier> headerSuppliers;
+    private final Function<Object, String> destinationNameFunction;
 
-    public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger) {
+    public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger,
+            Function<Object, String> destinationNameFunction) {
         if (config == null)
             throw new NullPointerException();
         this.config = config;
@@ -37,6 +39,8 @@ public class JmsSender {
         if (logger == null)
             throw new NullPointerException();
         this.logger = logger;
+
+        this.destinationNameFunction = destinationNameFunction;
 
         this.headerSuppliers = loadHeaderSuppliers();
     }
@@ -53,7 +57,6 @@ public class JmsSender {
     protected void resetLookupCache() {
         jndiContext = null;
         connectionFactory = null;
-        destination = null;
     }
 
     private Context getJNDIContext() {
@@ -82,18 +85,20 @@ public class JmsSender {
         return connectionFactory;
     }
 
-    protected Destination getDestination() {
-        if (destination == null) {
-            String destinationName = config.getDestinationName();
-            try {
-                destination = (Destination) getJNDIContext().lookup(destinationName);
-            } catch (NamingException e) {
-                String msg = "can't get destination " + destinationName;
-                logger.error(msg);
-                throw new RuntimeException(msg, e);
-            }
+    private String getDestinationName(Object pojo) {
+        if (destinationNameFunction != null)
+            return destinationNameFunction.apply(pojo);
+        return config.getDestinationName();
+    }
+
+    private Destination getDestination(String destinationName) {
+        try {
+            return (Destination) getJNDIContext().lookup(destinationName);
+        } catch (NamingException e) {
+            String msg = "can't get destination " + destinationName;
+            logger.error(msg);
+            throw new RuntimeException(msg, e);
         }
-        return destination;
     }
 
     public JmsQueueConfig getConfig() {
@@ -103,9 +108,10 @@ public class JmsSender {
     public void sendJms(Object pojo) {
         Object payload = payloadHandler.toPayload(pojo);
         boolean transacted = config.isTransacted();
+        String destinationName = getDestinationName(pojo);
 
         // TODO back to debug level:
-        logger.info("sending {}transacted message to {}", transacted ? "" : "non-", config.getDestinationName());
+        logger.info("sending {}transacted message to {}", transacted ? "" : "non-", destinationName);
         logger.info("payload:\n{}", payload);
 
         Connection connection = null;
@@ -116,7 +122,7 @@ public class JmsSender {
             connection = factory.createConnection(config.getUser(), config.getPass());
             Session session = connection.createSession(transacted, Session.AUTO_ACKNOWLEDGE);
 
-            MessageProducer messageProducer = session.createProducer(getDestination());
+            MessageProducer messageProducer = session.createProducer(getDestination(destinationName));
 
             Message message = payloadHandler.createJmsMessage(payload, session);
 
