@@ -17,7 +17,5 @@ import javax.inject.Qualifier;
 @Target({ TYPE, METHOD, FIELD, PARAMETER })
 @Retention(RUNTIME)
 public @interface DestinationName {
-    public static final String DEFAULT = "###DEFAULT###";
-
-    public String value() default DEFAULT;
+    public String value();
 }

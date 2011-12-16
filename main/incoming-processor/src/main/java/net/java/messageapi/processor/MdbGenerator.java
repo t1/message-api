@@ -130,12 +130,8 @@ public class MdbGenerator extends AbstractGenerator {
 
     private String getDestinationName(TypeElement type) {
         DestinationName destinationNameAnnotation = type.getAnnotation(DestinationName.class);
-        String qualifiedName = type.getQualifiedName().toString();
         if (destinationNameAnnotation == null)
-            return qualifiedName;
-        String destination = destinationNameAnnotation.value();
-        if (DestinationName.DEFAULT.equals(destination))
-            return qualifiedName;
-        return destination;
+            return type.getQualifiedName().toString();
+        return destinationNameAnnotation.value();
     }
 }

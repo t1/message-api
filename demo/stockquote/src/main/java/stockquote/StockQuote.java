@@ -9,7 +9,6 @@ import net.java.messageapi.*;
 
 @XmlRootElement
 @MessageEvent
-@DestinationName("testination")
 public class StockQuote implements Serializable {
     private static final long serialVersionUID = 1L;
 
