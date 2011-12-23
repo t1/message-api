@@ -1,7 +1,7 @@
-Features still left to do:
+Bigger features still left to do:
 *Find out if there is a way to register MDBs generated at startup; if there is, finish the dynamic generator and remove the incoming-processor.
 *For the FallbackParameterNameSupplier, instead of 'arg0' etc. take the type name and count only if it's not unique.
-*Change JmsMappedPayload and JmsSerializedPayload into an enum, so to prevent contradictions.
+*Change JmsMappedPayload and JmsSerializedPayload into an enum, to prevent contradictions. (Do we need custom payload handlers?)
 
 
 
