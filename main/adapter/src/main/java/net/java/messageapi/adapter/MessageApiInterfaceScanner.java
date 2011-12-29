@@ -64,9 +64,9 @@ class MessageApiInterfaceScanner {
 
     void createBeans(@Observes AfterBeanDiscovery abd) {
         if (beanIds.size() > BEANCOUNT_SUM_LOG_THRESHOLD)
-            log.info("create {} beans for {} message apis", beanIds.size(), messageApis.size());
+            log.info("define {} beans for {} message apis", beanIds.size(), messageApis.size());
         for (BeanId beanId : beanIds) {
-            log.info("create bean for {}", beanId);
+            log.info("define message api bean for {}", beanId);
             MessageApiBean<?> bean = MessageApiBean.of(beanId.type, beanId.qualifiers);
             abd.addBean(bean);
         }

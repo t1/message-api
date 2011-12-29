@@ -90,7 +90,7 @@ final class MessageApiBean<T> extends AbstractBean<T> {
     @Override
     public T create(CreationalContext<T> ctx) {
         try {
-            log.info("create message api bean {} qualified as {}", type.getSimpleName(), qualifiers);
+            log.info("instantiate message api bean {} qualified as {}", type.getSimpleName(), qualifiers);
             return factory.create(type);
         } catch (RuntimeException e) {
             // by default CDI doesn't report exceptions, so we do it here ourselves
