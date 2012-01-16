@@ -147,6 +147,10 @@ public class JmsSender {
 
             logger.info("sent {} message id {} to {}",
                     new Object[] { payloadHandler.getName(), message.getJMSMessageID(), message.getJMSDestination() });
+
+            if (transacted)
+                session.commit();
+
             sent = true;
         } catch (JMSException e) {
             throw new RuntimeException("can't send JMS", e);
