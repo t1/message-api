@@ -27,12 +27,19 @@ public class VersionSupplier implements JmsHeaderSupplier {
     private String extractInterfaceVersion(Class<?> api) {
         String className = api.getSimpleName() + ".class";
         URL resource = api.getResource(className);
-        log.debug("get resource for {} -> {}", className, resource);
+        log.debug("get resource for {} -> {}", className, pathOf(api));
         if (resource == null)
             return null;
         String classPath = resource.toString();
         if (classPath.startsWith("jar")) {
             String jarPath = classPath.substring(0, classPath.lastIndexOf("!") + 1);
+            Attributes attributes = getManifestAttributes(jarPath, api);
+            if (attributes != null) {
+                return attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
+            }
+        } else if (classPath.endsWith(pathOf(api))) {
+            String jarPath = classPath.substring(0, classPath.length() - pathOf(api).length());
+            log.debug("############# {}", jarPath);
             Attributes attributes = getManifestAttributes(jarPath, api);
             if (attributes != null) {
                 return attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
@@ -47,6 +54,10 @@ public class VersionSupplier implements JmsHeaderSupplier {
             log.error("Could not extract version for " + api + ": Invalid class path " + classPath + ".");
         }
         return null;
+    }
+
+    private String pathOf(Class<?> api) {
+        return api.getCanonicalName().replace('.', '/');
     }
 
     private Attributes getManifestAttributes(String jarPath, Class<?> api) {
