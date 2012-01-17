@@ -277,7 +277,7 @@
 		<module>main</module>
 		<module>archetype</module>
 		<module>test</module>
-		<!--module>demo</module-->
+		<!-- disabled, so a clean build works <module>demo</module> -->
 	</modules>
 
 	<dependencyManagement>
