@@ -1,0 +1,29 @@
+= Status =
+
+* double check
+** Optional
+** DestinationName
+** DynamicDestinationName
+
+* works
+** ConnectionFactoryName
+** MessageEvent (document!)
+** JmsProperty
+
+* works partially
+
+* needs rework
+** JmsMapped/SerializedPayload
+** JmsMappedName (rename to JmsName and add a ParameterNameSupplier for it)
+
+* workaround
+** JmsIncoming/Outgoing
+
+* doesn't work
+** JmsSelector
+
+= TODO =
+Bigger features still left to do:
+*Find out if there is a way to register MDBs generated at startup; if there is, finish the dynamic generator and remove the incoming-processor.
+*For the FallbackParameterNameSupplier, instead of 'arg0' etc. take the type name and count only if it's not unique.
+*Do we need custom payload handlers?
