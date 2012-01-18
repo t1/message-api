@@ -1,11 +1,12 @@
 = MessageApi =
 
-[[image: blob/master/www/1_1-logo.jpg|right]]
+[[image: ./raw/master/www/1&1-logo.jpg|right]]
 
 The EJB standard took a giant step between version 2.1 and 3.0 - the same step (in our eyes) is still missing in the JMS standard: To provide a simple to use, pure Java interface solution to remote calls... only asynchronous in this case. Even Spring has not a solution satisfying us, so we at 1&1 have started this project.
 
 We want to evolve it into a standard in some way (in some fits of megalomania I think it maybe even become part of [http://java.net/projects/jms-spec JSR-343/JMS 2.0] and/or Java EE 7 one day ;-). As a first step we make it publicly available so everybody can take a look at what we're up to. We welcome any feedback - from feature requests to patches, from downloads to success stories. Yes, downloading is feedback, too: Having lots of users and still no comments could mean that the project is just perfect, couldn't it? ;-)
 
 
-<a href="blob/master/doc/STATUS.mediawiki">Status and TODOs</a>
 <a href="blob/master/doc/PROPOSAL.mediawiki">Proposal for a new Chapter in the JMS spec</a>
+<br>
+<a href="blob/master/doc/STATUS.mediawiki">Status and TODOs</a>
