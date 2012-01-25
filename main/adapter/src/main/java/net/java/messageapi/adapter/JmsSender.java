@@ -86,8 +86,12 @@ public class JmsSender {
     }
 
     private String getDestinationName(Object pojo) {
-        if (destinationNameFunction != null)
-            return destinationNameFunction.apply(pojo);
+        if (destinationNameFunction != null) {
+            String name = destinationNameFunction.apply(pojo);
+            if (name != null) {
+                return name;
+            }
+        }
         return config.getDestinationName();
     }
 
