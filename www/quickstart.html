@@ -9,31 +9,31 @@
 
 <h3>Build the MessageApi</h3>
 <ol>
-<li><tt>svn co https://messageapi.dev.java.net/svn/messageapi/tags/1.1 messageapi</tt></li>
-<li><tt>cd messageapi</tt></li>
-<li><tt>mvn clean install</tt>
+<li><code>svn co https://messageapi.dev.java.net/svn/messageapi/tags/1.1 messageapi</code></li>
+<li><code>cd messageapi</code></li>
+<li><code>mvn clean install</code>
 <br/><small style="color:green">we are working on getting the messageapi into a maven repository, so you could skip this step.</small></li>
 </ol>
 
 <h3>Create the Chat-API</h3>
 <ol>
-<li><tt>mvn archetype:create -DgroupId=chat -DartifactId=chat-api -DarchetypeGroupId=net.java.messageapi -DarchetypeArtifactId=api-archetype -DarchetypeVersion=1.1 -DremoteRepositories=http://download.java.net/maven/2</tt></li>
-<li>replace the sample <tt>MyMessageApi.java</tt> with your own <tt>ChatApi.java</tt>:
+<li><code>mvn archetype:create -DgroupId=chat -DartifactId=chat-api -DarchetypeGroupId=net.java.messageapi -DarchetypeArtifactId=api-archetype -DarchetypeVersion=1.1 -DremoteRepositories=http://download.java.net/maven/2</code></li>
+<li>replace the sample <code>MyMessageApi.java</code> with your own <code>ChatApi.java</code>:
 <pre>@MessageApi
 public interface ChatApi {
 	public void send(String message);
 }</pre>
 </li>
-<li><tt>mvn clean install</tt></li>
+<li><code>mvn clean install</code></li>
 </ol>
 
 <h3>Create the Sender</h3>
 <ol>
-<li style="color:grey">create a web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-send -Dpackage=chat</tt></li>
-<li>add dependencies to your <tt>chat-api</tt>, to <tt>joda-time:1.6.2</tt>, and the <tt>net.java.messageapi:adapter:1.1</tt></li>
-<li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
-<li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
-<li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
+<li style="color:grey">create a web project: <code>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-send -Dpackage=chat</code></li>
+<li>add dependencies to your <code>chat-api</code>, to <code>joda-time:1.6.2</code>, and the <code>net.java.messageapi:adapter:1.1</code></li>
+<li style="color:grey">remove the file <code>src/main/webapp/index.jsp</code></li>
+<li style="color:grey">create the folder <code>src/main/webapp/WEB-INF</code></li>
+<li style="color:grey">create the file <code>web.xml</code> in that folder with this contents:<pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -51,7 +51,7 @@ public interface ChatApi {
 	&lt;/welcome-file-list&gt;
 &lt;/web-app&gt;
 </pre></li>
-<li>create the <tt>chat.ChatSend.java</tt> (the imports and stuff are left out for brevity):
+<li>create the <code>chat.ChatSend.java</code> (the imports and stuff are left out for brevity):
 <pre>
 <span style="color:grey">public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -74,7 +74,7 @@ public interface ChatApi {
 
     private void request(HttpServletRequest request) {
         String message = request.getParameter("message");
-        if (message != null && message.length() &gt; 0) {</span>
+        if (message != null &amp;&amp; message.length() &gt; 0) {</span>
             chat.send(message);
 <span style="color:grey">        }
     }
@@ -94,7 +94,7 @@ public interface ChatApi {
     }
 }</span>
 </pre></li>
-<li>Create the configuration file <tt>chat.ChatApi.config</tt>:
+<li>Create the configuration file <code>chat.ChatApi.config</code>:
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
 &lt;jmsSenderFactory api="net.java.messageapi.test.TestApi"&gt;
@@ -108,17 +108,17 @@ public interface ChatApi {
 &lt;/jmsSenderFactory&gt;
 </pre>
 <small style="color:green">we are working on a automatic registry for services, so this config would be unnecessary.</small></li>
-<li style="color:grey">build the war: <tt>mvn clean verify</tt></li>
+<li style="color:grey">build the war: <code>mvn clean verify</code></li>
 </ol>
 
 <h3>Create the Receiver</h3>
 <ol>
-<li style="color:grey">create another web project: <tt>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-<b>receive</b> -Dpackage=chat</tt></li>
-<li style="color:grey">change the maven dependency on <tt>javaee-web-api</tt> to the full <tt>javaee-api</tt>; we'll add a MDB</li>
-<li>add dependencies to your <tt>chat-api</tt> and the <tt>net.java.messageapi:adapter:1.1</tt></li>
-<li style="color:grey">remove the file <tt>src/main/webapp/index.jsp</tt></li>
-<li style="color:grey">create the folder <tt>src/main/webapp/WEB-INF</tt></li>
-<li style="color:grey">create the file <tt>web.xml</tt> in that folder with this contents:<pre>
+<li style="color:grey">create another web project: <code>mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=webapp-javaee6 -DgroupId=chat -DartifactId=chat-<b>receive</b> -Dpackage=chat</code></li>
+<li style="color:grey">change the maven dependency on <code>javaee-web-api</code> to the full <code>javaee-api</code>; we'll add a MDB</li>
+<li>add dependencies to your <code>chat-api</code> and the <code>net.java.messageapi:adapter:1.1</code></li>
+<li style="color:grey">remove the file <code>src/main/webapp/index.jsp</code></li>
+<li style="color:grey">create the folder <code>src/main/webapp/WEB-INF</code></li>
+<li style="color:grey">create the file <code>web.xml</code> in that folder with this contents:<pre>
 &lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
@@ -135,7 +135,7 @@ public interface ChatApi {
 	&lt;/welcome-file-list&gt;
 &lt;/web-app&gt;
 </pre></li>
-<li>create the <tt>chat.ChatReceiver</tt>:
+<li>create the <code>chat.ChatReceiver</code>:
 <pre>
 public class ChatReceiver implements ChatApi {
 <span style="color:grey">
@@ -155,16 +155,16 @@ public class ChatReceiver implements ChatApi {
     }
 }</span>
 </pre></li>
-<li>create the <tt>chat.ChatMDB</tt>:<pre>
+<li>create the <code>chat.ChatMDB</code>:<pre>
 @MessageDriven(mappedName = "Chat")
-public class ChatMDB extends MessageDecoder<ChatApi> {
+public class ChatMDB extends MessageDecoder&lt;ChatApi&gt; {
 	public ChatMDB() {
 		super(ChatApi.class, new ChatReceiver());
 	}
 }
 </pre>
 <small style="color:green">we are working on a generic MDB, so you only have to configure the connection between a destination and your business bean</small></li>
-<li style="color:grey">create the <tt>chat.ChatReceiveServlet</tt>:
+<li style="color:grey">create the <code>chat.ChatReceiveServlet</code>:
 <pre>
 public class ChatReceiveServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -193,32 +193,32 @@ public class ChatReceiveServlet extends HttpServlet {
     }
 }
 </pre></li>
-<li style="color:grey">build the war: <tt>mvn clean verify</tt></li>
+<li style="color:grey">build the war: <code>mvn clean verify</code></li>
 </ol>
 
 <h3>Deploy on your glassfish</h3>
 <ol style="color:grey">
 <li>open the <a href="http://localhost:4848">admin console</a></li>
-<li>create the connection factory <tt>jms/ConnectionFactory</tt><ol>
-    <li>go to <tt>Resources/JMS Resources/Connection Factories</tt></li>
-    <li>click <tt>New...</tt></li>
-    <li>set the <tt>Pool Name</tt> <tt>ConnectionFactory</tt></li>
-    <li>set the <tt>Resource Type</tt> <tt>javax.jms.ConnectionFactory</tt></li>
+<li>create the connection factory <code>jms/ConnectionFactory</code><ol>
+    <li>go to <code>Resources/JMS Resources/Connection Factories</code></li>
+    <li>click <code>New...</code></li>
+    <li>set the <code>Pool Name</code> <code>ConnectionFactory</code></li>
+    <li>set the <code>Resource Type</code> <code>javax.jms.ConnectionFactory</code></li>
     <li>hit return</li>
 </ol></li>
-<li>create the topic <tt>Chat</tt><ol>
-    <li>go to <tt>Resources/JMS Resources/Destination Resources</tt></li>
-    <li>click <tt>New...</tt></li>
-    <li>set the <tt>JNDI Name</tt> and the <tt>Physical Destination Name</tt> to <tt>Chat</tt></li>
+<li>create the topic <code>Chat</code><ol>
+    <li>go to <code>Resources/JMS Resources/Destination Resources</code></li>
+    <li>click <code>New...</code></li>
+    <li>set the <code>JNDI Name</code> and the <code>Physical Destination Name</code> to <code>Chat</code></li>
     <li>hit return</li>
 </ol></li>
 <li>deploy the apps<ol>
-    <li>go to <tt>Applications</tt></li>
-    <li>click <tt>Deploy...</tt></li>
-    <li>browse for your <tt>chat-send.war</tt></li>
-    <li>hit <tt>continue</tt></li>
+    <li>go to <code>Applications</code></li>
+    <li>click <code>Deploy...</code></li>
+    <li>browse for your <code>chat-send.war</code></li>
+    <li>hit <code>continue</code></li>
     <li>wait until the deploy is finished</li>
-    <li>repeat for the <tt>chat-receive.war</tt></li>
+    <li>repeat for the <code>chat-receive.war</code></li>
 </ol></li>
 <li>open the <a href="http://localhost:8080/chat-send">sender</a></li>
 <li>open the <a href="http://localhost:8080/chat-receive">receiver</a></li>
