@@ -3,8 +3,8 @@ package net.java.messageapi.processor;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.tools.FileObject;
 
@@ -16,13 +16,13 @@ import org.joda.time.Instant;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Generates the <code>.parametermap</code> files for the
- * {@link net.java.messageapi.reflection.Parameter Parameter} class.
+ * Generates the <code>.parametermap</code> files for the {@link net.java.messageapi.reflection.Parameter Parameter}
+ * class.
  */
 public class ParameterMapGenerator extends AbstractGenerator {
 
-    public ParameterMapGenerator(Messager messager, Filer filer) {
-        super(messager, filer);
+    public ParameterMapGenerator(Messager messager, ProcessingEnvironment env) {
+        super(messager, env);
     }
 
     @Override

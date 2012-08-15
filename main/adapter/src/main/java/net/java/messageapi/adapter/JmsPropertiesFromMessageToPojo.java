@@ -69,6 +69,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     private List<String> getListProperty(String propertyName) throws JMSException {
         List<String> list = Lists.newArrayList();
         Pattern pattern = Pattern.compile("^" + propertyName + "\\[([0-9]+)\\]$");
+        @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
         while (propertyNames.hasMoreElements()) {
             String name = propertyNames.nextElement();
@@ -87,6 +88,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     private Set<String> getSetProperty(String propertyName) throws JMSException {
         Set<String> set = Sets.newHashSet();
         Pattern pattern = Pattern.compile("^" + propertyName + "\\[([0-9]+)\\]$");
+        @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
         while (propertyNames.hasMoreElements()) {
             String name = propertyNames.nextElement();
@@ -102,6 +104,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     private Map<String, String> getMapProperty(String propertyName) throws JMSException {
         ImmutableMap.Builder<String, String> map = ImmutableMap.builder();
         Pattern pattern = Pattern.compile("^" + propertyName + "\\[([^\\]]+)\\]$");
+        @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
         while (propertyNames.hasMoreElements()) {
             String name = propertyNames.nextElement();

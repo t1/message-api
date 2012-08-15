@@ -173,6 +173,7 @@ public class JmsSender {
     }
 
     private String properties(Message message) throws JMSException {
+        @SuppressWarnings("unchecked")
         Enumeration<String> names = message.getPropertyNames();
         if (names == null)
             return "none";

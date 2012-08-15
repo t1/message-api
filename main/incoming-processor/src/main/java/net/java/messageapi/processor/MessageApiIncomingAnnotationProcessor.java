@@ -23,11 +23,10 @@ public class MessageApiIncomingAnnotationProcessor extends AbstractProcessor2 {
     private MdbGenerator mdbGenerator;
 
     @Override
-    public synchronized void init(@SuppressWarnings("hiding") ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
+    public synchronized void init(ProcessingEnvironment env) {
+        super.init(env);
         Messager messager = getMessager();
-        Filer filer = processingEnv.getFiler();
-        mdbGenerator = new MdbGenerator(messager, filer);
+        mdbGenerator = new MdbGenerator(messager, env);
     }
 
     @Override

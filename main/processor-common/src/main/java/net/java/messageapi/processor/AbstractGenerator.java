@@ -3,23 +3,23 @@ package net.java.messageapi.processor;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
+import javax.annotation.processing.*;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.*;
-
-import net.java.messageapi.reflection.ReflectionAdapter;
 
 public abstract class AbstractGenerator {
 
     private final Messager messager;
     private final Filer filer;
+    private final Elements utils;
 
-    public AbstractGenerator(Messager messager, Filer filer) {
+    public AbstractGenerator(Messager messager, ProcessingEnvironment env) {
         this.messager = messager;
-        this.filer = filer;
+        this.filer = env.getFiler();
+        this.utils = env.getElementUtils();
     }
 
     protected void error(CharSequence message) {
@@ -46,8 +46,7 @@ public abstract class AbstractGenerator {
         return filer.createSourceFile(name, elements);
     }
 
-    protected FileObject createResourceFile(String pkg, String name, List<TypeElement> rootElements)
-            throws IOException {
+    protected FileObject createResourceFile(String pkg, String name, List<TypeElement> rootElements) throws IOException {
         Element[] elements = toArray(rootElements);
         return filer.createResource(StandardLocation.CLASS_OUTPUT, pkg, name, elements);
     }
@@ -63,7 +62,7 @@ public abstract class AbstractGenerator {
     }
 
     protected String getPackageOf(Element element) {
-        return ReflectionAdapter.getPackageOf(element).getQualifiedName().toString();
+        return utils.getPackageOf(element).getQualifiedName().toString();
     }
 
     public abstract void process(Element element);

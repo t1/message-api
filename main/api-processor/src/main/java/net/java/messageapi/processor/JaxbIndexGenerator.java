@@ -5,8 +5,8 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
@@ -15,16 +15,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.common.collect.*;
 
 /**
- * Annotation processor that generates <code>jaxb.index</code> files. All packages that contain at
- * least one class that is annotated as {@link XmlRootElement} will get one index file containing a
- * list of the package-relative class names of all root elements.
+ * Annotation processor that generates <code>jaxb.index</code> files. All packages that contain at least one class that
+ * is annotated as {@link XmlRootElement} will get one index file containing a list of the package-relative class names
+ * of all root elements.
  */
 public class JaxbIndexGenerator extends AbstractGenerator {
 
     private final ListMultimap<String, TypeElement> packageMap = ArrayListMultimap.create();
 
-    public JaxbIndexGenerator(Messager messager, Filer filer) {
-        super(messager, filer);
+    public JaxbIndexGenerator(Messager messager, ProcessingEnvironment env) {
+        super(messager, env);
     }
 
     @Override
@@ -53,8 +53,7 @@ public class JaxbIndexGenerator extends AbstractGenerator {
         }
     }
 
-    private void writeJaxbIndex(FileObject jaxbIndex, List<TypeElement> elements)
-            throws IOException {
+    private void writeJaxbIndex(FileObject jaxbIndex, List<TypeElement> elements) throws IOException {
         List<String> compound = convert(elements);
         Collections.sort(compound);
         write(jaxbIndex, compound);

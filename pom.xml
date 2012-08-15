@@ -302,11 +302,6 @@
 				<artifactId>google-collections</artifactId>
 				<version>1.0</version>
 			</dependency>
-			<dependency>
-				<groupId>javax.jms</groupId>
-				<artifactId>jms</artifactId>
-				<version>1.1</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>

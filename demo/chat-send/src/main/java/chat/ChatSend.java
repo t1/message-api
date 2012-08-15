@@ -1,20 +1,15 @@
 package chat;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.java.messageapi.DestinationName;
+import javax.servlet.http.*;
 
 public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    @DestinationName("Chat")
+    // @DestinationName("Chat")
     ChatApi chat;
 
     @Override

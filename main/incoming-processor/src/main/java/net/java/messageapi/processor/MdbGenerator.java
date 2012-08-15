@@ -3,8 +3,8 @@ package net.java.messageapi.processor;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
@@ -51,8 +51,8 @@ public class MdbGenerator extends AbstractGenerator {
         public abstract String getDecoderClass();
     }
 
-    public MdbGenerator(Messager messager, Filer filer) {
-        super(messager, filer);
+    public MdbGenerator(Messager messager, ProcessingEnvironment env) {
+        super(messager, env);
     }
 
     @Override

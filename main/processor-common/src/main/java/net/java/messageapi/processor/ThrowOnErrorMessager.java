@@ -37,8 +37,7 @@ public class ThrowOnErrorMessager implements Messager {
     }
 
     @Override
-    public void printMessage(Kind kind, CharSequence msg, Element e, AnnotationMirror a,
-            AnnotationValue v) {
+    public void printMessage(Kind kind, CharSequence msg, Element e, AnnotationMirror a, AnnotationValue v) {
         target.printMessage(kind, msg, e, a, v);
         throwOnError(kind, msg);
     }

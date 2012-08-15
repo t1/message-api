@@ -18,8 +18,7 @@ public class MapMessageDecoderTest {
                 throw new UnsupportedOperationException();
             }
         };
-        MapMessageDecoder<TestApi> decoder = new MapMessageDecoder<TestApi>(TestApi.class, impl,
-                null);
+        MapMessageDecoder<TestApi> decoder = new MapMessageDecoder<TestApi>(TestApi.class, impl, null);
         fail("should have failed");
         System.out.println(decoder);
     }

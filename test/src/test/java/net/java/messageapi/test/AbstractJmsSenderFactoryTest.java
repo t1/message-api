@@ -60,6 +60,7 @@ public abstract class AbstractJmsSenderFactoryTest {
     /** Helper for debugging */
     protected void printHeaders() throws JMSException {
         Message message = captureMessage();
+        @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
         while (propertyNames.hasMoreElements()) {
             String propertyName = propertyNames.nextElement();

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import net.java.messageapi.JmsProperty;
@@ -25,8 +26,8 @@ public class XmlMessageDecoderTest {
     @Mock
     private TextMessage message;
 
-    protected void mockMessage() {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+    protected void mockMessage() throws JMSException {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
                 + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
                 + "</testMethodHeaderOnly>\n";
@@ -206,8 +207,8 @@ public class XmlMessageDecoderTest {
         mockMessage();
         when(message.getIntProperty("arg1")).thenReturn(123);
 
-        XmlMessageDecoder<TestInterfaceHeaderOnlyInt> decoder = XmlMessageDecoder.of(
-                TestInterfaceHeaderOnlyInt.class, implInt);
+        XmlMessageDecoder<TestInterfaceHeaderOnlyInt> decoder = XmlMessageDecoder.of(TestInterfaceHeaderOnlyInt.class,
+                implInt);
 
         decoder.onMessage(message);
 
@@ -343,8 +344,7 @@ public class XmlMessageDecoderTest {
 
     @Test
     public void shouldSetHeaderOnlyListPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
                 + "</testMethodHeaderOnly>\n";
         when(message.getText()).thenReturn(xml);
@@ -370,8 +370,7 @@ public class XmlMessageDecoderTest {
 
     @Test
     public void shouldSetHeaderOnlyArrayPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
                 + "</testMethodHeaderOnly>\n";
         when(message.getText()).thenReturn(xml);
@@ -397,8 +396,7 @@ public class XmlMessageDecoderTest {
 
     @Test
     public void shouldSetHeaderOnlySetPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
                 + "</testMethodHeaderOnly>\n";
         when(message.getText()).thenReturn(xml);
@@ -407,8 +405,8 @@ public class XmlMessageDecoderTest {
         when(message.getStringProperty("arg1[1]")).thenReturn("two");
         when(message.getStringProperty("arg1[2]")).thenReturn("three");
 
-        XmlMessageDecoder<TestInterfaceHeaderOnlySet> decoder = XmlMessageDecoder.of(
-                TestInterfaceHeaderOnlySet.class, implSet);
+        XmlMessageDecoder<TestInterfaceHeaderOnlySet> decoder = XmlMessageDecoder.of(TestInterfaceHeaderOnlySet.class,
+                implSet);
 
         decoder.onMessage(message);
 
@@ -424,8 +422,7 @@ public class XmlMessageDecoderTest {
 
     @Test
     public void shouldSetHeaderOnlyMapPropertyAnnotation() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodHeaderOnly>\n" //
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<testMethodHeaderOnly>\n" //
                 + "    <arg0>foo</arg0>\n" //
                 + "</testMethodHeaderOnly>\n";
         when(message.getText()).thenReturn(xml);
@@ -434,12 +431,11 @@ public class XmlMessageDecoderTest {
         when(message.getStringProperty("arg1[B]")).thenReturn("two");
         when(message.getStringProperty("arg1[C]")).thenReturn("three");
 
-        XmlMessageDecoder<TestInterfaceHeaderOnlyMap> decoder = XmlMessageDecoder.of(
-                TestInterfaceHeaderOnlyMap.class, implMap);
+        XmlMessageDecoder<TestInterfaceHeaderOnlyMap> decoder = XmlMessageDecoder.of(TestInterfaceHeaderOnlyMap.class,
+                implMap);
 
         decoder.onMessage(message);
 
-        verify(implMap).testMethodHeaderOnly("foo",
-                ImmutableMap.of("A", "one", "B", "two", "C", "three"));
+        verify(implMap).testMethodHeaderOnly("foo", ImmutableMap.of("A", "one", "B", "two", "C", "three"));
     }
 }

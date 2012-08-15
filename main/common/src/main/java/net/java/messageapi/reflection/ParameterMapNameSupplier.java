@@ -38,17 +38,15 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
                 }
             }
         } finally {
-            close(content);
+            if (content != null) {
+                try {
+                    content.close();
+                } catch (IOException e) {
+                    // ignore while closing
+                }
+            }
         }
         return delegate.get(method, index);
-    }
-
-    private String readLine(LineNumberReader content) {
-        try {
-            return content.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private LineNumberReader getParameterMap(Method method) {
@@ -67,6 +65,14 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
             return new LineNumberReader(new InputStreamReader(stream, Charset.defaultCharset()));
         } catch (IOException e) {
             throw new RuntimeException("opening " + url, e);
+        }
+    }
+
+    private String readLine(LineNumberReader content) {
+        try {
+            return content.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -89,15 +95,5 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
         }
 
         return names.build();
-    }
-
-    private void close(LineNumberReader content) {
-        if (content != null) {
-            try {
-                content.close();
-            } catch (IOException e) {
-                // ignore while closing
-            }
-        }
     }
 }

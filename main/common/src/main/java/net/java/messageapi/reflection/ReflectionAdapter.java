@@ -3,11 +3,10 @@ package net.java.messageapi.reflection;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.ExecutableElement;
 
 /**
- * Adapt the java reflection api or the apt api to the level of abstraction we need to generate
- * pojos.
+ * Adapt the java reflection api or the apt api to the level of abstraction we need to generate pojos.
  */
 public abstract class ReflectionAdapter<T> {
 
@@ -17,10 +16,6 @@ public abstract class ReflectionAdapter<T> {
 
     public static ReflectionAdapter<ExecutableElement> of(ExecutableElement method) {
         return new AptReflectionAdapter(method);
-    }
-
-    public static PackageElement getPackageOf(Element element) {
-        return AptReflectionAdapter.getPackageOf(element);
     }
 
     protected final T method;

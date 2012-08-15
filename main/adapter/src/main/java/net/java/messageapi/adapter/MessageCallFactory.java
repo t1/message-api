@@ -18,6 +18,7 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
         this.pojoClass = getType();
     }
 
+    @SuppressWarnings("unchecked")
     private Class<T> getType() {
         return (Class<T>) new MethodAsClassGenerator(method).get();
     }
@@ -43,8 +44,7 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
         return argTypes;
     }
 
-    private Constructor<?> findConstructor(Class<?> type, Class<?>[] argTypes)
-            throws NoSuchMethodException {
+    private Constructor<?> findConstructor(Class<?> type, Class<?>[] argTypes) throws NoSuchMethodException {
         if (argTypes == null)
             return type.getConstructor();
         for (Constructor<?> constructor : type.getConstructors()) {
@@ -79,8 +79,7 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
             return (Class<?>) type;
         if (type instanceof ParameterizedType)
             return classOf(((ParameterizedType) type).getRawType());
-        throw new IllegalArgumentException("don't know how to get class out of a "
-                + type.getClass().getName());
+        throw new IllegalArgumentException("don't know how to get class out of a " + type.getClass().getName());
     }
 
     private boolean matches(Class<?> constructorArgType, Class<?> methodArgType) {

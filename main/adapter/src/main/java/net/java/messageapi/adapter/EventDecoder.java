@@ -60,11 +60,19 @@ public class EventDecoder<T> implements MessageListener {
             if (field.isAnnotationPresent(DynamicDestinationName.class)) {
                 field.setAccessible(true);
                 try {
-                    field.set(pojo, message.getJMSDestination().toString());
+                    field.set(pojo, getDestinationOf(message));
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
+        }
+    }
+
+    private String getDestinationOf(Message message) {
+        try {
+            return message.getJMSDestination().toString();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
         }
     }
 }

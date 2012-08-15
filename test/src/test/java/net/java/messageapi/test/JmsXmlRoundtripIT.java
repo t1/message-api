@@ -3,6 +3,9 @@ package net.java.messageapi.test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.io.InputStream;
+import java.util.Scanner;
+
 import javax.jms.*;
 
 import net.java.messageapi.adapter.*;
@@ -17,13 +20,19 @@ import org.junit.runner.RunWith;
 import org.mockejb.jms.TextMessageImpl;
 
 @RunWith(TwiP.class)
-public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
+public class JmsXmlRoundtripIT extends AbstractJmsSenderFactoryTest {
+
+    private static final Object API_VERSION;
+    static {
+        InputStream stream = JmsXmlRoundtripIT.class.getResourceAsStream("/project.version");
+        API_VERSION = new Scanner(stream).nextLine();
+    }
 
     private final JaxbProviderMemento memento;
 
     // TODO support ECLIPSE_LINK when this bug is fixed:
     // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
-    public JmsXmlRoundtripTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
+    public JmsXmlRoundtripIT(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
         this.memento = jaxbProvider.setUp();
     }
 
@@ -75,7 +84,7 @@ public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
         // Then
         Message message = captureMessage();
-        assertNull(message.getStringProperty("VERSION"));
+        assertEquals(API_VERSION, message.getStringProperty("VERSION"));
     }
 
     @Test

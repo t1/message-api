@@ -23,12 +23,11 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
     private ParameterMapGenerator propertyNameIndexGenerator;
 
     @Override
-    public synchronized void init(@SuppressWarnings("hiding") ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
+    public synchronized void init(ProcessingEnvironment env) {
+        super.init(env);
         Messager messager = getMessager();
-        Filer filer = processingEnv.getFiler();
-        pojoGenerator = new PojoGenerator(messager, filer);
-        propertyNameIndexGenerator = new ParameterMapGenerator(messager, filer);
+        pojoGenerator = new PojoGenerator(messager, env);
+        propertyNameIndexGenerator = new ParameterMapGenerator(messager, env);
     }
 
     @Override

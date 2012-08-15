@@ -59,7 +59,6 @@ public class JmsPropertyScannerTest {
 
     static class Private {
         @JmsProperty
-        @SuppressWarnings("unused")
         private final String priv = "value";
     }
 

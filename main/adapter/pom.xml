@@ -21,14 +21,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.java.messageapi</groupId>
-			<artifactId>test-dummies</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-6.0</artifactId>
+			<version>3.0.1.Final</version>
+			<type>pom</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

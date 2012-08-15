@@ -1,5 +1,6 @@
 package net.java.messageapi.adapter;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,63 +16,66 @@ import org.slf4j.LoggerFactory;
 public class VersionSupplier implements JmsHeaderSupplier {
     Logger log = LoggerFactory.getLogger(VersionSupplier.class);
 
-    String getVersion(Class<?> api) {
-        String version = api.getPackage().getSpecificationVersion();
+    public String getVersion(Class<?> api) {
+        log.trace("getVersion for {} -> {}/{}", new Object[] { api, api.getPackage().getImplementationVersion(),
+                api.getPackage().getSpecificationVersion() });
+        String version = api.getPackage().getImplementationVersion();
         if (version == null)
-            version = api.getPackage().getImplementationVersion();
+            version = api.getPackage().getSpecificationVersion();
         if (version == null)
-            version = extractInterfaceVersion(api);
+            version = readVersionFromManifest(api);
         return version;
     }
 
-    private String extractInterfaceVersion(Class<?> api) {
+    private String readVersionFromManifest(Class<?> api) {
         String className = api.getSimpleName() + ".class";
         URL resource = api.getResource(className);
-        log.debug("get resource for {} -> {}", className, pathOf(api));
+        log.trace("get resource for {} -> {} -> {}", new Object[] { className, pathOf(api), resource });
         if (resource == null)
             return null;
         String classPath = resource.toString();
-        if (classPath.startsWith("jar")) {
-            String jarPath = classPath.substring(0, classPath.lastIndexOf("!") + 1);
-            Attributes attributes = getManifestAttributes(jarPath, api);
-            if (attributes != null) {
-                return attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
-            }
-        } else if (classPath.endsWith(pathOf(api))) {
-            String jarPath = classPath.substring(0, classPath.length() - pathOf(api).length());
-            log.debug("############# {}", jarPath);
-            Attributes attributes = getManifestAttributes(jarPath, api);
-            if (attributes != null) {
-                return attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
-            }
-        } else if (classPath.contains("/WEB-INF/")) {
-            String jarPath = classPath.substring(0, classPath.lastIndexOf("/WEB-INF/"));
-            Attributes attributes = getManifestAttributes(jarPath, api);
-            if (attributes != null) {
-                return attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
-            }
-        } else {
-            log.error("Could not extract version for " + api + ": Invalid class path " + classPath + ".");
+        String version = null;
+        if (classPath.startsWith("jar:"))
+            version = version(classPath.substring(0, classPath.lastIndexOf("!") + 1));
+        if (version == null && classPath.endsWith(pathOf(api) + ".class"))
+            version = version(classPath.substring(0, classPath.length() - pathOf(api).length() - 7));
+        if (version == null && classPath.contains("/WEB-INF/"))
+            version = version(classPath.substring(0, classPath.lastIndexOf("/WEB-INF/")));
+        if (version == null)
+            log.error("Could not extract version for {}: Invalid class path {}.", api, classPath);
+        return version;
+    }
+
+    private String version(String jarPath) {
+        Attributes attributes = getManifestAttributes(jarPath);
+        if (attributes == null) {
+            log.debug("no main attributes in manifest {}", jarPath);
+            return null;
         }
-        return null;
+        String version = attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
+        log.trace("found specification version {}", version);
+        return version;
     }
 
     private String pathOf(Class<?> api) {
         return api.getCanonicalName().replace('.', '/');
     }
 
-    private Attributes getManifestAttributes(String jarPath, Class<?> api) {
+    private Attributes getManifestAttributes(String jarPath) {
         String manifestPath = jarPath + "/META-INF/MANIFEST.MF";
         try {
-            log.debug("manifest path: {}", manifestPath);
+            log.trace("manifest path: {}", manifestPath);
             Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+            log.trace("found entries: {}", manifest.getEntries().keySet());
             return manifest.getMainAttributes();
         } catch (MalformedURLException e) {
-            log.error("Could not extract version for " + api + ": Malformed manifest path URL " + manifestPath + ".", e);
+            log.error("Could not extract version", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            log.debug("No manifest found at {}", manifestPath);
             return null;
         } catch (IOException e) {
-            log.error("Could not extract version for " + api + ": Unable to access MANIFEST.MF located at "
-                    + manifestPath + ".", e);
+            log.error("Could not extract version", e);
             return null;
         }
     }

@@ -25,8 +25,7 @@ public class MethodAsClassGeneratorTwoArgsTest {
 
     @BeforeClass
     public static void before() throws Exception {
-        Method testMethod = TestInterfaceTwo.class.getMethod("testMethodTwo", String.class,
-                Integer.class);
+        Method testMethod = TestInterfaceTwo.class.getMethod("testMethodTwo", String.class, Integer.class);
         MethodAsClassGenerator generator = new MethodAsClassGenerator(testMethod);
 
         generated = generator.get();
@@ -55,8 +54,7 @@ public class MethodAsClassGeneratorTwoArgsTest {
         verify(declaredFields, 1, Integer.class, false, Modifier.TRANSIENT);
     }
 
-    private void verify(Field[] declaredFields, int index, Class<?> type, boolean required,
-            int expectedModifiers) {
+    private void verify(Field[] declaredFields, int index, Class<?> type, boolean required, int expectedModifiers) {
         Field field = declaredFields[index];
         assertEquals("arg" + index, field.getName());
         assertEquals(type, field.getType());
@@ -89,16 +87,19 @@ public class MethodAsClassGeneratorTwoArgsTest {
         Constructor<?>[] declaredConstructors = generated.getDeclaredConstructors();
         assertEquals(2, declaredConstructors.length);
 
-        Constructor<?> defaultConstructor = declaredConstructors[0];
-        assertEquals(0, defaultConstructor.getParameterTypes().length);
-        assertTrue(Modifier.isPrivate(defaultConstructor.getModifiers()));
-
-        Constructor<?> fullConstructor = declaredConstructors[1];
-        Class<?>[] parameterTypes = fullConstructor.getParameterTypes();
-        assertEquals(2, parameterTypes.length);
-        assertEquals(String.class, parameterTypes[0]);
-        assertEquals(Integer.class, parameterTypes[1]);
-        assertTrue(Modifier.isPublic(fullConstructor.getModifiers()));
+        // no guaranteed ordering :|
+        for (Constructor<?> declaredConstructor : declaredConstructors) {
+            // default constructor
+            if (declaredConstructor.getParameterTypes().length == 0) {
+                assertTrue(Modifier.isPrivate(declaredConstructor.getModifiers()));
+            } else { // all args constructor
+                Class<?>[] parameterTypes = declaredConstructor.getParameterTypes();
+                assertEquals(2, parameterTypes.length);
+                assertEquals(String.class, parameterTypes[0]);
+                assertEquals(Integer.class, parameterTypes[1]);
+                assertTrue(Modifier.isPublic(declaredConstructor.getModifiers()));
+            }
+        }
     }
 
     @Test
@@ -118,8 +119,7 @@ public class MethodAsClassGeneratorTwoArgsTest {
 
         StringWriter writer = new StringWriter();
         JAXB.marshal(instance, writer);
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                + "<testMethodTwo>\n" //
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + "<testMethodTwo>\n" //
                 + "    <arg0>foo</arg0>\n" //
                 + "</testMethodTwo>\n", writer.toString());
     }

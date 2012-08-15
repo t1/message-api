@@ -1,0 +1,92 @@
+The @Asynchronous annotation is very handy in local situations. There are some use-cases, esp. when invoking remote systems, where there is some room for improvement:
+
+1) I want to be able to send messages to a service independently of whether it's currently down or not. It's asynchronous, so it should be no problem to queue the request somewhere.
+
+2) If the client (or the network) runs into some problem while the service is working, the client will have to repeat the request, because the client can't know if the job is going to be completed or not. So the service has to be designed idempotent, which may make your code less simple. I'd rather have the result also queued somewhere.
+
+3) If the job takes a long time (could be weeks or longer, eventually due to manual steps), it would be nice to put the client to sleep and activate it when finally the reply arrives.
+
+4) A remote service is often developed by one team while the client is developed by another (some still call this SOA ;-) The decision to make a service (a)synchronous is currently made by the services' team in response to the requirements of the client's team. It would reduce communication cost, if the client team could decide by itself, if it wants to make calls synchronously or not.
+
+
+Currently the standard solution for 1) to 3) is to use JMS, but even with the new JMS 2.0 spec, this doesn't fulfill requirement 4): It's still a big change for the client as well as the service to use JMS instead of EJB (and it continues to add some boilerplate code for packing, unpacking, and dispatching the messages).
+
+But binding to an asynchronous service actually can be automated and hidden from the business code. Let's start with a fire-and-forget service, say you have a simple remote business interface like this:
+
+@Remote
+public interface CustomerService {
+    public void createCustomer(String first, String last);
+}
+
+The application container running the implementation of this service could, in addition to the synchronous RMI binding, provide an asynchronous binding. The most obvious choice would be to provide an MDB that unpacks create-customer messages and dispatches them to the corresponding method in the session bean.
+
+The client would need a second proxy that takes the method call, converts it to a message, and forwards it to the proper queue. By convention over configuration, the name of the queue is the fully qualified name of the business interface (e.g., CustomerService), and the message format is an xml text message. But things could be configured to be different. 
+
+The container (EE as well as SE-CDI) running the client would inject such a proxy:
+
+public class Client {
+    @Inject @AsynchronousBean CustomerService service;
+
+    public void someLocalCall() {
+        ...
+        service.createCustomer("Joe", "Doe");
+    }
+}
+
+Sending and receiving a message in this way is relatively straight forward to implement. I know, because I've already done that (with some variations) in the MessageApi project on java.net and github.
+
+Of course, the next question is: How about returning the reply? It's easy to just leave it up to the application to reply with the same messaging mechanisms and handle the correlation itself (this is actually what I've been following with the MessageApi until now). But this does not fulfill requirement 4). So the question is: If, e.g., the createCustomer method returns the id of the newly created customer, how does it (asynchronously) get back to the client?
+
+@Remote
+public interface CustomerService {
+    public long createCustomer(String first, String last);
+}
+
+The MDB can simply take the result returned by the session bean and return it to the JMSReplyTo queue with the JMSCorrelationID. It could do the same with application exceptions, following a specific message format. System exceptions OTOH would just make the JMS provider redeliver the message.
+
+Asynchronously receiving a reply on the client side is not so straight forward, because this finally does require a real change in the programming model. But there is a syntactical solution that looks very natural and appealing to me:
+
+public class Client {
+    @Inject @AsynchronousBean CustomerService service;
+
+    public void someLocalCall() {
+        ...
+        replyTo(this).customerCreated(service.createCustomer("Joe", "Doe"););
+    }
+
+    void customerCreated(long id) {
+        // handle the asynchronous reply
+    }
+}
+
+The static replyTo method would return a proxy of the same type as the parameter passed in, i.e., the Client class. The signature would be:
+
+public static <T> T replyTo(T target);
+
+As it did for the fire-and-forget case above, the @AsynchronousBean service proxy would send the message, but as it knows that the createCustomer method returns something, it would add appropriate meta data to, e.g., a ThreadLocal. Now the replyTo proxy is called and it collects that meta data and augments it with the information it has about the customerCreated method and the Client instance that should handle the result. Then it forwards all of this meta data to an MDB that's listening on the reply queue, so the MDB can do the correlation to the correct bean, activate it and pass it the reply parameters.
+
+Business exceptions thrown in the service are forwarded to the same client class by calling methods annotated as @RemoteExceptionHandler:
+
+@RemoteExceptionHandler
+void handle(CustomerAlreadyExistsException e) {
+    ...
+}
+
+If you don't have requirement 3) and can live without a once-and-only-once guarantee, it sometimes is easier to work with  Future objects... but we still don't want to change the service, because of requirement 4). The client code could then look like this:
+
+public class Client {
+    @Inject @AsynchronousBean CustomerService service;
+
+    public void someLocalCall() {
+        ...
+        Future<Long> reply = future(service.createCustomer("Joe", "Doe"););
+        ...
+    }
+}
+
+The static method future would also collect the meta data and package it into a Future object.
+
+
+What do you think? 
+
+

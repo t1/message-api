@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.List;
 
 import javax.annotation.Generated;
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
@@ -53,6 +53,7 @@ public class PojoGenerator extends AbstractGenerator {
         }
 
         public List<VariableElement> getParameters() {
+            @SuppressWarnings("unchecked")
             List<VariableElement> parameters = (List<VariableElement>) method.getParameters();
             return parameters;
         }
@@ -67,8 +68,8 @@ public class PojoGenerator extends AbstractGenerator {
 
     private final List<Pojo> generatedPojos = Lists.newArrayList();
 
-    public PojoGenerator(Messager messager, Filer filer) {
-        super(messager, filer);
+    public PojoGenerator(Messager messager, ProcessingEnvironment env) {
+        super(messager, env);
     }
 
     @Override

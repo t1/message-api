@@ -59,6 +59,7 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
             if (field.isAnnotationPresent(JmsProperty.class) || Modifier.isStatic(field.getModifiers()))
                 continue;
             String fieldName = field.getName();
+            @SuppressWarnings("unchecked")
             FieldMapping<Object> fieldMapping = (FieldMapping<Object>) mapping.getMappingForField(fieldName);
             Object value = getField(pojo, field);
             if (value != null) {

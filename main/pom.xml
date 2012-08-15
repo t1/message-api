@@ -18,7 +18,6 @@
 	</description>
 
 	<modules>
-		<module>test-dummies</module>
 		<module>annotations</module>
 		<module>common</module>
 		<module>processor-common</module>
@@ -39,7 +38,6 @@
 		<dependency>
 			<groupId>com.google.collections</groupId>
 			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

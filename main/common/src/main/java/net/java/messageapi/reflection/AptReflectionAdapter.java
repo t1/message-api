@@ -9,15 +9,6 @@ import javax.lang.model.element.*;
 
 class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
 
-    public static PackageElement getPackageOf(Element startElement) {
-        for (Element e = startElement; e != null; e = e.getEnclosingElement()) {
-            if (e.getKind() == ElementKind.PACKAGE) {
-                return (PackageElement) e;
-            }
-        }
-        throw new IllegalStateException("no package for " + startElement);
-    }
-
     public AptReflectionAdapter(ExecutableElement method) {
         super(method);
     }
@@ -30,14 +21,24 @@ class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
     @Override
     protected Iterable<ExecutableElement> siblings() {
         Iterable<? extends Element> allSiblings = method.getEnclosingElement().getEnclosedElements();
-        Iterable<ExecutableElement> siblingMethods = (Iterable<ExecutableElement>) filter(
-                allSiblings, instanceOf(ExecutableElement.class));
+        @SuppressWarnings("unchecked")
+        Iterable<ExecutableElement> siblingMethods = (Iterable<ExecutableElement>) filter(allSiblings,
+                instanceOf(ExecutableElement.class));
         return siblingMethods;
     }
 
     @Override
     public String getPackage() {
         return getPackageOf(method).getQualifiedName().toString();
+    }
+
+    private PackageElement getPackageOf(Element startElement) {
+        for (Element e = startElement; e != null; e = e.getEnclosingElement()) {
+            if (e.getKind() == ElementKind.PACKAGE) {
+                return (PackageElement) e;
+            }
+        }
+        throw new IllegalStateException("no package for " + startElement);
     }
 
     @Override

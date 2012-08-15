@@ -425,6 +425,8 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     }
 
     private <T> void givenFieldMapping(Mapping receiveMapping, String attributeName, FieldMapping<T> fieldMapping) {
-        given((FieldMapping<T>) receiveMapping.getMappingForField(attributeName)).willReturn(fieldMapping);
+        @SuppressWarnings("unchecked")
+        FieldMapping<T> mapping = (FieldMapping<T>) receiveMapping.getMappingForField(attributeName);
+        given(mapping).willReturn(fieldMapping);
     }
 }
