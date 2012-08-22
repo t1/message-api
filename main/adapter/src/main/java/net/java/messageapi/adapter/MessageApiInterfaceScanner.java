@@ -36,7 +36,8 @@ class MessageApiInterfaceScanner {
         if (annotation != null) {
             Class<X> messageApi = annotatedType.getJavaClass();
             String version = versionSupplier.getVersion(messageApi);
-            log.info("discovered message api {} v{}", messageApi.getName(), (version == null) ? "unknown" : version);
+            log.info("discovered message api {} version {}", messageApi.getName(), //
+                    (version == null) ? "unknown" : version);
             messageApis.add(messageApi);
         }
     }

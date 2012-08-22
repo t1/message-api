@@ -42,14 +42,14 @@ public class VersionSupplier implements JmsHeaderSupplier {
         if (version == null && classPath.contains("/WEB-INF/"))
             version = version(classPath.substring(0, classPath.lastIndexOf("/WEB-INF/")));
         if (version == null)
-            log.error("Could not extract version for {}: Invalid class path {}.", api, classPath);
+            log.debug("Could not extract version for {}: Unsupported class path {}.", api, classPath);
         return version;
     }
 
     private String version(String jarPath) {
         Attributes attributes = getManifestAttributes(jarPath);
         if (attributes == null) {
-            log.debug("no main attributes in manifest {}", jarPath);
+            log.trace("no main attributes in manifest {}", jarPath);
             return null;
         }
         String version = attributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
@@ -72,7 +72,7 @@ public class VersionSupplier implements JmsHeaderSupplier {
             log.error("Could not extract version", e);
             return null;
         } catch (FileNotFoundException e) {
-            log.debug("No manifest found at {}", manifestPath);
+            log.trace("No manifest found at {}", manifestPath);
             return null;
         } catch (IOException e) {
             log.error("Could not extract version", e);
