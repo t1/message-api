@@ -7,7 +7,6 @@ import java.util.concurrent.Semaphore;
 import javax.inject.Inject;
 
 import net.java.messageapi.JmsIncoming;
-import net.java.messageapi.MessageApi;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,7 +24,7 @@ public class NoConfigApiIT {
     @Deployment(name = "test-mdb")
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test-mdb.war") //
-        // .addClasses(NoConfigApi.class, NoConfigApiMDB.class) //
+        .addClasses(NoConfigApi.class, NoConfigApiMDB.class) //
         .addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class) //
                 .artifacts("net.java.messageapi:adapter:2.0-SNAPSHOT", "net.java.messageapi:annotations:2.0-SNAPSHOT",
@@ -38,11 +37,17 @@ public class NoConfigApiIT {
     private static boolean called = false;
     private static Semaphore semaphore = new Semaphore(0);
 
+    @After
+    public void after() {
+        called = false;
+    }
+
     @JmsIncoming
     static class NoConfigApiImpl implements NoConfigApi {
         @Override
         public void noConfigCall() {
             called = true;
+            System.out.println("actually called... release semaphore");
             semaphore.release();
         }
     }
@@ -50,39 +55,15 @@ public class NoConfigApiIT {
     @Inject
     NoConfigApi sender;
 
-    @After
-    public void after() {
-        called = false;
-    }
-
     @Test
     public void sendShouldBeAsynchronous() throws Exception {
         assertFalse(called);
+        System.out.println("calling");
         sender.noConfigCall();
         assertFalse(called);
+        System.out.println("call sent... wait for semaphore");
         semaphore.acquire();
+        System.out.println("semaphore released... test finished");
         assertTrue(called);
-    }
-
-    @MessageApi
-    public interface LocalApi {
-        void localApiCall();
-    }
-
-    public static class LocalApiImpl implements LocalApi {
-        @Override
-        public void localApiCall() {
-            NoConfigApiIT.ARG0 = "test";
-        }
-    }
-
-    @Inject
-    private LocalApi localApiSender;
-    public static String ARG0;
-
-    @Test
-    public void simpleCall() {
-        localApiSender.localApiCall();
-        assertEquals("test", ARG0);
     }
 }
