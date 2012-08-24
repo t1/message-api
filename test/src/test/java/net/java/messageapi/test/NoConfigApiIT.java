@@ -23,12 +23,12 @@ import org.junit.runner.RunWith;
 public class NoConfigApiIT {
     @Deployment(name = "test-mdb")
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test-mdb.war") //
+        return ShrinkWrap.create(WebArchive.class, NoConfigApiIT.class.getName() + ".war") //
         .addClasses(NoConfigApi.class, NoConfigApiMDB.class) //
         .addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class) //
                 .artifacts("net.java.messageapi:adapter:2.0-SNAPSHOT", "net.java.messageapi:annotations:2.0-SNAPSHOT",
-                        "org.mockito:mockito-all:1.8.5", "com.google.collections:google-collections:1.0") //
+                        "com.google.collections:google-collections:1.0") //
                 .resolveAsFiles()) //
         .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml") //
         ;
