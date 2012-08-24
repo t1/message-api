@@ -52,6 +52,7 @@ public class NoConfigApiIT {
         }
     }
 
+    @SuppressWarnings("all")
     @Inject
     NoConfigApi sender;
 
