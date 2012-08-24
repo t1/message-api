@@ -9,11 +9,6 @@
 		</engine>
 	-->
 
-	<!--
-		<container qualifier="jbossas-remote" default="false">
-		</container>
-	-->
-
 	<container qualifier="jbossas-embedded">
 		<configuration>
 			<property name="jbossHome">target/jboss-as-7.1.1.Final</property>
