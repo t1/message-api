@@ -42,7 +42,7 @@ public class VersionSupplier implements JmsHeaderSupplier {
         if (version == null && classPath.contains("/WEB-INF/"))
             version = version(classPath.substring(0, classPath.lastIndexOf("/WEB-INF/")));
         if (version == null)
-            log.debug("Could not extract version for {}: Unsupported class path {}.", api, classPath);
+            log.debug("Could not extract version for {} from class path {}.", api, classPath);
         return version;
     }
 
