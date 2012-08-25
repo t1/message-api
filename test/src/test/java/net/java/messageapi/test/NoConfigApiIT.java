@@ -27,7 +27,8 @@ public class NoConfigApiIT {
         .addClasses(NoConfigApi.class, NoConfigApiMDB.class) //
         .addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class) //
-                .artifacts("net.java.messageapi:adapter:2.0-SNAPSHOT", "net.java.messageapi:annotations:2.0-SNAPSHOT",
+                .artifacts("net.java.messageapi:adapter:" + VersionHelper.API_VERSION,
+                        "net.java.messageapi:annotations:" + VersionHelper.API_VERSION,
                         "com.google.collections:google-collections:1.0") //
                 .resolveAsFiles()) //
         .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml") //
