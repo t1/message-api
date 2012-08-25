@@ -45,10 +45,19 @@ final class MessageApiBean<T> extends AbstractBean<T> {
     }
 
     private String getDestinationName() {
+        log.debug("find destination name for {}", type);
         DestinationName destinationName = getQualifier(DestinationName.class);
-        if (destinationName == null)
-            return type.getCanonicalName();
-        return destinationName.value();
+        if (destinationName != null) {
+            log.debug("found injection point qualifier: {}", destinationName.value());
+            return destinationName.value();
+        }
+        if (type.isAnnotationPresent(DestinationName.class)) {
+            String value = type.getAnnotation(DestinationName.class).value();
+            log.debug("found annotation at interface: {}", value);
+            return value;
+        }
+        log.debug("fall back to use: canonical name: {}", type.getCanonicalName());
+        return type.getCanonicalName();
     }
 
     private <Q> Q getQualifier(Class<Q> qualifierType) {

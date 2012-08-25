@@ -6,8 +6,7 @@ import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
 
-import net.java.messageapi.JmsIncoming;
-import net.java.messageapi.MessageApi;
+import net.java.messageapi.*;
 import net.java.messageapi.test.DoubleNestedApiIT.DoubleNestedApiContainer.DoubleNestedApi;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,7 +45,7 @@ public class DoubleNestedApiIT {
 
     public static class DoubleNestedApiContainer {
         @MessageApi
-        // @DestinationName("queue/test")
+        @DestinationName("queue/test")
         public interface DoubleNestedApi {
             void doubleNestedApiCall();
         }

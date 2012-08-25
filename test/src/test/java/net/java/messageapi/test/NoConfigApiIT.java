@@ -6,7 +6,6 @@ import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
 
-import net.java.messageapi.DestinationName;
 import net.java.messageapi.JmsIncoming;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -56,7 +55,6 @@ public class NoConfigApiIT {
 
     @SuppressWarnings("all")
     @Inject
-    @DestinationName("queue/test")
     NoConfigApi sender;
 
     @Test

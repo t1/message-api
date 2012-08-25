@@ -6,6 +6,7 @@ import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
 
+import net.java.messageapi.DestinationName;
 import net.java.messageapi.MessageApi;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -35,7 +36,7 @@ public class NestedApiIT {
     }
 
     @MessageApi
-    // @DestinationName("queue/test")
+    @DestinationName("queue/test")
     public interface NestedApi {
         public void nestedCall();
     }
