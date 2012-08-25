@@ -6,6 +6,7 @@ import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
 
+import net.java.messageapi.DestinationName;
 import net.java.messageapi.JmsIncoming;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -34,37 +35,39 @@ public class NoConfigApiIT {
         ;
     }
 
-    private static boolean called = false;
+    public static String RESULT;
     private static Semaphore semaphore = new Semaphore(0);
 
     @After
     public void after() {
-        called = false;
+        RESULT = null;
     }
 
     @JmsIncoming
     static class NoConfigApiImpl implements NoConfigApi {
         @Override
         public void noConfigCall() {
-            called = true;
+            NoConfigApiIT.RESULT = "no-config-test";
             System.out.println("actually called... release semaphore");
             semaphore.release();
+            System.out.println("call done");
         }
     }
 
     @SuppressWarnings("all")
     @Inject
+    @DestinationName("queue/test")
     NoConfigApi sender;
 
     @Test
     public void sendShouldBeAsynchronous() throws Exception {
-        assertFalse(called);
+        assertNull(RESULT);
         System.out.println("calling");
         sender.noConfigCall();
-        assertFalse(called);
-        System.out.println("call sent... wait for semaphore");
+        assertNull(RESULT);
+        System.out.println("call sent... acquire semaphore");
         semaphore.acquire();
-        System.out.println("semaphore released... test finished");
-        assertTrue(called);
+        System.out.println("semaphore acquired... finish test");
+        assertEquals("no-config-test", RESULT);
     }
 }

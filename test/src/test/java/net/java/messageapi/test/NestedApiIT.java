@@ -6,7 +6,6 @@ import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
 
-import net.java.messageapi.JmsIncoming;
 import net.java.messageapi.MessageApi;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -42,32 +41,19 @@ public class NestedApiIT {
     }
 
     public static String RESULT;
-    private static Semaphore in = new Semaphore(0);
-    private static Semaphore out = new Semaphore(0);
-
-    protected static void inAcquire() {
-        try {
-            in.acquire();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static Semaphore semaphore = new Semaphore(0);
 
     @After
     public void after() {
         RESULT = null;
     }
 
-    @JmsIncoming
     static class NestedApiImpl implements NestedApi {
         @Override
         public void nestedCall() {
-            System.out.println("actually called... acquire in-semaphore");
-            inAcquire();
             NestedApiIT.RESULT = "nested-test";
-            System.out.println("release out-semaphore");
-            out.release();
-            System.out.println("call done");
+            System.out.println("actually called... release semaphore");
+            semaphore.release();
         }
     }
 
@@ -81,11 +67,9 @@ public class NestedApiIT {
         System.out.println("calling");
         sender.nestedCall();
         assertNull(RESULT);
-        System.out.println("call sent... release in-semaphore");
-        in.release();
-        System.out.println("... acquire out-semaphore");
-        out.acquire();
-        System.out.println("out-semaphore acquired... finish test");
+        System.out.println("call sent... acquire semaphore");
+        semaphore.acquire();
+        System.out.println("semaphore acquired... finish test");
         assertEquals("nested-test", RESULT);
     }
 }

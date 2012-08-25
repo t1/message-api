@@ -37,16 +37,7 @@ public class DoubleNestedApiIT {
     }
 
     public static String RESULT;
-    private static Semaphore in = new Semaphore(0);
-    private static Semaphore out = new Semaphore(0);
-
-    protected static void inAcquire() {
-        try {
-            in.acquire();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static Semaphore semaphore = new Semaphore(0);
 
     @After
     public void after() {
@@ -65,11 +56,9 @@ public class DoubleNestedApiIT {
     public static class DoubleNestedApiImpl implements DoubleNestedApi {
         @Override
         public void doubleNestedApiCall() {
-            System.out.println("actually called... acquire in-semaphore");
-            inAcquire();
             DoubleNestedApiIT.RESULT = "double-test";
-            System.out.println("release out-semaphore");
-            out.release();
+            System.out.println("actually called... release semaphore");
+            semaphore.release();
             System.out.println("call done");
         }
     }
@@ -84,11 +73,9 @@ public class DoubleNestedApiIT {
         System.out.println("calling");
         doubleNestedApiSender.doubleNestedApiCall();
         assertNull(RESULT);
-        System.out.println("call sent... release in-semaphore");
-        in.release();
-        System.out.println("... acquire out-semaphore");
-        out.acquire();
-        System.out.println("out-semaphore acquired... finish test");
+        System.out.println("call sent... acquire semaphore");
+        semaphore.acquire();
+        System.out.println("semaphore acquired... finish test");
         assertEquals("double-test", RESULT);
     }
 }
