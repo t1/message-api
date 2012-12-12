@@ -53,6 +53,11 @@ public class NestedApiIT {
     static class NestedApiImpl implements NestedApi {
         @Override
         public void nestedCall() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             NestedApiIT.RESULT = "nested-test";
             System.out.println("actually called... release semaphore");
             semaphore.release();

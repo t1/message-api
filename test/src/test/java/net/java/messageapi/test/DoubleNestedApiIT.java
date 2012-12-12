@@ -56,6 +56,11 @@ public class DoubleNestedApiIT {
     public static class DoubleNestedApiImpl implements DoubleNestedApi {
         @Override
         public void doubleNestedApiCall() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             DoubleNestedApiIT.RESULT = "double-test";
             System.out.println("actually called... release semaphore");
             semaphore.release();

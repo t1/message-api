@@ -47,6 +47,11 @@ public class NoConfigApiIT {
     static class NoConfigApiImpl implements NoConfigApi {
         @Override
         public void noConfigCall() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             NoConfigApiIT.RESULT = "no-config-test";
             System.out.println("actually called... release semaphore");
             semaphore.release();

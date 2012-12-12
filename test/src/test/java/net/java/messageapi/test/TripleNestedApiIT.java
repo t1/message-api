@@ -58,6 +58,11 @@ public class TripleNestedApiIT {
     public static class TripleNestedApiImpl implements TripleNestedApi {
         @Override
         public void tripleNestedApiCall() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             TripleNestedApiIT.RESULT = "triple-test";
             System.out.println("actually called... release semaphore");
             semaphore.release();
