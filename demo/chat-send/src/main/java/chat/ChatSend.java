@@ -5,11 +5,13 @@ import java.io.*;
 import javax.inject.Inject;
 import javax.servlet.http.*;
 
+import net.java.messageapi.DestinationName;
+
 public class ChatSend extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    // @DestinationName("Chat")
+    @DestinationName("queue/test")
     ChatApi chat;
 
     @Override
