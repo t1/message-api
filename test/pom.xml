@@ -261,7 +261,7 @@
 						<executions>
 							<execution>
 								<id>unpack</id>
-								<phase>process-test-classes</phase>
+								<phase>pre-integration-test</phase>
 								<goals>
 									<goal>unpack</goal>
 								</goals>

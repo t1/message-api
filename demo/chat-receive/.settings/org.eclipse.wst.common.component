@@ -15,9 +15,6 @@
         <dependent-module archiveName="annotations-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/annotations/annotations">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="processor-common-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/processor-common/processor-common">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="chat-receive"/>
         <property name="java-output-path" value="/chat-receive/target/classes"/>
     </wb-module>

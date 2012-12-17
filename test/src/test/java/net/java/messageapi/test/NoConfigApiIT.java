@@ -3,6 +3,7 @@ package net.java.messageapi.test;
 import static org.junit.Assert.*;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -18,15 +19,15 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class NoConfigApiIT {
     @Deployment(name = "test-mdb")
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, NoConfigApiIT.class.getName() + ".war") //
+        return ShrinkWrap.create(WebArchive.class, NoConfigApiIT.class.getSimpleName() + ".war") //
         .addClasses(NoConfigApi.class, NoConfigApiImpl.class) //
         .addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class) //
@@ -47,7 +48,7 @@ public class NoConfigApiIT {
     }
 
     @MessageDriven(messageListenerInterface = MessageListener.class, activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/test") })
-    static class NoConfigApiImpl extends MessageDecoder<NoConfigApi> implements NoConfigApi {
+    public static class NoConfigApiImpl extends MessageDecoder<NoConfigApi> implements NoConfigApi {
         @Override
         public void noConfigCall() {
             try {
@@ -56,7 +57,7 @@ public class NoConfigApiIT {
                 throw new RuntimeException(e);
             }
             NoConfigApiIT.RESULT = "no-config-test";
-            System.out.println("actually called... release semaphore");
+            System.out.println(getClass().getSimpleName() + " actually called... release semaphore");
             semaphore.release();
             System.out.println("call done");
         }
@@ -73,7 +74,8 @@ public class NoConfigApiIT {
         sender.noConfigCall();
         assertNull(RESULT);
         System.out.println("call sent... acquire semaphore");
-        semaphore.acquire();
+        boolean acquired = semaphore.tryAcquire(1, TimeUnit.SECONDS);
+        assertTrue("couldn't acquire semaphore in time", acquired);
         System.out.println("semaphore acquired... finish test");
         assertEquals("no-config-test", RESULT);
     }
