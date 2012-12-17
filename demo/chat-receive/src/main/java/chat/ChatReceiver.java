@@ -2,20 +2,27 @@ package chat;
 
 import java.util.*;
 
-public class ChatReceiver implements ChatApi {
+import javax.ejb.*;
+import javax.jms.MessageListener;
 
-	static List<String> messages = new ArrayList<String>();
+import net.java.messageapi.adapter.MessageDecoder;
 
-	@Override
-	public void send(String message) {
-		ChatReceiver.messages.add(message);
-	}
+@MessageDriven(messageListenerInterface = MessageListener.class, //
+activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/test") })
+public class ChatReceiver extends MessageDecoder<ChatApi> implements ChatApi {
 
-	public List<String> getMessages() {
-		return ChatReceiver.messages;
-	}
+    static List<String> messages = new ArrayList<String>();
 
-	public void setMessages(List<String> messages) {
-		ChatReceiver.messages = messages;
-	}
+    @Override
+    public void send(String message) {
+        ChatReceiver.messages.add(message);
+    }
+
+    public List<String> getMessages() {
+        return ChatReceiver.messages;
+    }
+
+    public void setMessages(List<String> messages) {
+        ChatReceiver.messages = messages;
+    }
 }

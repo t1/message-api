@@ -17,13 +17,13 @@ import org.junit.runner.RunWith;
 import org.mockejb.jms.TextMessageImpl;
 
 @RunWith(TwiP.class)
-public class JmsXmlRoundtripIT extends AbstractJmsSenderFactoryTest {
+public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private final JaxbProviderMemento memento;
 
     // TODO support ECLIPSE_LINK when this bug is fixed:
     // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
-    public JmsXmlRoundtripIT(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
+    public JmsXmlRoundtripTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider) {
         this.memento = jaxbProvider.setUp();
     }
 

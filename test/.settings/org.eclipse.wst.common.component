@@ -11,9 +11,6 @@
         <dependent-module archiveName="processor-common-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/processor-common/processor-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="incoming-processor-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/incoming-processor/incoming-processor">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="adapter-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/adapter/adapter">
             <dependency-type>uses</dependency-type>
         </dependent-module>

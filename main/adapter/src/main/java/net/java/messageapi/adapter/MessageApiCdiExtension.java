@@ -49,7 +49,6 @@ public class MessageApiCdiExtension implements Extension {
 
     void step3(@Observes AfterBeanDiscovery abd) {
         messageApiScanner.createBeans(abd);
-        mdbScanner.createBeans(abd);
         eventScanner.createBeans(abd);
     }
 }

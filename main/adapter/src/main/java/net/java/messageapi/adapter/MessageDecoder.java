@@ -2,25 +2,35 @@ package net.java.messageapi.adapter;
 
 import javax.jms.*;
 
+import net.java.messageapi.MessageApi;
+
 /**
  * Automatically delegates to the proper {@link MapMessageDecoder} or {@link XmlMessageDecoder}
  */
 public class MessageDecoder<T> implements MessageListener {
 
-    public static <T> MessageDecoder<T> of(Class<T> api, T impl) {
-        return new MessageDecoder<T>(api, impl);
-    }
-
     private final Class<T> api;
-    private final T impl;
 
     private XmlMessageDecoder<T> xmlMessageDecoder;
     private MapMessageDecoder<T> mapMessageDecoder;
     private ObjectMessageDecoder<T> objectMessageDecoder;
 
-    public MessageDecoder(Class<T> api, T impl) {
-        this.api = api;
-        this.impl = impl;
+    public MessageDecoder() {
+        this.api = findMessageApi(this.getClass());
+    }
+
+    private Class<T> findMessageApi(Class<?> type) {
+        for (Class<?> interface_ : type.getInterfaces()) {
+            if (interface_.isAnnotationPresent(MessageApi.class)) {
+                @SuppressWarnings("unchecked")
+                Class<T> result = (Class<T>) interface_;
+                return result;
+            }
+        }
+        Class<?> superclass = type.getSuperclass();
+        if (superclass == MessageDecoder.class)
+            throw new RuntimeException(this.getClass().getSimpleName() + " doesn't implement any message-apis");
+        return findMessageApi(superclass);
     }
 
     @Override
@@ -38,19 +48,19 @@ public class MessageDecoder<T> implements MessageListener {
 
     private MessageListener getXmlMessageDecoder() {
         if (xmlMessageDecoder == null)
-            xmlMessageDecoder = XmlMessageDecoder.of(api, impl);
+            xmlMessageDecoder = XmlMessageDecoder.of(api, api.cast(this));
         return xmlMessageDecoder;
     }
 
     private MessageListener getMapMessageDecoder() {
         if (mapMessageDecoder == null)
-            mapMessageDecoder = MapMessageDecoder.of(api, impl);
+            mapMessageDecoder = MapMessageDecoder.of(api, api.cast(this));
         return mapMessageDecoder;
     }
 
     private MessageListener getObjectMessageDecoder() {
         if (objectMessageDecoder == null)
-            objectMessageDecoder = ObjectMessageDecoder.of(api, impl);
+            objectMessageDecoder = ObjectMessageDecoder.of(api, api.cast(this));
         return objectMessageDecoder;
     }
 }

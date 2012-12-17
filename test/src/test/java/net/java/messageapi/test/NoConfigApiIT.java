@@ -4,9 +4,12 @@ import static org.junit.Assert.*;
 
 import java.util.concurrent.Semaphore;
 
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
 import javax.inject.Inject;
+import javax.jms.MessageListener;
 
-import net.java.messageapi.JmsIncoming;
+import net.java.messageapi.adapter.MessageDecoder;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -15,16 +18,16 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
+@Ignore
 public class NoConfigApiIT {
     @Deployment(name = "test-mdb")
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, NoConfigApiIT.class.getName() + ".war") //
-        .addClasses(NoConfigApi.class, NoConfigApiMDB.class) //
+        .addClasses(NoConfigApi.class, NoConfigApiImpl.class) //
         .addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class) //
                 .artifacts("net.java.messageapi:adapter:" + VersionHelper.API_VERSION,
@@ -43,8 +46,8 @@ public class NoConfigApiIT {
         RESULT = null;
     }
 
-    @JmsIncoming
-    static class NoConfigApiImpl implements NoConfigApi {
+    @MessageDriven(messageListenerInterface = MessageListener.class, activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/test") })
+    static class NoConfigApiImpl extends MessageDecoder<NoConfigApi> implements NoConfigApi {
         @Override
         public void noConfigCall() {
             try {

@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class VersionHelper {
     public static final String API_VERSION;
     static {
-        InputStream stream = JmsXmlRoundtripIT.class.getResourceAsStream("/project.version");
+        InputStream stream = JmsXmlRoundtripTest.class.getResourceAsStream("/project.version");
         API_VERSION = new Scanner(stream).nextLine();
     }
 }
