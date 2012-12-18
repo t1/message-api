@@ -5,19 +5,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/test-annotations"/>
-        <dependent-module archiveName="api-processor-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/api-processor/api-processor">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="processor-common-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/processor-common/processor-common">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="adapter-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/adapter/adapter">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="common-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/common/common">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="annotations-2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/annotations/annotations">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="test"/>

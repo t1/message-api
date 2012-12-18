@@ -10,6 +10,7 @@ import javax.ejb.MessageDriven;
 import javax.inject.Inject;
 import javax.jms.MessageListener;
 
+import net.java.messageapi.DestinationName;
 import net.java.messageapi.adapter.MessageDecoder;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -63,8 +64,8 @@ public class NoConfigApiIT {
         }
     }
 
-    @SuppressWarnings("all")
     @Inject
+    @DestinationName("queue/test")
     NoConfigApi sender;
 
     @Test

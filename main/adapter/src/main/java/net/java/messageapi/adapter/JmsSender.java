@@ -115,7 +115,7 @@ public class JmsSender {
         String destinationName = getDestinationName(pojo);
 
         // TODO back to debug level:
-        logger.info("sending {}transacted message to {}", transacted ? "" : "non-", destinationName);
+        logger.info("sending {} transacted message to {}", transacted ? "manually" : "automatically", destinationName);
         logger.info("payload:\n{}", payload);
 
         Connection connection = null;
