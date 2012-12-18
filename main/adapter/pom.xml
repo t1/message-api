@@ -44,6 +44,11 @@
 			<artifactId>weld-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -63,9 +68,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<scope>provided</scope>
+			<groupId>net.java.messageapi</groupId>
+			<artifactId>api-processor</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -5,17 +5,20 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * The Java reflection api regards method arguments as second class citizens: They are not
- * represented as objects like Class, Method, Package, etc. are. They are only accessible through
- * helper methods. This class tries to fill that gap as good as it goes.
+ * The Java reflection api regards method arguments as second class citizens: They are not represented as objects like
+ * Class, Method, Package, etc. are. They are only accessible through helper methods. This class tries to fill that gap
+ * as good as it goes.
  * 
- * Note that the parameter name is not accessible through the normal reflection apis. It is stored
- * in the debug infos, though, so we use javassist to read it. If your code is not compiled with
- * debug options, if the method is abstract (including interfaces), or if javassist is not
- * available, we'll fall back to the generic name <code>arg0</code> etc.
+ * Note that the parameter name is not accessible through the normal reflection apis. It is stored in the debug infos,
+ * though, so we use javassist to read it. If your code is not compiled with debug options, if the method is abstract
+ * (including interfaces), or if javassist is not available, we'll fall back to the generic name <code>arg0</code> etc.
  */
 public class Parameter {
+    private static final Logger log = LoggerFactory.getLogger(Parameter.class);
 
     private static final ParameterNameSupplier PARAMETER_NAME_SUPPLIER = parameterNameSupplierStack();
 
@@ -31,8 +34,10 @@ public class Parameter {
         try {
             Class.forName("javassist.ClassPool");
         } catch (ClassNotFoundException e) {
+            log.info("javassist is not available");
             return false;
         }
+        log.info("javassist is available");
         return true;
     }
 
@@ -60,8 +65,7 @@ public class Parameter {
     }
 
     /**
-     * @return the annotation of that type or <code>null</code> if the parameter is not annotated
-     *         with that type.
+     * @return the annotation of that type or <code>null</code> if the parameter is not annotated with that type.
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
         for (final Annotation annotation : getAnnotations()) {
@@ -100,9 +104,9 @@ public class Parameter {
     }
 
     /**
-     * Can that value be passed as this parameter? I.e. is it an instance of the correct type or (if
-     * it's not really primitive) <code>null</code>; correctly handles primitive types where
-     * {@link Class#isInstance(Object)} returns <code>false</code> for.
+     * Can that value be passed as this parameter? I.e. is it an instance of the correct type or (if it's not really
+     * primitive) <code>null</code>; correctly handles primitive types where {@link Class#isInstance(Object)} returns
+     * <code>false</code> for.
      */
     public boolean isAssignable(Object value) {
         Class<?> parameterType = getType();
@@ -131,7 +135,7 @@ public class Parameter {
 
     @Override
     public String toString() {
-        return Parameter.class.getSimpleName() + "#" + getIndex()
-                + ((name == null) ? "" : (":" + name)) + " of " + getMethod().toGenericString();
+        return Parameter.class.getSimpleName() + "#" + getIndex() + ((name == null) ? "" : (":" + name)) + " of "
+                + getMethod().toGenericString();
     }
 }

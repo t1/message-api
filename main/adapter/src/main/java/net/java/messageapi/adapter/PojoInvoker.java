@@ -1,13 +1,13 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
 import net.java.messageapi.MessageApi;
 import net.java.messageapi.reflection.Parameter;
 
-import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Calls methods from an implementation of an {@link MessageApi} by converting instances of the generated POJOs back to
@@ -15,10 +15,13 @@ import com.google.common.collect.Lists;
  */
 public class PojoInvoker<T> {
 
+    final Logger log = LoggerFactory.getLogger(PojoInvoker.class);
+
     public static <T> PojoInvoker<T> of(Class<T> api, T impl) {
         return new PojoInvoker<T>(api, impl);
     }
 
+    /** the impl is *not* enough: it may be a proxy, so reflection would return the wrong methods */
     private final Class<T> api;
     private final T impl;
 
@@ -34,20 +37,24 @@ public class PojoInvoker<T> {
     }
 
     public void invoke(Object pojo) {
+        log.debug("invoke for {}", pojo);
         PojoProperties pojoProperties = PojoProperties.of(pojo);
 
         String methodName = getMethodNameFor(pojo);
+        log.debug("search {} with {}", methodName, pojoProperties);
 
         for (Method method : api.getMethods()) {
+            log.debug("compare {}", method);
             if (method.getName().equals(methodName)) {
                 List<Parameter> methodParameters = Parameter.allOf(method);
-                if (matches(methodParameters, pojoProperties)) {
-                    invoke(method, methodParameters, pojoProperties);
+                if (pojoProperties.matches(methodParameters)) {
+                    log.debug("parameters match... invoke");
+                    pojoProperties.invoke(impl, method, methodParameters);
                     return;
                 }
             }
         }
-        throw new RuntimeException("method " + methodName + " with properties " + pojoProperties + " not found in "
+        throw new RuntimeException("method [" + methodName + "] with properties " + pojoProperties + " not found in "
                 + api);
     }
 
@@ -55,44 +62,5 @@ public class PojoInvoker<T> {
         String[] names = pojo.getClass().getSimpleName().split("\\$");
         String name = names[names.length - 1];
         return Character.toLowerCase(name.charAt(0)) + name.substring(1);
-    }
-
-    private boolean matches(List<Parameter> methodParameters, PojoProperties pojoProperties) {
-        if (pojoProperties.size() != methodParameters.size())
-            return false;
-        for (Parameter parameter : methodParameters) {
-            String name = parameter.getName();
-            if (!pojoProperties.hasProperty(name))
-                return false;
-            Object propertyValue = pojoProperties.getValue(name);
-            if (!parameter.isAssignable(propertyValue)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void invoke(Method method, List<Parameter> methodParameters, PojoProperties pojoProperties) {
-        try {
-            method.invoke(impl, getArgs(methodParameters, pojoProperties));
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof RuntimeException)
-                throw (RuntimeException) e.getCause();
-            if (e.getCause() instanceof Error)
-                throw (Error) e.getCause();
-            throw new RuntimeException(e.getCause());
-        }
-    }
-
-    private Object[] getArgs(List<Parameter> methodParameters, PojoProperties pojoProperties) {
-        List<Object> result = Lists.newArrayList();
-        for (Parameter parameter : methodParameters) {
-            String name = parameter.getName();
-            Object value = pojoProperties.getValue(name);
-            result.add(value);
-        }
-        return result.toArray();
     }
 }

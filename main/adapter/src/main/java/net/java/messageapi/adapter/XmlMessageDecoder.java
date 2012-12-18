@@ -5,12 +5,11 @@ import javax.jms.*;
 import net.java.messageapi.MessageApi;
 
 /**
- * Takes a {@link TextMessage}, deserializes it and calls the corresponding method in an
- * implementation of the matching {@link MessageApi}.
+ * Takes a {@link TextMessage}, deserializes it and calls the corresponding method in an implementation of the matching
+ * {@link MessageApi}.
  * 
  * @param <T>
- *            the {@link MessageApi} interface that the calls are for and the <code>impl</code>
- *            implements.
+ *            the {@link MessageApi} interface that the calls are for and the <code>impl</code> implements.
  */
 public class XmlMessageDecoder<T> implements MessageListener {
 

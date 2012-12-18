@@ -9,18 +9,18 @@ import javax.jms.TextMessage;
 
 import net.java.messageapi.JmsProperty;
 import net.java.messageapi.Optional;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.*;
 
 /**
  * This is actually an integration test within the adapter classes
  */
-@RunWith(TwiP.class)
+@RunWith(MockitoJUnitRunner.class)
 public class XmlMessageDecoderTest {
 
     @Mock

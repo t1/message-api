@@ -16,10 +16,9 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
 /**
- * TODO some of the logic in here is duplicated in the annotation processor; it's not going to
- * change much, so that's not a huge deal, but separating the concern of what has to go into the
- * pojo, from the concern of how to put that into source resp. bytecode, would make everything
- * easier to understand.
+ * TODO some of the logic in here is duplicated in the annotation processor; it's not going to change much, so that's
+ * not a huge deal, but separating the concern of what has to go into the pojo, from the concern of how to put that into
+ * source resp. bytecode, would make everything easier to understand.
  */
 public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
@@ -28,6 +27,8 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
     private final ClassPool classPool;
     private CtClass ctClass;
     private final Class<?> result;
+    private final List<String> xmlTypePropOrder = Lists.newArrayList();
+    private final List<String> totalPropOrder = Lists.newArrayList();
 
     public MethodAsClassGenerator(Method method) {
         this.classPool = getClassPool(method);
@@ -43,7 +44,7 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
         return pool;
     }
 
-    protected Class<?> generate() {
+    private Class<?> generate() {
         String className = reflectionAdapter.getMethodNameAsFullyQualifiedClassName();
 
         // try real class
@@ -70,23 +71,27 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
         }
     }
 
-    protected void generate(String className) throws Exception {
+    private void generate(String className) throws Exception {
         this.ctClass = classPool.makeClass(className);
         ctClass.getClassFile().setVersionToJava5();
 
-        List<String> propOrder = addProperties();
+        addProperties();
         addConstructors();
-        addClassAnnotations(propOrder);
+        addClassAnnotations();
     }
 
-    private void addClassAnnotations(List<String> propOrder) {
-        CtClassAnnotation xmlRootElement = new CtClassAnnotation(ctClass, XmlRootElement.class);
-        xmlRootElement.addMemberValue("name", reflectionAdapter.getMethodName());
-        xmlRootElement.set();
+    private void addClassAnnotations() {
+        CtClassAnnotation xmlRootElementAnnotation = new CtClassAnnotation(ctClass, XmlRootElement.class);
+        xmlRootElementAnnotation.addMemberValue("name", reflectionAdapter.getMethodName());
+        xmlRootElementAnnotation.set();
 
-        CtClassAnnotation xmlType = new CtClassAnnotation(ctClass, XmlType.class);
-        xmlType.addMemberValue("propOrder", propOrder);
-        xmlType.set();
+        CtClassAnnotation totalPropOrderAnnotation = new CtClassAnnotation(ctClass, PropOrder.class);
+        totalPropOrderAnnotation.addMemberValue("value", totalPropOrder);
+        totalPropOrderAnnotation.set();
+
+        CtClassAnnotation xmlTypeAnnotation = new CtClassAnnotation(ctClass, XmlType.class);
+        xmlTypeAnnotation.addMemberValue("propOrder", xmlTypePropOrder);
+        xmlTypeAnnotation.set();
     }
 
     private void addConstructors() throws Exception {
@@ -111,7 +116,7 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
         ctClass.addConstructor(constructor);
     }
 
-    public String constructorBody(List<CtClass> argTypes) throws NotFoundException {
+    private String constructorBody(List<CtClass> argTypes) throws NotFoundException {
         StringBuilder constructorBody = new StringBuilder("{ super();");
         for (Parameter parameter : parameters) {
             argTypes.add(classPool.get(parameter.getType().getName()));
@@ -124,9 +129,7 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
 
     // TODO generate toString, hashCode and equals
 
-    private List<String> addProperties() throws Exception {
-        List<String> propOrder = Lists.newArrayList();
-
+    private void addProperties() throws Exception {
         for (Parameter parameter : parameters) {
             Optional optional = parameter.getAnnotation(Optional.class);
             CtField field = addProperty(parameter);
@@ -138,11 +141,10 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
                 CtFieldAnnotation xmlElement = new CtFieldAnnotation(field, XmlElement.class);
                 xmlElement.addMemberValue("required", (optional == null));
                 xmlElement.set();
-                propOrder.add(field.getName());
+                xmlTypePropOrder.add(field.getName());
             }
+            totalPropOrder.add(field.getName());
         }
-
-        return propOrder;
     }
 
     private CtField addProperty(Parameter parameter) throws Exception {
