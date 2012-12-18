@@ -4,10 +4,14 @@ import static org.junit.Assert.*;
 
 import java.util.concurrent.Semaphore;
 
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
 import javax.inject.Inject;
+import javax.jms.MessageListener;
 
 import net.java.messageapi.DestinationName;
 import net.java.messageapi.MessageApi;
+import net.java.messageapi.adapter.MessageDecoder;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -16,16 +20,16 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class NestedApiIT {
     @Deployment(name = "test-mdb")
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, NestedApiIT.class.getName() + ".war") //
-        .addClasses(NestedApi.class).addClass(NestedApi.class.getName() + "MDB") //
+        .addClasses(NestedApi.class, NestedApiImpl.class) //
         .addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class) //
                 .artifacts("net.java.messageapi:adapter:" + VersionHelper.API_VERSION,
@@ -50,7 +54,8 @@ public class NestedApiIT {
         RESULT = null;
     }
 
-    static class NestedApiImpl implements NestedApi {
+    @MessageDriven(messageListenerInterface = MessageListener.class, activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/test") })
+    public static class NestedApiImpl extends MessageDecoder<NestedApi> implements NestedApi {
         @Override
         public void nestedCall() {
             try {
