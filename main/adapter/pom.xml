@@ -49,6 +49,12 @@
 			<artifactId>slf4j-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.java.messageapi</groupId>
+			<artifactId>api-processor</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -68,9 +74,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.java.messageapi</groupId>
-			<artifactId>api-processor</artifactId>
-			<version>${project.version}</version>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
