@@ -58,6 +58,7 @@ public class PojoInvokerTest {
         TwoStringsApi impl = mock(TwoStringsApi.class);
         PojoInvoker<TwoStringsApi> invoker = PojoInvoker.of(TwoStringsApi.class, impl);
         @SuppressWarnings("unused")
+        @PropOrder({ "string1", "string2" })
         class SomeMethod {
             String string1, string2;
 
@@ -87,6 +88,7 @@ public class PojoInvokerTest {
         IntegerAndStringApi impl = mock(IntegerAndStringApi.class);
         PojoInvoker<IntegerAndStringApi> invoker = PojoInvoker.of(IntegerAndStringApi.class, impl);
         @SuppressWarnings("unused")
+        @PropOrder({ "integer", "string" })
         class SomeMethod {
             int integer;
             String string;
