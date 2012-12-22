@@ -309,17 +309,17 @@
 			<dependency>
 				<groupId>org.jboss.weld</groupId>
 				<artifactId>weld-core</artifactId>
-				<version>1.0.1-SP4</version>
+				<version>1.1.10.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.6.4</version>
+				<version>1.7.2</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.collections</groupId>
