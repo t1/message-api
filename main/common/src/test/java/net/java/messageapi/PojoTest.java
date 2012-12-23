@@ -8,14 +8,11 @@ import javax.xml.bind.annotation.XmlElement;
 
 import net.java.messageapi.pojo.Pojo;
 import net.java.messageapi.pojo.PojoProperty;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import com.google.common.collect.Lists;
 
-@RunWith(TwiP.class)
 public class PojoTest {
 
     private String getOtherImports(Pojo pojo) {
@@ -93,8 +90,7 @@ public class PojoTest {
         assertEquals("javax.util.List<javax.util.Set<org.joda.time.Instant>>", property.getType());
         assertEquals("List", property.getRawType());
         assertEquals("List<Set<Instant>>", property.getLocalType());
-        assertEquals("[javax.util.List, javax.util.Set, org.joda.time.Instant]",
-                getOtherImports(pojo));
+        assertEquals("[javax.util.List, javax.util.Set, org.joda.time.Instant]", getOtherImports(pojo));
     }
 
     @Test
