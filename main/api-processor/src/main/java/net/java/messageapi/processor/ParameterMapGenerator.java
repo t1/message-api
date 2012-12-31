@@ -3,9 +3,10 @@ package net.java.messageapi.processor;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
+import javax.lang.model.util.Elements;
 import javax.tools.FileObject;
 
 import net.java.messageapi.reflection.DelimiterWriter;
@@ -21,8 +22,8 @@ import com.google.common.collect.ImmutableList;
  */
 public class ParameterMapGenerator extends AbstractGenerator {
 
-    public ParameterMapGenerator(Messager messager, ProcessingEnvironment env) {
-        super(messager, env);
+    public ParameterMapGenerator(Messager messager, Filer filer, Elements utils) {
+        super(messager, filer, utils);
     }
 
     @Override

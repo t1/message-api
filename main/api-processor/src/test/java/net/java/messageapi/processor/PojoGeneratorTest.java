@@ -8,8 +8,10 @@ import java.io.Serializable;
 import java.util.*;
 
 import javax.annotation.Generated;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
+import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.*;
 
@@ -17,20 +19,19 @@ import net.java.messageapi.*;
 import net.java.messageapi.pojo.Pojo;
 import net.java.messageapi.pojo.PojoProperty;
 import net.java.messageapi.processor.mock.*;
-import net.sf.twip.TwiP;
 
 import org.joda.time.Instant;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-@RunWith(TwiP.class)
-public class ApiToMessagePojoProcessorTest {
+@RunWith(MockitoJUnitRunner.class)
+public class PojoGeneratorTest {
 
     private static final Set<String> REQUIRED_IMPORTS = ImmutableSet.of( //
             Generated.class.getName(), //
@@ -39,12 +40,21 @@ public class ApiToMessagePojoProcessorTest {
             XmlElement.class.getName(), //
             Serializable.class.getName());
 
-    private static final String PACKAGE = ApiToMessagePojoProcessorTest.class.getPackage().getName();
+    private static final String PACKAGE = PojoGeneratorTest.class.getPackage().getName();
 
     @Mock
     private Messager messager;
 
-    private final MessageApiAnnotationProcessor processor = new MessageApiAnnotationProcessor();
+    private final Filer filer = new FilerDummy();
+
+    private final Elements utils = new ElementUtilDummy();
+
+    private PojoGenerator generator;
+
+    @Before
+    public void before() {
+        generator = new PojoGenerator(messager, filer, utils);
+    }
 
     @After
     public void after() {
@@ -52,11 +62,11 @@ public class ApiToMessagePojoProcessorTest {
     }
 
     private List<Pojo> getGeneratedPojos() {
-        return processor.getPojoGenerator().getGeneratedPojos();
+        return generator.getGeneratedPojos();
     }
 
     private void convert(Class<?> type) {
-        new ProcessingEnvironmentDummy(messager).process(processor, type);
+        generator.process(new TypeElementImpl(type));
     }
 
     private Pojo popPojo() {
@@ -92,9 +102,6 @@ public class ApiToMessagePojoProcessorTest {
         verify(messager).printMessage(Kind.ERROR,
                 "The MessageApi annotation can only be put on an interface, not on a CLASS",
                 new TypeElementImpl(ClassApi.class));
-        verify(messager).printMessage(Kind.ERROR,
-                "can't process MessageApi: " + UnsupportedOperationException.class.getName(),
-                new TypeElementImpl(ClassApi.class));
     }
 
     @MessageApi
@@ -119,7 +126,6 @@ public class ApiToMessagePojoProcessorTest {
         convert(ReturnsApi.class);
 
         verify(messager).printMessage(Kind.NOTE, "Processing MessageApi [" + ReturnsApi.class.getName() + "]");
-        verify(messager).printMessage(Kind.NOTE, "Writing .parametermap for " + ReturnsApi.class.getName());
         verify(messager).printMessage(Kind.ERROR, "MessageApi methods must return void; they are asynchronous!",
                 new MethodElementImpl(ReturnsApi.class.getMethod("returningCall")));
         verifyNoMoreInteractions(messager);

@@ -7,12 +7,12 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 
-import net.java.messageapi.processor.XmlRootElementAnnotationProcessor;
-import net.java.messageapi.processor.mock.FilerDummy;
-import net.java.messageapi.processor.mock.ProcessingEnvironmentDummy;
+import net.java.messageapi.processor.mock.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,11 +30,17 @@ public class JaxbIndexGeneratorTest {
 
     private final Filer filer = new FilerDummy(Suppliers.<Writer> ofInstance(stringWriter));
 
-    private final Processor processor = new XmlRootElementAnnotationProcessor();
+    private JaxbIndexGenerator generator;
+
+    @Before
+    public void before() {
+        this.generator = new JaxbIndexGenerator(messager, filer, new ElementUtilDummy());
+    }
 
     @Test
     public void shouldCreateListOfClassNames() throws Exception {
         generate();
+
         List<String> jaxbIndexList = readJaxbIndex();
         assertTrue(jaxbIndexList.contains(AnnotationProcessorTestMethod1.class.getSimpleName()));
         assertTrue(jaxbIndexList.contains(AnnotationProcessorTestMethod2.class.getSimpleName()));
@@ -42,9 +48,10 @@ public class JaxbIndexGeneratorTest {
     }
 
     private void generate() {
-        new ProcessingEnvironmentDummy(messager, filer).process(processor,
-                AnnotationProcessorTestMethod1.class, AnnotationProcessorTestMethod2.class,
-                AnnotationProcessorTestMethod3.class);
+        generator.process(new TypeElementImpl(AnnotationProcessorTestMethod1.class));
+        generator.process(new TypeElementImpl(AnnotationProcessorTestMethod2.class));
+        generator.process(new TypeElementImpl(AnnotationProcessorTestMethod3.class));
+        generator.finish();
     }
 
     private List<String> readJaxbIndex() {

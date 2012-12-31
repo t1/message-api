@@ -65,7 +65,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
-			<artifactId>processor-common</artifactId>
+			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

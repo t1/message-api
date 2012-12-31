@@ -1,13 +1,9 @@
 package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-
-@RunWith(TwiP.class)
 public class MappingBuilderTest {
 
     private final MappingBuilder builder = new MappingBuilder("myop");

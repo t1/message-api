@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 
-class ElementUtilDummy implements Elements {
+public class ElementUtilDummy implements Elements {
 
     @Override
     public List<? extends AnnotationMirror> getAllAnnotationMirrors(Element e) {
@@ -35,8 +35,7 @@ class ElementUtilDummy implements Elements {
     }
 
     @Override
-    public Map<? extends ExecutableElement, ? extends AnnotationValue> getElementValuesWithDefaults(
-            AnnotationMirror a) {
+    public Map<? extends ExecutableElement, ? extends AnnotationValue> getElementValuesWithDefaults(AnnotationMirror a) {
         throw new UnsupportedOperationException();
     }
 
@@ -76,8 +75,7 @@ class ElementUtilDummy implements Elements {
     }
 
     @Override
-    public boolean overrides(ExecutableElement overrider, ExecutableElement overridden,
-            TypeElement type) {
+    public boolean overrides(ExecutableElement overrider, ExecutableElement overridden, TypeElement type) {
         throw new UnsupportedOperationException();
     }
 

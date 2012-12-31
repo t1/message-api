@@ -41,13 +41,8 @@
 			<!-- the api annotation processor is required only at build time, -->
 			<!-- but there's no such scope -->
 			<!--scope>build</scope -->
-			<!-- we trick maven by saying it was optional: -->
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.java.messageapi</groupId>
-			<artifactId>adapter</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<!-- we trick maven by saying it was provided and optional: -->
+			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

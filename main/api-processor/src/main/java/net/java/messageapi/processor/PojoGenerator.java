@@ -4,10 +4,11 @@ import java.io.*;
 import java.util.List;
 
 import javax.annotation.Generated;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.util.Elements;
 import javax.tools.JavaFileObject;
 import javax.xml.bind.annotation.*;
 
@@ -68,13 +69,13 @@ public class PojoGenerator extends AbstractGenerator {
 
     private final List<Pojo> generatedPojos = Lists.newArrayList();
 
-    public PojoGenerator(Messager messager, ProcessingEnvironment env) {
-        super(messager, env);
+    public PojoGenerator(Messager messager, Filer filer, Elements utils) {
+        super(messager, filer, utils);
     }
 
     @Override
-    public void process(Element messageApi) {
-        TypeElement type = checkType(messageApi);
+    public void process(Element element) {
+        TypeElement type = checkType(element);
         if (type != null) {
             processType(type);
         }

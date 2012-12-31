@@ -5,10 +5,11 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 import javax.tools.FileObject;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,8 +24,8 @@ public class JaxbIndexGenerator extends AbstractGenerator {
 
     private final ListMultimap<String, TypeElement> packageMap = ArrayListMultimap.create();
 
-    public JaxbIndexGenerator(Messager messager, ProcessingEnvironment env) {
-        super(messager, env);
+    public JaxbIndexGenerator(Messager messager, Filer filer, Elements utils) {
+        super(messager, filer, utils);
     }
 
     @Override

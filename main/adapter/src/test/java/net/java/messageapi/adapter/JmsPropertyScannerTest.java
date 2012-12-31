@@ -1,6 +1,6 @@
 package net.java.messageapi.adapter;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;

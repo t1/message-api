@@ -3,23 +3,24 @@ package net.java.messageapi.processor;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.*;
 
-public abstract class AbstractGenerator {
+abstract class AbstractGenerator {
 
     private final Messager messager;
     private final Filer filer;
     private final Elements utils;
 
-    public AbstractGenerator(Messager messager, ProcessingEnvironment env) {
+    public AbstractGenerator(Messager messager, Filer filer, Elements utils) {
         this.messager = messager;
-        this.filer = env.getFiler();
-        this.utils = env.getElementUtils();
+        this.filer = filer;
+        this.utils = utils;
     }
 
     protected void error(CharSequence message) {

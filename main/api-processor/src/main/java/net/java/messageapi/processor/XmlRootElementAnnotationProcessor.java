@@ -17,7 +17,7 @@ public class XmlRootElementAnnotationProcessor extends AbstractProcessor2 {
     @Override
     public synchronized void init(ProcessingEnvironment env) {
         super.init(env);
-        generator = new JaxbIndexGenerator(getMessager(), env);
+        generator = new JaxbIndexGenerator(getMessager(), env.getFiler(), env.getElementUtils());
     }
 
     @Override

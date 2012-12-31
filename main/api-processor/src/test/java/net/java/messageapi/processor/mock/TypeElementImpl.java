@@ -2,8 +2,7 @@ package net.java.messageapi.processor.mock;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
@@ -68,7 +67,7 @@ public class TypeElementImpl extends AbstractElementImpl implements TypeElement 
 
     @Override
     public List<? extends AnnotationMirror> getAnnotationMirrors() {
-        throw new UnsupportedOperationException();
+        return Arrays.asList();
     }
 
     @Override

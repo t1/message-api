@@ -1,16 +1,19 @@
 package net.java.messageapi.adapter;
 
-import static org.junit.Assert.*;
-
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class MapMessageDecoderTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     interface TestApi {
         public void testMethod(String string);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void shouldFailWithNullMapping() throws Exception {
         TestApi impl = new TestApi() {
             @Override
@@ -18,8 +21,8 @@ public class MapMessageDecoderTest {
                 throw new UnsupportedOperationException();
             }
         };
-        MapMessageDecoder<TestApi> decoder = new MapMessageDecoder<TestApi>(TestApi.class, impl, null);
-        fail("should have failed");
-        System.out.println(decoder);
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage("mapping must not be null");
+        new MapMessageDecoder<TestApi>(TestApi.class, impl, null).notify();
     }
 }

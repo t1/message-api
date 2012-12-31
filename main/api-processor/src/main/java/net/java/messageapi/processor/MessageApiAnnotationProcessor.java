@@ -6,11 +6,10 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
 
 import net.java.messageapi.MessageApi;
-
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Annotation processor that generates message POJOs for all methods in an interface annotated as {@link MessageApi}.
@@ -26,8 +25,10 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
     public synchronized void init(ProcessingEnvironment env) {
         super.init(env);
         Messager messager = getMessager();
-        pojoGenerator = new PojoGenerator(messager, env);
-        propertyNameIndexGenerator = new ParameterMapGenerator(messager, env);
+        Filer filer = env.getFiler();
+        Elements utils = env.getElementUtils();
+        pojoGenerator = new PojoGenerator(messager, filer, utils);
+        propertyNameIndexGenerator = new ParameterMapGenerator(messager, filer, utils);
     }
 
     @Override
@@ -43,10 +44,5 @@ public class MessageApiAnnotationProcessor extends AbstractProcessor2 {
             }
         }
         return false;
-    }
-
-    @VisibleForTesting
-    public PojoGenerator getPojoGenerator() {
-        return pojoGenerator;
     }
 }

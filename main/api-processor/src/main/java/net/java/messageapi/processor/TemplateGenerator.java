@@ -5,9 +5,11 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 import javax.tools.JavaFileObject;
 
 /**
@@ -23,12 +25,12 @@ public abstract class TemplateGenerator extends AbstractGenerator {
     protected TypeElement type;
     private final String templateName;
 
-    public TemplateGenerator(Messager messager, ProcessingEnvironment env) {
-        this(messager, env, null);
+    public TemplateGenerator(Messager messager, Filer filer, Elements utils) {
+        this(messager, filer, utils, null);
     }
 
-    public TemplateGenerator(Messager messager, ProcessingEnvironment env, String templateName) {
-        super(messager, env);
+    public TemplateGenerator(Messager messager, Filer filer, Elements utils, String templateName) {
+        super(messager, filer, utils);
         this.templateName = templateName;
     }
 
