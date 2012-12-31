@@ -37,18 +37,18 @@ public class PojoInvoker<T> {
     }
 
     public void invoke(Object pojo) {
-        log.debug("invoke for {}", pojo);
+        log.trace("invoke for {}", pojo);
         PojoProperties pojoProperties = PojoProperties.of(pojo);
 
         String methodName = getMethodNameFor(pojo);
-        log.debug("search {} with {}", methodName, pojoProperties);
+        log.trace("search {} with {}", methodName, pojoProperties);
 
         for (Method method : api.getMethods()) {
-            log.debug("compare {}", method);
+            log.trace("compare {}", method);
             if (method.getName().equals(methodName)) {
                 List<Parameter> methodParameters = Parameter.allOf(method);
                 if (pojoProperties.matches(methodParameters)) {
-                    log.debug("parameters match... invoke");
+                    log.trace("parameters match... invoke");
                     pojoProperties.invoke(impl, method, methodParameters);
                     return;
                 }
