@@ -6,9 +6,4 @@
 	<sources>
 		<source>src/main/java/MyMessageApi.java</source>
 	</sources>
-	<resources>
-		<resource>.classpath</resource>
-		<resource>.factorypath</resource>
-		<resource>.project</resource>
-	</resources>
 </archetype>

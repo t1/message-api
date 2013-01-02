@@ -80,10 +80,6 @@
 				<version>1.9</version>
 			</extension>
 		</extensions>
-		<!-- IMPORTANT: We specify as many plugin versions as possible. -->
-		<!-- This is to: -->
-		<!-- a) get the correct version without mvn -U -->
-		<!-- b) avoid using a newer version if it has a bug -->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -155,18 +151,13 @@
 				<version>2.4</version>
 				<configuration>
 					<archive>
-						<!--addMavenDescriptor>false</addMavenDescriptor -->
+						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
 					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.3</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -302,7 +293,7 @@
 		<module>main</module>
 		<module>archetype</module>
 		<module>test</module>
-		<!-- disabled, so a clean build works <module>demo</module> -->
+		<module>demo</module>
 	</modules>
 
 	<dependencyManagement>

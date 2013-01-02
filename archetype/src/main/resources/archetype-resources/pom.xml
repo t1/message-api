@@ -2,27 +2,37 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>net.java.messageapi</groupId>
-		<artifactId>archetype-parent</artifactId>
-		<version>1.2-SNAPSHOT</version>
-	</parent>
-
 	<groupId>${groupId}</groupId>
 	<artifactId>${artifactId}</artifactId>
 	<version>${version}</version>
 	<name>${artifactId} message api</name>
 	<description>The message api jar for ${artifactId}</description>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+					<encoding>utf8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
 			<artifactId>processor</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<!-- the annotation processor is required only at build time, -->
-			<!-- but there's no such scope -->
-			<!--scope>build</scope-->
-			<!-- we trick maven by saying it was optional: -->
+			<!-- but there's no build-scope -->
+			<!-- we trick maven by saying it was provided and optional: -->
+			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
