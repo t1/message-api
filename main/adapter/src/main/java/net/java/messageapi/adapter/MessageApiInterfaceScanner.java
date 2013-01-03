@@ -8,12 +8,14 @@ import javax.ejb.MessageDriven;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 
 import net.java.messageapi.MessageApi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -34,7 +36,7 @@ class MessageApiInterfaceScanner {
 
     <X> void discoverMessageApis(AnnotatedType<X> annotatedType) {
         if (annotatedType.isAnnotationPresent(MessageDriven.class))
-            handleMessageDriven(annotatedType);
+            scanMessageDriven(annotatedType);
         MessageApi annotation = annotatedType.getAnnotation(MessageApi.class);
         if (annotation != null) {
             Class<X> messageApi = annotatedType.getJavaClass();
@@ -50,14 +52,16 @@ class MessageApiInterfaceScanner {
      * 
      * @see <a href="https://issues.jboss.org/browse/WELD-1035">WELD-1035</a>
      */
-    private <X> void handleMessageDriven(AnnotatedType<X> annotatedType) {
-        log.debug("handle MDB: {}", annotatedType.getJavaClass());
+    private <X> void scanMessageDriven(AnnotatedType<X> annotatedType) {
+        log.debug("scan MDB: {}", annotatedType.getJavaClass());
         for (AnnotatedField<? super X> annotatedField : annotatedType.getFields()) {
             if (annotatedField.isAnnotationPresent(Inject.class)) {
                 Type type = annotatedField.getBaseType();
                 log.debug("handle MDB field '{}': {}", annotatedField.getJavaMember().getName(), type);
                 if (isMessageApi(type)) {
-                    addBean((Class<?>) type, annotatedField.getAnnotations());
+                    Set<Annotation> qualifiers = qualifiers(annotatedField);
+                    log.debug("-> register message-api adapter with qualifiers {}", qualifiers);
+                    addBean((Class<?>) type, qualifiers);
                 }
             }
         }
@@ -65,6 +69,16 @@ class MessageApiInterfaceScanner {
 
     private boolean isMessageApi(Type type) {
         return type instanceof Class && ((Class<?>) type).isAnnotationPresent(MessageApi.class);
+    }
+
+    private <X> Set<Annotation> qualifiers(AnnotatedField<? super X> annotatedField) {
+        ImmutableSet.Builder<Annotation> result = ImmutableSet.builder();
+        for (Annotation annotation : annotatedField.getAnnotations()) {
+            if (annotation.annotationType().isAnnotationPresent(Qualifier.class)) {
+                result.add(annotation);
+            }
+        }
+        return result.build();
     }
 
     void discoverMessageApiInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {
