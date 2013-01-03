@@ -1,10 +1,13 @@
 package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Set;
 
+import javax.ejb.MessageDriven;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
+import javax.inject.Inject;
 
 import net.java.messageapi.MessageApi;
 
@@ -29,9 +32,9 @@ class MessageApiInterfaceScanner {
     private final Set<Class<?>> messageApis = Sets.newHashSet();
     private final Set<BeanId> beanIds = Sets.newHashSet();
 
-    <X> void discoverMessageApis(ProcessAnnotatedType<X> pat) {
-        AnnotatedType<X> annotatedType = pat.getAnnotatedType();
-
+    <X> void discoverMessageApis(AnnotatedType<X> annotatedType) {
+        if (annotatedType.isAnnotationPresent(MessageDriven.class))
+            handleMessageDriven(annotatedType);
         MessageApi annotation = annotatedType.getAnnotation(MessageApi.class);
         if (annotation != null) {
             Class<X> messageApi = annotatedType.getJavaClass();
@@ -42,6 +45,28 @@ class MessageApiInterfaceScanner {
         }
     }
 
+    /**
+     * Workaround for a bug in Weld, where ProcessInjectionTarget is not fired for MDBs
+     * 
+     * @see <a href="https://issues.jboss.org/browse/WELD-1035">WELD-1035</a>
+     */
+    private <X> void handleMessageDriven(AnnotatedType<X> annotatedType) {
+        log.debug("handle MDB: {}", annotatedType.getJavaClass());
+        for (AnnotatedField<? super X> annotatedField : annotatedType.getFields()) {
+            if (annotatedField.isAnnotationPresent(Inject.class)) {
+                Type type = annotatedField.getBaseType();
+                log.debug("handle MDB field '{}': {}", annotatedField.getJavaMember().getName(), type);
+                if (isMessageApi(type)) {
+                    addBean((Class<?>) type, annotatedField.getAnnotations());
+                }
+            }
+        }
+    }
+
+    private boolean isMessageApi(Type type) {
+        return type instanceof Class && ((Class<?>) type).isAnnotationPresent(MessageApi.class);
+    }
+
     void discoverMessageApiInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {
         if (messageApis.contains(type)) {
             final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
@@ -49,11 +74,15 @@ class MessageApiInterfaceScanner {
                     "discovered injection point named \"{}\" in {} for message api {} qualified as {}",
                     new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
                             type.getSimpleName(), qualifiers });
-            BeanId beanId = new BeanId(type, qualifiers);
-            boolean added = beanIds.add(beanId);
-            if (!added) {
-                log.info("bean {} already defined", beanId);
-            }
+            addBean(type, qualifiers);
+        }
+    }
+
+    private void addBean(Class<?> type, final Set<Annotation> qualifiers) {
+        BeanId beanId = new BeanId(type, qualifiers);
+        boolean added = beanIds.add(beanId);
+        if (!added) {
+            log.info("bean {} already defined", beanId);
         }
     }
 

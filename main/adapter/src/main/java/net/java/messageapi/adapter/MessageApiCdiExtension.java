@@ -20,12 +20,13 @@ public class MessageApiCdiExtension implements Extension {
     private final MessageApiEventScanner eventScanner = new MessageApiEventScanner();
 
     <X> void step1(@Observes ProcessAnnotatedType<X> pat) {
-        messageApiScanner.discoverMessageApis(pat);
+        messageApiScanner.discoverMessageApis(pat.getAnnotatedType());
         mdbScanner.handleMessageApiImplementations(pat);
-        eventScanner.discoverMessageEvents(pat);
+        eventScanner.discoverMessageEvents(pat.getAnnotatedType());
     }
 
-    void step2(@Observes ProcessInjectionTarget<?> pit) {
+    <X> void step2(@Observes ProcessInjectionTarget<X> pit) {
+        log.trace("process injection target {}", pit.getAnnotatedType());
         for (InjectionPoint injectionPoint : pit.getInjectionTarget().getInjectionPoints()) {
             log.debug("scan injection point {}", injectionPoint);
             Class<?> type = getType(injectionPoint);

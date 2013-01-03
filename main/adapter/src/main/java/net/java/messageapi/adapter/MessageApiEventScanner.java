@@ -25,9 +25,7 @@ public class MessageApiEventScanner {
     private final Set<Class<?>> messageEvents = Sets.newHashSet();
     private final Set<ObserverMethod<?>> observers = Sets.newHashSet();
 
-    <X> void discoverMessageEvents(ProcessAnnotatedType<X> pat) {
-        AnnotatedType<X> annotatedType = pat.getAnnotatedType();
-
+    <X> void discoverMessageEvents(AnnotatedType<X> annotatedType) {
         MessageEvent annotation = annotatedType.getAnnotation(MessageEvent.class);
         if (annotation != null) {
             Class<X> messageEvent = annotatedType.getJavaClass();
