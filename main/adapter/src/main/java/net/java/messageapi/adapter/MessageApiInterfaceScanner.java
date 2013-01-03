@@ -6,7 +6,9 @@ import java.util.Set;
 
 import javax.ejb.MessageDriven;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.*;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 
@@ -24,6 +26,10 @@ import com.google.common.collect.Sets;
  * annotations, they all can share the same bean.
  */
 class MessageApiInterfaceScanner {
+    private static final ImmutableSet<Annotation> DEFAULT = ImmutableSet.<Annotation> of(new AnnotationLiteral<Default>() {
+        private static final long serialVersionUID = 1L;
+    });
+
     /** If there are lots of beans, it's useful to log the sum. */
     private static final int BEANCOUNT_SUM_LOG_THRESHOLD = 5;
 
@@ -72,13 +78,14 @@ class MessageApiInterfaceScanner {
     }
 
     private <X> Set<Annotation> qualifiers(AnnotatedField<? super X> annotatedField) {
-        ImmutableSet.Builder<Annotation> result = ImmutableSet.builder();
+        ImmutableSet.Builder<Annotation> qualifiers = ImmutableSet.builder();
         for (Annotation annotation : annotatedField.getAnnotations()) {
             if (annotation.annotationType().isAnnotationPresent(Qualifier.class)) {
-                result.add(annotation);
+                qualifiers.add(annotation);
             }
         }
-        return result.build();
+        ImmutableSet<Annotation> result = qualifiers.build();
+        return result.isEmpty() ? DEFAULT : result;
     }
 
     void discoverMessageApiInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {
