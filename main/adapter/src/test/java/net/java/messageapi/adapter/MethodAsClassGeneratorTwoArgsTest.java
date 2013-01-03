@@ -67,16 +67,13 @@ public class MethodAsClassGeneratorTwoArgsTest {
 
     @Test
     public void shouldBuildGetters() throws Exception {
-        Method[] declaredMethods = generated.getDeclaredMethods();
-        assertEquals(2, declaredMethods.length);
-
-        verify(declaredMethods, 0, String.class);
-        verify(declaredMethods, 1, Integer.class);
+        assertEquals(2, generated.getDeclaredMethods().length);
+        verify(0, String.class);
+        verify(1, Integer.class);
     }
 
-    private void verify(Method[] declaredMethods, int index, Class<?> type) {
-        Method method = declaredMethods[index];
-        assertEquals("getArg" + index, method.getName());
+    private void verify(int index, Class<?> type) throws NoSuchMethodException {
+        Method method = generated.getDeclaredMethod("getArg" + index);
         assertTrue(Modifier.isPublic(method.getModifiers()));
         assertEquals(type, method.getReturnType());
         assertEquals(0, method.getParameterTypes().length);
