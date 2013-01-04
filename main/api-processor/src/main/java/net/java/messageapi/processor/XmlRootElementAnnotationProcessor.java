@@ -6,6 +6,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -23,7 +24,13 @@ public class XmlRootElementAnnotationProcessor extends AbstractProcessor2 {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(XmlRootElement.class)) {
-            generator.process(element);
+            if (element.getAnnotation(XmlRootElement.class) == null) {
+                String message = "element " + element
+                        + " is probably annotated with an annotation not on the classpath";
+                getMessager().printMessage(Kind.WARNING, message, element);
+            } else {
+                generator.process(element);
+            }
         }
 
         if (roundEnv.processingOver()) {
