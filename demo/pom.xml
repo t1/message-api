@@ -18,6 +18,6 @@
 		<module>chat-receive</module>
 		<module>chat-send</module>
 
-		<module>stockquote</module>
+		<module>stockquote-topic</module>
 	</modules>
 </project>

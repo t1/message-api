@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>stockquote</groupId>
-	<artifactId>stockquote</artifactId>
+	<groupId>net.java.messageapi.demo</groupId>
+	<artifactId>stockquote-topic</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>Stock quote example</name>
 	<packaging>war</packaging>
