@@ -40,7 +40,7 @@ public class QuoteEntry extends HttpServlet {
     private void response(HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
         out.println("<html>");
-        out.println("  <head><title>Stock Quotes - Topic</title></head>");
+        out.println("  <head><title>Stock Quotes - Selector</title></head>");
         out.println("  <body>");
         out.println("    <h2>Please enter the stock quote</h2>");
         out.println("    <form method=\"post\" action=\"sender\"><p/>");
