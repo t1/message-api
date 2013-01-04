@@ -19,6 +19,7 @@ public class StockQuote implements Serializable {
     @XmlElement(required = true)
     private final BigDecimal price;
 
+    /** required by JAXB */
     @SuppressWarnings("unused")
     private StockQuote() {
         this.symbol = null;
