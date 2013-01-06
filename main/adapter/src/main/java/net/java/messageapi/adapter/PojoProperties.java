@@ -106,7 +106,7 @@ class PojoProperties {
         return true;
     }
 
-    public void invoke(Object impl, Method method, List<Parameter> methodParameters) {
+    public void invoke(Object impl, Method method) {
         try {
             method.invoke(impl, getArgs());
         } catch (IllegalAccessException e) {

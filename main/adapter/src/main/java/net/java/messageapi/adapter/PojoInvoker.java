@@ -49,7 +49,7 @@ public class PojoInvoker<T> {
                 List<Parameter> methodParameters = Parameter.allOf(method);
                 if (pojoProperties.matches(methodParameters)) {
                     log.trace("parameters match... invoke");
-                    pojoProperties.invoke(impl, method, methodParameters);
+                    pojoProperties.invoke(impl, method);
                     return;
                 }
             }
