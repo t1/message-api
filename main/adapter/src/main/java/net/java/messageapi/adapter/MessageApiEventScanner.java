@@ -17,6 +17,8 @@ import com.google.common.collect.Sets;
  * Scans {@link MessageEvent}s and generates {@link EventObserverSendAdapter observers} to forward them to JMS.
  * 
  * TODO generate the {@link EventDecoder}-MDBs dynamically (don't know how to register them with the container)
+ * TODO workaround for <a href="https://issues.jboss.org/browse/WELD-1035">WELD-1035</a> analogous to
+ * {@link MessageApiInterfaceScanner}
  */
 public class MessageApiEventScanner {
     private final Logger log = LoggerFactory.getLogger(MessageApiEventScanner.class);
