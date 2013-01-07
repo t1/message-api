@@ -1,7 +1,6 @@
 package net.java.messageapi.adapter;
 
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.lang.reflect.Field;
 
 import javax.enterprise.event.Event;
@@ -10,19 +9,24 @@ import javax.xml.bind.*;
 
 import net.java.messageapi.DynamicDestinationName;
 
+import org.slf4j.*;
+
 public class EventDecoder<T> implements MessageListener {
     private final Class<T> type;
     private final Event<T> event;
     private final JAXBContext context;
+    private final Logger log;
 
     public EventDecoder(Class<T> type, Event<T> createEvent) {
         this.event = createEvent;
         this.type = type;
         this.context = JaxbProvider.UNCHANGED.createJaxbContextFor(type);
+        this.log = LoggerFactory.getLogger(type);
     }
 
     @Override
     public void onMessage(Message message) {
+        log.debug("received " + message);
         // FIXME handle other message types
         TextMessage textMessage = (TextMessage) message;
         T pojo = decode(getText(textMessage));

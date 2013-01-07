@@ -9,8 +9,7 @@ import javax.enterprise.inject.spi.*;
 
 import net.java.messageapi.MessageEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import com.google.common.collect.Sets;
 
@@ -34,17 +33,11 @@ public class MessageApiEventScanner {
         }
     }
 
-    private Object getBeanName(InjectionPoint injectionPoint) {
-        final Bean<?> bean = injectionPoint.getBean();
-        return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
-    }
-
     void handleMessageEventInjectionPoint(InjectionPoint injectionPoint, Class<?> type, ProcessInjectionTarget<?> pit) {
         if (messageEvents.contains(type)) {
             final Set<Annotation> qualifiers = injectionPoint.getQualifiers();
             log.info(
-                    "discovered injection point named \"{}\" in {} for message event {} qualified as {}; "
-                            + "qualifying as JmsOutgoing and generating observer",
+                    "discovered injection point named \"{}\" in {} for message event {} qualified as {}",
                     new Object[] { injectionPoint.getMember().getName(), getBeanName(injectionPoint),
                             type.getSimpleName(), qualifiers });
             annotateAsOutgoing(injectionPoint, pit);
@@ -52,8 +45,16 @@ public class MessageApiEventScanner {
         }
     }
 
+    private Object getBeanName(InjectionPoint injectionPoint) {
+        final Bean<?> bean = injectionPoint.getBean();
+        return (bean == null) ? "???" : bean.getBeanClass().getSimpleName();
+    }
+
     private <T> void annotateAsOutgoing(final InjectionPoint injectionPoint, ProcessInjectionTarget<T> pit) {
         // TODO this doesn't work... why?
+        // TODO only of not yet annotated as JmsOutgoing
+        if (true)
+            return;
         InjectionTarget<T> target = pit.getInjectionTarget();
         log.debug("wrapping {} in {}", injectionPoint, target);
         InjectionTargetWrapper<T> wrapper = new InjectionTargetWrapper<T>(target) {
@@ -78,8 +79,8 @@ public class MessageApiEventScanner {
     }
 
     private <T> void generateOutgoingAdapter(Class<T> type) {
-        EventObserverSendAdapter<T> adapter = new EventObserverSendAdapter<T>(type);
-        observers.add(adapter);
+        log.debug("instantiate {} for {}", EventObserverSendAdapter.class.getSimpleName(), type);
+        observers.add(new EventObserverSendAdapter<T>(type));
     }
 
     <T, X> void scanObserverMethod(@Observes ProcessObserverMethod<T, X> pom) {
@@ -95,6 +96,7 @@ public class MessageApiEventScanner {
 
     void createBeans(@Observes AfterBeanDiscovery abd) {
         for (ObserverMethod<?> observer : observers) {
+            log.debug("add observer: {}", observer);
             abd.addObserverMethod(observer);
         }
     }

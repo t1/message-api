@@ -12,4 +12,9 @@ public abstract class JmsPayloadHandler {
     public abstract Message createJmsMessage(Object payload, Session session) throws JMSException;
 
     public abstract String getName();
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

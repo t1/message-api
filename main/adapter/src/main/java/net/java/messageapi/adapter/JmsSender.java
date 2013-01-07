@@ -4,8 +4,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.NamingException;
+import javax.naming.*;
 
 import net.java.messageapi.reflection.DelimiterWriter;
 
@@ -192,7 +191,7 @@ public class JmsSender {
 
     @Override
     public String toString() {
-        return "JmsSenderFactory [config=" + config + ", payloadHandler=" + payloadHandler + "]";
+        return "[config=" + config + ", payloadHandler=" + payloadHandler + "]";
     }
 
     @Override

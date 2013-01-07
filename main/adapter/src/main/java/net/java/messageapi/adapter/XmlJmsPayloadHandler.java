@@ -1,13 +1,10 @@
 package net.java.messageapi.adapter;
 
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
+import javax.jms.*;
 import javax.xml.bind.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -88,5 +85,10 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
     @Override
     public String getName() {
         return "xml";
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " (JAXB=" + jaxbProvider + ")";
     }
 }

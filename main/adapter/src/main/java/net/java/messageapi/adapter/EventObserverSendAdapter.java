@@ -1,20 +1,16 @@
 package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Set;
 
-import javax.enterprise.event.Reception;
-import javax.enterprise.event.TransactionPhase;
+import javax.enterprise.event.*;
 import javax.enterprise.inject.spi.ObserverMethod;
 import javax.enterprise.util.AnnotationLiteral;
 
-import net.java.messageapi.DynamicDestinationName;
-import net.java.messageapi.JmsOutgoing;
+import net.java.messageapi.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -91,5 +87,10 @@ public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
     @Override
     public void notify(T event) {
         sender.sendJms(event);
+    }
+
+    @Override
+    public String toString() {
+        return eventType + " -> " + sender;
     }
 }
