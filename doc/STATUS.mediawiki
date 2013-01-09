@@ -19,8 +19,6 @@
 * workaround
 ** JmsIncoming/Outgoing
 
-* doesn't work
-** JmsSelector
 
 = TODO =
 Bigger features still left to do:
