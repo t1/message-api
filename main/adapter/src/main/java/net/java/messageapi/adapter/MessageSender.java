@@ -7,11 +7,12 @@ import java.util.Enumeration;
 
 import javax.xml.bind.*;
 
+import net.java.messageapi.DestinationName;
+
 /**
  * The central provider for the proxies to send messages.
  * <p>
- * If you need your own converters or stuff in the {@link JAXBContext}, you can
- * {@link #setContext(JAXBContext) set} it.
+ * If you need your own converters or stuff in the {@link JAXBContext}, you can {@link #setContext(JAXBContext) set} it.
  * 
  * @see net.java.messageapi.MessageApi
  */
@@ -73,7 +74,14 @@ public class MessageSender {
     }
 
     public static JmsQueueConfig getDefaultConfig(Class<?> api) {
-        return new JmsQueueConfig(api.getName());
+        return new JmsQueueConfig(getStaticDestinationName(api));
+    }
+
+    private static String getStaticDestinationName(Class<?> api) {
+        DestinationName destinationName = api.getAnnotation(DestinationName.class);
+        if (destinationName == null)
+            return api.getName();
+        return destinationName.value();
     }
 
     private static InputStream getSingleUrlFor(ClassLoader classLoader, String fileName) {

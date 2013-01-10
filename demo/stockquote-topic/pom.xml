@@ -7,6 +7,7 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>Stock quote example</name>
 	<packaging>war</packaging>
+	<description>A MessageApi example sending messages to a dynamic topic, i.e. one topic per symbol</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +42,10 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
 					</archive>
 				</configuration>
 			</plugin>

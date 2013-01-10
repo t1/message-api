@@ -3,10 +3,8 @@ package net.java.messageapi.processor;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
+import javax.annotation.processing.*;
+import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.*;
@@ -41,6 +39,10 @@ abstract class AbstractGenerator {
 
     protected void note(CharSequence message) {
         messager.printMessage(Kind.NOTE, message);
+    }
+
+    protected void note(CharSequence message, Element element) {
+        messager.printMessage(Kind.NOTE, message, element);
     }
 
     protected JavaFileObject createSourceFile(String name, Element... elements) throws IOException {

@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.*;
 import net.java.messageapi.*;
 
 @XmlRootElement
-@MessageEvent
-@DestinationName("topic/test") // TODO make MessageEvent-DestinationName work
+@MessageEvent(generateMdb = true)
+@DestinationName("topic/test")
 public class StockQuote implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     @JmsProperty
     private final String symbol;
 

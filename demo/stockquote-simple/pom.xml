@@ -3,10 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.java.messageapi.demo</groupId>
-	<artifactId>stockquote-selector</artifactId>
+	<artifactId>stockquote-simple</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>Stock quote example</name>
 	<packaging>war</packaging>
+	<description>A MessageApi example sending to a generated MDB</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +42,10 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
