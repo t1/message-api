@@ -113,9 +113,8 @@ public class JmsSender {
         boolean transacted = config.isTransacted();
         String destinationName = getDestinationName(pojo);
 
-        // TODO back to debug level:
-        logger.info("sending {} transacted message to {}", transacted ? "manually" : "automatically", destinationName);
-        logger.info("payload:\n{}", payload);
+        logger.debug("sending {} transacted message to {}", transacted ? "manually" : "automatically", destinationName);
+        logger.debug("payload:\n{}", payload);
 
         Connection connection = null;
         boolean sent = false;
@@ -138,9 +137,8 @@ public class JmsSender {
                 message.setObjectProperty(additionalProperty.getKey(), additionalProperty.getValue());
             }
 
-            // TODO back to debug level:
-            if (logger.isInfoEnabled())
-                logger.info("properties: {}", properties(message));
+            if (logger.isDebugEnabled())
+                logger.debug("message properties: {}", properties(message));
 
             int deliveryMode = Message.DEFAULT_DELIVERY_MODE;
             int priority = Message.DEFAULT_PRIORITY;
