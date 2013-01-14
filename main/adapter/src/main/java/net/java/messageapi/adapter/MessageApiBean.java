@@ -5,7 +5,10 @@ import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
 
-import net.java.messageapi.*;
+import net.java.messageapi.ConnectionFactoryName;
+import net.java.messageapi.DestinationName;
+import net.java.messageapi.JmsMappedPayload;
+import net.java.messageapi.JmsSerializedPayload;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +19,7 @@ final class MessageApiBean<T> extends AbstractBean<T> {
     private final Logger log = LoggerFactory.getLogger(MessageApiBean.class);
 
     public static <T> MessageApiBean<T> of(Class<T> api, Annotation... qualifiers) {
-        return MessageApiBean.of(api, ImmutableSet.<Annotation> of(qualifiers));
+        return MessageApiBean.of(api, ImmutableSet.<Annotation> copyOf(qualifiers));
     }
 
     public static <T> MessageApiBean<T> of(Class<T> api, Set<Annotation> qualifiers) {
