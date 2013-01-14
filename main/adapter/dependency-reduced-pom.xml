@@ -179,9 +179,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.google.collections</groupId>
-      <artifactId>google-collections</artifactId>
-      <version>1.0</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>13.0.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -201,10 +201,6 @@
         <exclusion>
           <artifactId>jsr250-api</artifactId>
           <groupId>javax.annotation</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>guava</artifactId>
-          <groupId>com.google.guava</groupId>
         </exclusion>
         <exclusion>
           <artifactId>slf4j-ext</artifactId>
