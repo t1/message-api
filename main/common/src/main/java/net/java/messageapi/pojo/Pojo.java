@@ -6,9 +6,6 @@ import java.util.*;
 
 import net.java.messageapi.reflection.DelimiterWriter;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.*;
-
 /**
  * Collects properties to generate the java source for an immutable POJO (plain old java object).
  */
@@ -16,12 +13,12 @@ public class Pojo {
 
     private final String pkg;
     private final String className;
-    private final Set<String> imports = Sets.newLinkedHashSet();
+    private final Set<String> imports = new LinkedHashSet<String>();
     private final PojoAnnotations annotations = new PojoAnnotations();
-    private final List<PojoProperty> properties = Lists.newArrayList();
+    private final List<PojoProperty> properties = new ArrayList<PojoProperty>();
     private boolean privateDefaultConstructor;
     private String superClass;
-    private final List<String> interfaces = Lists.newArrayList();
+    private final List<String> interfaces = new ArrayList<String>();
 
     public Pojo(String pkg, String className) {
         this.pkg = pkg;
@@ -144,8 +141,7 @@ public class Pojo {
         writer.append("\t\tif (getClass() != obj.getClass())\n");
         writer.append("\t\t\treturn false;\n");
         if (!properties.isEmpty())
-            writer.append("\t\t").append(className).append(" other = (").append(className).append(
-                    ") obj;\n");
+            writer.append("\t\t").append(className).append(" other = (").append(className).append(") obj;\n");
         for (PojoProperty property : properties) {
             property.writeEqualsTo(writer);
         }
@@ -242,7 +238,7 @@ public class Pojo {
     }
 
     public Set<String> getImports() {
-        return ImmutableSet.copyOf(imports);
+        return new HashSet<String>(imports);
     }
 
     public String getPackage() {
@@ -254,10 +250,9 @@ public class Pojo {
     }
 
     public List<PojoProperty> getProperties() {
-        return ImmutableList.copyOf(properties);
+        return new ArrayList<PojoProperty>(properties);
     }
 
-    @VisibleForTesting
     public PojoProperty getProperty(String name) {
         for (PojoProperty property : properties) {
             if (name.equals(property.getName())) {

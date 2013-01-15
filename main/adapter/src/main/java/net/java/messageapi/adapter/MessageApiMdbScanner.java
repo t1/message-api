@@ -1,19 +1,14 @@
 package net.java.messageapi.adapter;
 
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.*;
 
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.inject.spi.*;
 import javax.enterprise.util.AnnotationLiteral;
 
-import net.java.messageapi.JmsIncoming;
-import net.java.messageapi.MessageApi;
+import net.java.messageapi.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
+import org.slf4j.*;
 
 /**
  * Scans all implementations of {@link MessageApi} interfaces, qualifies them as {@link JmsIncoming} (so they don't
@@ -43,14 +38,14 @@ class MessageApiMdbScanner {
      */
     private Set<Type> getImplementedMessageApis(AnnotatedType<?> type) {
         if (type.getJavaClass().isInterface())
-            return ImmutableSet.of();
-        ImmutableSet.Builder<Type> result = ImmutableSet.builder();
+            return Collections.emptySet();
+        Set<Type> result = new HashSet<Type>();
         for (Type implementedType : type.getTypeClosure()) {
             if (isMessageApi(implementedType)) {
                 result.add(implementedType);
             }
         }
-        return result.build();
+        return result;
     }
 
     private boolean isMessageApi(Type implementedType) {

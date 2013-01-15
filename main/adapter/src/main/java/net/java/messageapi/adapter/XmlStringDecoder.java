@@ -1,23 +1,19 @@
 package net.java.messageapi.adapter;
 
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.bind.*;
 
 import net.java.messageapi.MessageApi;
 
-import com.google.common.collect.Lists;
-
 /**
- * Takes XML Strings, deserializes them and calls the corresponding methods in an implementation of
- * some {@link MessageApi}.
+ * Takes XML Strings, deserializes them and calls the corresponding methods in an implementation of some
+ * {@link MessageApi}.
  * 
  * @param <T>
- *            the {@link MessageApi} interface that the calls are for and the <code>impl</code>
- *            implements.
+ *            the {@link MessageApi} interface that the calls are for and the <code>impl</code> implements.
  */
 public class XmlStringDecoder<T> {
 
@@ -33,8 +29,7 @@ public class XmlStringDecoder<T> {
 
     private XmlStringDecoder(Class<T> api, JaxbProvider jaxbProvider) {
         if (jaxbProvider == null)
-            throw new NullPointerException(
-                    "jaxbProvider must not be null; eventually pass JaxbProvider.UNCHANGED");
+            throw new NullPointerException("jaxbProvider must not be null; eventually pass JaxbProvider.UNCHANGED");
         this.unmarshaller = createUnmarshaller(api, jaxbProvider);
         // TODO verify by calling unmarshaller.setSchema(...)
     }
@@ -49,7 +44,7 @@ public class XmlStringDecoder<T> {
     }
 
     protected JAXBContext getContext(Class<T> api, JaxbProvider jaxbProvider) {
-        List<Class<?>> classes = Lists.newArrayList();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
         for (Method method : api.getMethods()) {
             Class<?> type = new MethodAsClassGenerator(method).get();
             classes.add(type);

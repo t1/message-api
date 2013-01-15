@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.google.common.collect.*;
-
 @RunWith(TwiP.class)
 public class JmsPropertyScannerTest {
 
@@ -162,7 +160,7 @@ public class JmsPropertyScannerTest {
 
     static class ListContainer {
         @JmsProperty
-        public List<String> list = ImmutableList.of("one", "two", "three");
+        public List<String> list = Arrays.asList("one", "two", "three");
     }
 
     @Test
@@ -176,7 +174,7 @@ public class JmsPropertyScannerTest {
 
     static class SetContainer {
         @JmsProperty
-        public Set<String> set = ImmutableSet.of("one", "two", "three");
+        public Set<String> set = new HashSet<String>(Arrays.asList("one", "two", "three"));
     }
 
     @Test
@@ -190,7 +188,12 @@ public class JmsPropertyScannerTest {
 
     static class MapContainer {
         @JmsProperty
-        public Map<String, String> map = ImmutableMap.of("one", "1", "two", "2", "three", "3");
+        public Map<String, String> map = new HashMap<String, String>();
+        {
+            map.put("one", "1");
+            map.put("two", "2");
+            map.put("three", "3");
+        }
     }
 
     @Test

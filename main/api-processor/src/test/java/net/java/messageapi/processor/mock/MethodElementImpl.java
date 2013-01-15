@@ -2,13 +2,10 @@ package net.java.messageapi.processor.mock;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
-
-import com.google.common.collect.Lists;
 
 public class MethodElementImpl extends AbstractElementImpl implements ExecutableElement {
 
@@ -27,7 +24,7 @@ public class MethodElementImpl extends AbstractElementImpl implements Executable
 
     @Override
     public List<? extends VariableElement> getParameters() {
-        List<VariableElement> result = Lists.newArrayList();
+        List<VariableElement> result = new ArrayList<VariableElement>();
         int n = method.getParameterTypes().length;
         for (int i = 0; i < n; i++) {
             result.add(new ParameterElementImpl(this, method, i));
@@ -42,7 +39,7 @@ public class MethodElementImpl extends AbstractElementImpl implements Executable
 
     @Override
     public List<? extends TypeMirror> getThrownTypes() {
-        List<TypeMirror> result = Lists.newArrayList();
+        List<TypeMirror> result = new ArrayList<TypeMirror>();
         for (Class<?> exceptionType : method.getExceptionTypes()) {
             result.add(new TypeMirrorImpl(exceptionType));
         }

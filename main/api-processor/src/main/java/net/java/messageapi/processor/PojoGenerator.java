@@ -1,26 +1,19 @@
 package net.java.messageapi.processor;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Generated;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
+import javax.annotation.processing.*;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import javax.tools.JavaFileObject;
 import javax.xml.bind.annotation.*;
 
-import net.java.messageapi.JmsProperty;
-import net.java.messageapi.Optional;
-import net.java.messageapi.pojo.Pojo;
-import net.java.messageapi.pojo.PojoProperty;
+import net.java.messageapi.*;
+import net.java.messageapi.pojo.*;
 import net.java.messageapi.reflection.ReflectionAdapter;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 public class PojoGenerator extends AbstractGenerator {
 
@@ -67,7 +60,7 @@ public class PojoGenerator extends AbstractGenerator {
         }
     }
 
-    private final List<Pojo> generatedPojos = Lists.newArrayList();
+    private final List<Pojo> generatedPojos = new ArrayList<Pojo>();
 
     public PojoGenerator(Messager messager, Filer filer, Elements utils) {
         super(messager, filer, utils);
@@ -168,12 +161,12 @@ public class PojoGenerator extends AbstractGenerator {
     }
 
     private void addAnnotations(MethodAdapter method, Pojo pojo) {
-        pojo.annotate(Generated.class, ImmutableMap.of("value", MessageApiAnnotationProcessor.class.getName()));
-        pojo.annotate(XmlRootElement.class, ImmutableMap.of("name", method.getMethodName()));
+        pojo.annotate(Generated.class, mapOf("value", MessageApiAnnotationProcessor.class.getName()));
+        pojo.annotate(XmlRootElement.class, mapOf("name", method.getMethodName()));
     }
 
     private void addProperties(MethodAdapter method, Pojo pojo) {
-        List<String> propOrder = Lists.newArrayList();
+        List<String> propOrder = new ArrayList<String>();
 
         for (VariableElement parameter : method.getParameters()) {
             String type = parameter.asType().toString();
@@ -188,20 +181,25 @@ public class PojoGenerator extends AbstractGenerator {
                 property.setTransient();
             } else {
                 boolean required = (optional == null);
-                property.annotate(XmlElement.class, ImmutableMap.of("required", required));
+                property.annotate(XmlElement.class, mapOf("required", required));
                 propOrder.add(name);
             }
         }
 
         String[] propOrderArray = propOrder.toArray(new String[propOrder.size()]);
-        pojo.annotate(XmlType.class, ImmutableMap.of("propOrder", propOrderArray));
+        pojo.annotate(XmlType.class, mapOf("propOrder", propOrderArray));
+    }
+
+    private <T> Map<String, T> mapOf(String key, T value) {
+        HashMap<String, T> map = new HashMap<String, T>();
+        map.put(key, value);
+        return map;
     }
 
     private String getParameterName(VariableElement parameter) {
         return parameter.getSimpleName().toString();
     }
 
-    @VisibleForTesting
     List<Pojo> getGeneratedPojos() {
         return generatedPojos;
     }

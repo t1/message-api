@@ -1,9 +1,6 @@
 package net.java.messageapi.reflection;
 
-import static com.google.common.base.Predicates.*;
-import static com.google.common.collect.Iterables.*;
-
-import java.util.List;
+import java.util.*;
 
 import javax.lang.model.element.*;
 
@@ -21,9 +18,12 @@ class AptReflectionAdapter extends ReflectionAdapter<ExecutableElement> {
     @Override
     protected Iterable<ExecutableElement> siblings() {
         Iterable<? extends Element> allSiblings = method.getEnclosingElement().getEnclosedElements();
-        @SuppressWarnings("unchecked")
-        Iterable<ExecutableElement> siblingMethods = (Iterable<ExecutableElement>) filter(allSiblings,
-                instanceOf(ExecutableElement.class));
+        List<ExecutableElement> siblingMethods = new ArrayList<ExecutableElement>();
+        for (Element sibling : allSiblings) {
+            if (sibling instanceof ExecutableElement) {
+                siblingMethods.add((ExecutableElement) sibling);
+            }
+        }
         return siblingMethods;
     }
 

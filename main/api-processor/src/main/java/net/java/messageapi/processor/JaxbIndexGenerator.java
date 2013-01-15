@@ -1,19 +1,13 @@
 package net.java.messageapi.processor;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
+import javax.annotation.processing.*;
+import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import javax.tools.FileObject;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.google.common.collect.*;
 
 /**
  * Annotation processor that generates <code>jaxb.index</code> files. All packages that contain at least one class that
@@ -22,7 +16,7 @@ import com.google.common.collect.*;
  */
 public class JaxbIndexGenerator extends AbstractGenerator {
 
-    private final ListMultimap<String, TypeElement> packageMap = ArrayListMultimap.create();
+    private final Map<String, List<TypeElement>> packageMap = new HashMap<String, List<TypeElement>>();
 
     public JaxbIndexGenerator(Messager messager, Filer filer, Elements utils) {
         super(messager, filer, utils);
@@ -33,13 +27,18 @@ public class JaxbIndexGenerator extends AbstractGenerator {
         // XmlRootElement can only be annotated to type elements
         TypeElement typeElement = (TypeElement) element;
         String pkg = getPackageOf(typeElement);
-        packageMap.put(pkg, typeElement);
+        List<TypeElement> list = packageMap.get(pkg);
+        if (list == null) {
+            list = new ArrayList<TypeElement>();
+            packageMap.put(pkg, list);
+        }
+        list.add(typeElement);
     }
 
     public void finish() {
         while (!packageMap.isEmpty()) {
             String key = packageMap.keySet().iterator().next();
-            List<TypeElement> types = packageMap.removeAll(key);
+            List<TypeElement> types = packageMap.remove(key);
             generate(key, types);
         }
     }
@@ -61,7 +60,7 @@ public class JaxbIndexGenerator extends AbstractGenerator {
     }
 
     private List<String> convert(List<TypeElement> elements) {
-        List<String> compound = Lists.newArrayList();
+        List<String> compound = new ArrayList<String>();
         for (TypeElement element : elements) {
             compound.add(getCompoundName(element));
         }

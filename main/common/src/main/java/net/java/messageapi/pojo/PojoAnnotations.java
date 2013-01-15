@@ -1,24 +1,21 @@
 package net.java.messageapi.pojo;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.lang.annotation.Annotation;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import net.java.messageapi.reflection.DelimiterWriter;
 
-import com.google.common.collect.*;
-
 class PojoAnnotations {
 
-    public static final Map<String, Object> NO_FIELDS = ImmutableMap.of();
+    public static final Map<String, Object> NO_FIELDS = new HashMap<String, Object>();
 
-    private static final ImmutableSet<Class<?>> BOXED_PRIMITIVES = ImmutableSet.<Class<?>> of(
-            Boolean.class, Byte.class, Short.class, Character.class, Integer.class, Long.class,
-            Float.class, Double.class);
+    private static final Set<Class<?>> BOXED_PRIMITIVES = new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
+            Boolean.class, Byte.class, Short.class, Character.class, Integer.class, Long.class, Float.class,
+            Double.class }));
 
-    private final Map<Class<Annotation>, Map<String, Object>> annotations = Maps.newLinkedHashMap();
+    private final Map<Class<Annotation>, Map<String, Object>> annotations = new LinkedHashMap<Class<Annotation>, Map<String, Object>>();
 
     @SuppressWarnings("unchecked")
     public void add(Class<? extends Annotation> type, Map<String, ?> fields) {
@@ -42,8 +39,7 @@ class PojoAnnotations {
         return "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t".substring(0, indent);
     }
 
-    private void appendAnnotationFields(Writer writer, Map<String, Object> fields, int indent)
-            throws IOException {
+    private void appendAnnotationFields(Writer writer, Map<String, Object> fields, int indent) throws IOException {
         if (fields.isEmpty()) {
             // write nothing
         } else {

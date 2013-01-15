@@ -1,8 +1,6 @@
 package net.java.messageapi.reflection;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
+import java.util.*;
 
 /**
  * @see #parse(String)
@@ -13,7 +11,7 @@ public class ParameterMatch {
      * Parse that parameter list string for the parameters with their types and names.
      */
     public static List<ParameterMatch> parse(String parameters) {
-        ImmutableList.Builder<ParameterMatch> matches = ImmutableList.builder();
+        List<ParameterMatch> matches = new ArrayList<ParameterMatch>();
         StringBuilder type = new StringBuilder();
         StringBuilder name = new StringBuilder();
         int level = 0;
@@ -57,7 +55,7 @@ public class ParameterMatch {
                 }
             }
         }
-        return matches.build();
+        return matches;
     }
 
     private static void fail(String message) {

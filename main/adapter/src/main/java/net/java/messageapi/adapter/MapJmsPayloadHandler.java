@@ -1,17 +1,13 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 import javax.jms.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.java.messageapi.JmsProperty;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * A {@link JmsPayloadHandler} that serializes the payload as map message.
@@ -33,13 +29,13 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
 
     @Override
     public Object toPayload(Object pojo) {
-        ImmutableMap.Builder<String, Object> result = ImmutableMap.builder();
+        Map<String, Object> result = new HashMap<String, Object>();
         addOperation(pojo, result);
         result.putAll(readFields(pojo));
-        return result.build();
+        return result;
     }
 
-    public void addOperation(Object pojo, ImmutableMap.Builder<String, Object> result) {
+    public void addOperation(Object pojo, Map<String, Object> result) {
         String operationName = mapping.getOperationForMethod(getSimpleTypeName(pojo));
         String operationField = mapping.getOperationMessageAttibute();
         result.put(operationField, operationName);
@@ -54,7 +50,7 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
     }
 
     private Map<String, Object> readFields(Object pojo) {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        Map<String, Object> result = new HashMap<String, Object>();
         for (Field field : pojo.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(JmsProperty.class) || Modifier.isStatic(field.getModifiers()))
                 continue;
@@ -63,10 +59,10 @@ public class MapJmsPayloadHandler extends JmsPayloadHandler {
             FieldMapping<Object> fieldMapping = (FieldMapping<Object>) mapping.getMappingForField(fieldName);
             Object value = getField(pojo, field);
             if (value != null) {
-                builder.put(fieldMapping.getAttributeName(), fieldMapping.marshal(value));
+                result.put(fieldMapping.getAttributeName(), fieldMapping.marshal(value));
             }
         }
-        return builder.build();
+        return result;
     }
 
     private Object getField(Object pojo, Field field) {

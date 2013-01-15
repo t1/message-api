@@ -1,20 +1,16 @@
 package net.java.messageapi.processor;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.util.Arrays;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
+import javax.annotation.processing.*;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import javax.tools.FileObject;
 
-import net.java.messageapi.reflection.DelimiterWriter;
-import net.java.messageapi.reflection.ParameterMapNameSupplier;
+import net.java.messageapi.reflection.*;
 
 import org.joda.time.Instant;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Generates the <code>.parametermap</code> files for the {@link net.java.messageapi.reflection.Parameter Parameter}
@@ -33,7 +29,7 @@ public class ParameterMapGenerator extends AbstractGenerator {
         String pkg = getPackageOf(type);
 
         try {
-            FileObject file = createResourceFile(pkg, fileName, ImmutableList.of(type));
+            FileObject file = createResourceFile(pkg, fileName, Arrays.asList(type));
             Writer writer = file.openWriter();
             try {
                 writeParameterMap(type, writer);

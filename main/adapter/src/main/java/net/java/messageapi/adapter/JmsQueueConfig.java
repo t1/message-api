@@ -1,19 +1,16 @@
 package net.java.messageapi.adapter;
 
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.naming.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.google.common.collect.ImmutableMap;
-
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JmsQueueConfig {
     /**
-     * By default the first parameter of {@link javax.jms.Connection#createSession(boolean, int)
-     * createSession} must be FALSE in the Java EE environment.
+     * By default the first parameter of {@link javax.jms.Connection#createSession(boolean, int) createSession} must be
+     * FALSE in the Java EE environment.
      * 
      * TODO is this really correct?
      */
@@ -52,8 +49,8 @@ public class JmsQueueConfig {
         this(factoryName, destinationName, null, null, DEFAULT_TRANSACTED, null, null);
     }
 
-    public JmsQueueConfig(String factoryName, String destinationName, String user, String pass,
-            boolean transacted, Properties contextProperties, Map<String, Object> header) {
+    public JmsQueueConfig(String factoryName, String destinationName, String user, String pass, boolean transacted,
+            Properties contextProperties, Map<String, Object> header) {
         this.factoryName = factoryName;
         this.destinationName = destinationName;
         this.user = user;
@@ -93,7 +90,7 @@ public class JmsQueueConfig {
 
     public Map<String, Object> getAdditionalProperties() {
         if (header == null)
-            return ImmutableMap.of();
+            return Collections.emptyMap();
         return header;
     }
 

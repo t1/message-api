@@ -1,17 +1,12 @@
 package net.java.messageapi.pojo;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.java.messageapi.reflection.TypeMatcher;
 
-import com.google.common.annotations.VisibleForTesting;
-
 /** TODO check why String properties add to the imports */
-@VisibleForTesting
 public abstract class PojoProperty {
 
     public static PojoProperty create(Pojo pojo, String type, String name) {

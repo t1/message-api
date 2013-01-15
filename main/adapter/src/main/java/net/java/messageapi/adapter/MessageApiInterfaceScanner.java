@@ -2,23 +2,18 @@ package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.MessageDriven;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.*;
 import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import javax.inject.Qualifier;
+import javax.inject.*;
 
 import net.java.messageapi.MessageApi;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import org.slf4j.*;
 
 /**
  * Scans all interfaces annotated as {@link MessageApi} and all injection points for them; then it creates
@@ -26,9 +21,10 @@ import com.google.common.collect.Sets;
  * annotations, they all can share the same bean.
  */
 class MessageApiInterfaceScanner {
-    private static final ImmutableSet<Annotation> DEFAULT = ImmutableSet.<Annotation> of(new AnnotationLiteral<Default>() {
+    private static final Set<Annotation> DEFAULT = new HashSet<Annotation>(Arrays.<Annotation> asList(//
+    new AnnotationLiteral<Default>() {
         private static final long serialVersionUID = 1L;
-    });
+    }));
 
     /** If there are lots of beans, it's useful to log the sum. */
     private static final int BEANCOUNT_SUM_LOG_THRESHOLD = 5;
@@ -37,8 +33,8 @@ class MessageApiInterfaceScanner {
 
     private final Logger log = LoggerFactory.getLogger(MessageApiInterfaceScanner.class);
 
-    private final Set<Class<?>> messageApis = Sets.newHashSet();
-    private final Set<BeanId> beanIds = Sets.newHashSet();
+    private final Set<Class<?>> messageApis = new HashSet<Class<?>>();
+    private final Set<BeanId> beanIds = new HashSet<BeanId>();
 
     <X> void discoverMessageApis(AnnotatedType<X> annotatedType) {
         if (annotatedType.isAnnotationPresent(MessageDriven.class))
@@ -78,14 +74,13 @@ class MessageApiInterfaceScanner {
     }
 
     private <X> Set<Annotation> qualifiers(AnnotatedField<? super X> annotatedField) {
-        ImmutableSet.Builder<Annotation> qualifiers = ImmutableSet.builder();
+        Set<Annotation> qualifiers = new HashSet<Annotation>();
         for (Annotation annotation : annotatedField.getAnnotations()) {
             if (annotation.annotationType().isAnnotationPresent(Qualifier.class)) {
                 qualifiers.add(annotation);
             }
         }
-        ImmutableSet<Annotation> result = qualifiers.build();
-        return result.isEmpty() ? DEFAULT : result;
+        return qualifiers.isEmpty() ? DEFAULT : qualifiers;
     }
 
     void discoverMessageApiInjectionPoint(InjectionPoint injectionPoint, Class<?> type) {

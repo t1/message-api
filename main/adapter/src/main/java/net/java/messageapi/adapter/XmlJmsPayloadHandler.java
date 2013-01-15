@@ -6,8 +6,6 @@ import javax.jms.*;
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 
-import com.google.common.annotations.VisibleForTesting;
-
 /**
  * A {@link JmsPayloadHandler} that serializes calls as XML text messages.
  */
@@ -32,7 +30,6 @@ public class XmlJmsPayloadHandler extends JmsPayloadHandler {
         return writer.toString();
     }
 
-    @VisibleForTesting
     public void convert(Writer writer, Object pojo) {
         Marshaller marshaller = createMarshaller(pojo);
         marshalPojo(marshaller, pojo, writer);

@@ -6,17 +6,14 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import net.java.messageapi.pojo.Pojo;
-import net.java.messageapi.pojo.PojoProperty;
+import net.java.messageapi.pojo.*;
 
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
 
 public class PojoTest {
 
     private String getOtherImports(Pojo pojo) {
-        ArrayList<String> imports = Lists.newArrayList(pojo.getImports());
+        ArrayList<String> imports = new ArrayList<String>(pojo.getImports());
         imports.remove(XmlElement.class.getName());
         return imports.toString();
     }

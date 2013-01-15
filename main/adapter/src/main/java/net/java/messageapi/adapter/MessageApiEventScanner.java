@@ -2,7 +2,7 @@ package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.*;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
@@ -11,20 +11,18 @@ import net.java.messageapi.MessageEvent;
 
 import org.slf4j.*;
 
-import com.google.common.collect.Sets;
-
 /**
  * Scans {@link MessageEvent}s and generates {@link EventObserverSendAdapter observers} to forward them to JMS.
  * 
- * TODO generate the {@link EventDecoder}-MDBs dynamically (don't know how to register them with the container)
- * TODO workaround for <a href="https://issues.jboss.org/browse/WELD-1035">WELD-1035</a> analogous to
+ * TODO generate the {@link EventDecoder}-MDBs dynamically (don't know how to register them with the container) TODO
+ * workaround for <a href="https://issues.jboss.org/browse/WELD-1035">WELD-1035</a> analogous to
  * {@link MessageApiInterfaceScanner}
  */
 public class MessageApiEventScanner {
     private final Logger log = LoggerFactory.getLogger(MessageApiEventScanner.class);
 
-    private final Set<Class<?>> messageEvents = Sets.newHashSet();
-    private final Set<ObserverMethod<?>> observers = Sets.newHashSet();
+    private final Set<Class<?>> messageEvents = new HashSet<Class<?>>();
+    private final Set<ObserverMethod<?>> observers = new HashSet<ObserverMethod<?>>();
 
     <X> void discoverMessageEvents(AnnotatedType<X> annotatedType) {
         MessageEvent annotation = annotatedType.getAnnotation(MessageEvent.class);
@@ -62,13 +60,13 @@ public class MessageApiEventScanner {
         InjectionTargetWrapper<T> wrapper = new InjectionTargetWrapper<T>(target) {
             @Override
             public Set<InjectionPoint> getInjectionPoints() {
-                Set<InjectionPoint> injectionPoints = Sets.newHashSet(super.getInjectionPoints());
+                Set<InjectionPoint> injectionPoints = new HashSet<InjectionPoint>(super.getInjectionPoints());
                 boolean removed = injectionPoints.remove(injectionPoint);
                 log.debug("removed {}: {}", injectionPoint, removed);
                 injectionPoints.add(new InjectionPointWrapper(injectionPoint) {
                     @Override
                     public Set<Annotation> getQualifiers() {
-                        Set<Annotation> qualifiers = Sets.newHashSet(super.getQualifiers());
+                        Set<Annotation> qualifiers = new HashSet<Annotation>(super.getQualifiers());
                         qualifiers.add(EventObserverSendAdapter.OUTGOING);
                         log.debug("adding @JmsOutgoing to {} -> {}", injectionPoint, qualifiers);
                         return qualifiers;

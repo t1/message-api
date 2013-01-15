@@ -1,13 +1,10 @@
 package net.java.messageapi.adapter;
 
 import java.lang.reflect.Method;
+import java.util.*;
 
-import net.java.messageapi.JmsMappedName;
-import net.java.messageapi.JmsMappedPayload;
+import net.java.messageapi.*;
 import net.java.messageapi.reflection.Parameter;
-
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
 
 public class MappingBuilder {
 
@@ -15,8 +12,8 @@ public class MappingBuilder {
     public static final Mapping DEFAULT = new MappingBuilder(DEFAULT_OPERATION_FIELD).build();
 
     private Mapping mapping;
-    private ImmutableMap.Builder<String, FieldMapping<?>> fieldMap;
-    private ImmutableBiMap.Builder<String, String> opMap;
+    private Map<String, FieldMapping<?>> fieldMap;
+    private Map<String, String> opMap;
 
     public MappingBuilder(String operationName) {
         this.mapping = new DefaultMapping(operationName);
@@ -24,8 +21,7 @@ public class MappingBuilder {
 
     public MappingBuilder(Class<?> api) {
         JmsMappedPayload annotation = api.getAnnotation(JmsMappedPayload.class);
-        String operationName = (annotation == null) ? DEFAULT_OPERATION_FIELD
-                : annotation.operationName();
+        String operationName = (annotation == null) ? DEFAULT_OPERATION_FIELD : annotation.operationName();
         this.mapping = new DefaultMapping(operationName);
 
         if (annotation != null && annotation.upperCaseFields())
@@ -66,14 +62,14 @@ public class MappingBuilder {
 
     public MappingBuilder mapField(String property, FieldMapping<?> attribute) {
         if (fieldMap == null)
-            fieldMap = ImmutableMap.builder();
+            fieldMap = new HashMap<String, FieldMapping<?>>();
         fieldMap.put(property, attribute);
         return this;
     }
 
     public MappingBuilder mapOperation(String method, String operation) {
         if (opMap == null)
-            opMap = ImmutableBiMap.builder();
+            opMap = new HashMap<String, String>();
         opMap.put(method, operation);
         return this;
     }
@@ -81,9 +77,9 @@ public class MappingBuilder {
     public Mapping build() {
         Mapping result = mapping;
         if (fieldMap != null)
-            result = new MapFieldsMapping(result, fieldMap.build());
+            result = new MapFieldsMapping(result, fieldMap);
         if (opMap != null)
-            result = new MapOperationsMapping(result, opMap.build());
+            result = new MapOperationsMapping(result, opMap);
         return new CheckedMapping(result);
     }
 }

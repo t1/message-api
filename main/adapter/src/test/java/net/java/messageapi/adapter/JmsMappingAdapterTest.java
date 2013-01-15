@@ -2,8 +2,7 @@ package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
 
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
@@ -12,9 +11,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import net.java.messageapi.adapter.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.converter.*;
 import net.sf.twip.*;
+import net.sf.twip.Assume;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 
 @RunWith(TwiP.class)
@@ -75,45 +74,11 @@ public class JmsMappingAdapterTest {
     private static final String XML = ""//
             + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
             + "<test-container>\n" //
-            + "    <mapping upperCase=\"true\" methodName=\"method\">\n"//
-            + "        <mapField to=\"A\" from=\"s1\"/>\n"//
-            + "        <mapField to=\"B\" from=\"s2\">\n"//
-            + "            <jodaInstantConverter/>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField to=\"C\" from=\"s3\">\n"//
-            + "            <jodaLocalDateConverter/>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField to=\"D\" from=\"s4\">\n"//
-            + "            <jodaLocalDateConverter pattern=\"yyyy-MM-dd\"/>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField to=\"E\" from=\"s5\">\n"//
-            + "            <stringToBooleanConverter false=\"no\" true=\"yes\"/>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField to=\"F\" from=\"s6\">\n"//
-            + "            <simpleTypeConverter/>\n"//
-            + "            <default>\n"//
-            + "                <simpleType>FFF</simpleType>\n"//
-            + "            </default>\n"//
-            + "        </mapField>\n"//
-            + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
-            + "        <mapOperation from=\"m2\">o2</mapOperation>\n"//
-            + "    </mapping>\n"//
-            + "</test-container>\n";
-
-    private static final String XML2 = ""//
-            + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
-            + "<test-container>\n" //
             + "    <mapping methodName=\"method\" upperCase=\"true\">\n"//
-            + "        <mapField from=\"s1\" to=\"A\"/>\n"//
             + "        <mapField from=\"s2\" to=\"B\">\n"//
             + "            <jodaInstantConverter/>\n"//
             + "        </mapField>\n"//
-            + "        <mapField from=\"s3\" to=\"C\">\n"//
-            + "            <jodaLocalDateConverter/>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField from=\"s4\" to=\"D\">\n"//
-            + "            <jodaLocalDateConverter pattern=\"yyyy-MM-dd\"/>\n"//
-            + "        </mapField>\n"//
+            + "        <mapField from=\"s1\" to=\"A\"/>\n"//
             + "        <mapField from=\"s5\" to=\"E\">\n"//
             + "            <stringToBooleanConverter true=\"yes\" false=\"no\"/>\n"//
             + "        </mapField>\n"//
@@ -122,6 +87,12 @@ public class JmsMappingAdapterTest {
             + "            <default>\n"//
             + "                <simpleType>FFF</simpleType>\n"//
             + "            </default>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField from=\"s3\" to=\"C\">\n"//
+            + "            <jodaLocalDateConverter/>\n"//
+            + "        </mapField>\n"//
+            + "        <mapField from=\"s4\" to=\"D\">\n"//
+            + "            <jodaLocalDateConverter pattern=\"yyyy-MM-dd\"/>\n"//
             + "        </mapField>\n"//
             + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
             + "        <mapOperation from=\"m2\">o2</mapOperation>\n"//
@@ -149,12 +120,11 @@ public class JmsMappingAdapterTest {
 
     // TODO support ECLIPSE_LINK when this bug is fixed:
     // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
-    public JmsMappingAdapterTest(
-            @NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider)
+    public JmsMappingAdapterTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider)
             throws Exception {
         this.memento = jaxbProvider.setUp();
-        this.context = JAXBContext.newInstance(Container.class, Converter.class,
-                SimpleTypeConverter.class, SimpleType.class);
+        this.context = JAXBContext.newInstance(Container.class, Converter.class, SimpleTypeConverter.class,
+                SimpleType.class);
     }
 
     @After
@@ -170,7 +140,7 @@ public class JmsMappingAdapterTest {
         marshaller.marshal(CONTAINER, writer);
 
         String actual = writer.toString().replace(" standalone=\"yes\"", "");
-        assertTrue(XML.equals(actual) || XML2.equals(actual));
+        assertEquals(XML, actual);
     }
 
     @Test

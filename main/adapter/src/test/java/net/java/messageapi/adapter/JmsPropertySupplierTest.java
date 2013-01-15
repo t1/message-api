@@ -13,8 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import com.google.common.collect.*;
-
 @RunWith(TwiP.class)
 public class JmsPropertySupplierTest {
 
@@ -263,7 +261,7 @@ public class JmsPropertySupplierTest {
 
     static class ListContainer {
         @JmsProperty
-        List<String> one = ImmutableList.of("111", "222", "333");
+        List<String> one = Arrays.asList("111", "222", "333");
     }
 
     @Test
@@ -295,7 +293,7 @@ public class JmsPropertySupplierTest {
 
     static class SetContainer {
         @JmsProperty
-        Set<String> one = ImmutableSet.of("111", "222", "333");
+        Set<String> one = new TreeSet<String>(Arrays.asList("111", "222", "333"));
     }
 
     @Test
@@ -311,7 +309,12 @@ public class JmsPropertySupplierTest {
 
     static class MapContainer {
         @JmsProperty
-        Map<String, String> one = ImmutableMap.of("aaa", "111", "bbb", "222", "ccc", "333");
+        Map<String, String> one = new HashMap<String, String>();
+        {
+            one.put("aaa", "111");
+            one.put("bbb", "222");
+            one.put("ccc", "333");
+        }
     }
 
     @Test

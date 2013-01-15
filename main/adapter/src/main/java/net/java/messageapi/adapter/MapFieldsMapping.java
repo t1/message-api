@@ -1,12 +1,12 @@
 package net.java.messageapi.adapter;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 class MapFieldsMapping extends MappingDecorator {
 
-    final ImmutableMap<String, FieldMapping<?>> map;
+    final Map<String, FieldMapping<?>> map;
 
-    public MapFieldsMapping(Mapping target, ImmutableMap<String, FieldMapping<?>> map) {
+    public MapFieldsMapping(Mapping target, Map<String, FieldMapping<?>> map) {
         super(target);
         this.map = map;
     }

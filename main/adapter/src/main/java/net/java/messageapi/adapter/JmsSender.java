@@ -10,9 +10,6 @@ import net.java.messageapi.reflection.DelimiterWriter;
 
 import org.slf4j.Logger;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-
 public class JmsSender {
 
     private final JmsQueueConfig config;
@@ -23,10 +20,10 @@ public class JmsSender {
     private ConnectionFactory connectionFactory = null;
 
     private final List<JmsHeaderSupplier> headerSuppliers;
-    private final Function<Object, String> destinationNameFunction;
+    private final DestinationNameFunction destinationNameFunction;
 
     public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger,
-            Function<Object, String> destinationNameFunction) {
+            DestinationNameFunction destinationNameFunction) {
         if (config == null)
             throw new NullPointerException();
         this.config = config;
@@ -45,12 +42,12 @@ public class JmsSender {
     }
 
     private List<JmsHeaderSupplier> loadHeaderSuppliers() {
-        ImmutableList.Builder<JmsHeaderSupplier> builder = ImmutableList.builder();
+        List<JmsHeaderSupplier> result = new ArrayList<JmsHeaderSupplier>();
         for (JmsHeaderSupplier service : ServiceLoader.load(JmsHeaderSupplier.class)) {
             logger.debug("add header supplier " + service.getClass().getName());
-            builder.add(service);
+            result.add(service);
         }
-        return builder.build();
+        return result;
     }
 
     protected void resetLookupCache() {

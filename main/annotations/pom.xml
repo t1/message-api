@@ -21,10 +21,5 @@
 			<artifactId>slf4j-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 </project>

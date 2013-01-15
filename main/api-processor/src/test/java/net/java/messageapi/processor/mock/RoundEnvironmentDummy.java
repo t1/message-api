@@ -1,18 +1,14 @@
 package net.java.messageapi.processor.mock;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-
-import com.google.common.collect.*;
+import javax.lang.model.element.*;
 
 class RoundEnvironmentDummy implements RoundEnvironment {
-    private final Set<Element> rootElements = Sets.newHashSet();
-    private final Multimap<Class<? extends Annotation>, Element> annotationMap = HashMultimap.create();
+    private final Set<Element> rootElements = new HashSet<Element>();
+    private final Map<Class<? extends Annotation>, Set<Element>> annotationMap = new HashMap<Class<? extends Annotation>, Set<Element>>();
     private boolean processingOver;
 
     private boolean errorRaised;
@@ -29,7 +25,7 @@ class RoundEnvironmentDummy implements RoundEnvironment {
 
     @Override
     public Set<? extends Element> getElementsAnnotatedWith(Class<? extends Annotation> a) {
-        return Collections.unmodifiableSet((Set<? extends Element>) annotationMap.get(a));
+        return Collections.unmodifiableSet(annotationMap.get(a));
     }
 
     @Override
@@ -46,14 +42,19 @@ class RoundEnvironmentDummy implements RoundEnvironment {
         TypeElement typeElement = new TypeElementImpl(type);
         rootElements.add(typeElement);
         for (Annotation annotation : type.getAnnotations()) {
-            annotationMap.put(annotation.annotationType(), typeElement);
+            Set<Element> set = annotationMap.get(annotation.annotationType());
+            if (set == null) {
+                set = new HashSet<Element>();
+                annotationMap.put(annotation.annotationType(), set);
+            }
+            set.add(typeElement);
         }
     }
 
     @Override
     public String toString() {
-        return "[errorRaised=" + errorRaised + ", annotationMap=" + annotationMap
-                + ", processingOver=" + processingOver + "]";
+        return "[errorRaised=" + errorRaised + ", annotationMap=" + annotationMap + ", processingOver="
+                + processingOver + "]";
     }
 
     void setProcessingOver(boolean processingOver) {

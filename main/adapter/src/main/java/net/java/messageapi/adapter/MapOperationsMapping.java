@@ -1,20 +1,24 @@
 package net.java.messageapi.adapter;
 
-import com.google.common.collect.ImmutableBiMap;
+import java.util.Map;
 
 class MapOperationsMapping extends MappingDecorator {
 
-    final ImmutableBiMap<String, String> map;
+    final Map<String, String> map;
 
-    public MapOperationsMapping(Mapping target, ImmutableBiMap<String, String> map) {
+    public MapOperationsMapping(Mapping target, Map<String, String> map) {
         super(target);
         this.map = map;
     }
 
     @Override
     public String getMethodForOperation(String operationName) {
-        final String value = map.inverse().get(operationName);
-        return (value == null) ? super.getMethodForOperation(operationName) : value;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (operationName.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return super.getMethodForOperation(operationName);
     }
 
     @Override

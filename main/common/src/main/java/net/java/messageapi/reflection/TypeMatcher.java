@@ -1,17 +1,12 @@
 package net.java.messageapi.reflection;
 
 import java.io.StringWriter;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.util.*;
+import java.util.regex.*;
 
 public class TypeMatcher {
-    private static final Set<String> PRIMITIVES = ImmutableSet.of("boolean", "byte", "char",
-            "short", "int", "long", "float", "double");
+    private static final Set<String> PRIMITIVES = new HashSet<String>(Arrays.asList(new String[] { //
+    "boolean", "byte", "char", "short", "int", "long", "float", "double" }));
 
     private static final Pattern TYPE_PATTERN = Pattern.compile("^([a-z.]*\\.)?([A-Za-z.]*)(<.*>)?(\\[\\])?$");
 
@@ -52,11 +47,11 @@ public class TypeMatcher {
     }
 
     /**
-     * The list of all package names and the raw types that are required to make this type
-     * {@link #getLocalType() local}.
+     * The list of all package names and the raw types that are required to make this type {@link #getLocalType() local}
+     * .
      */
     public List<String> getImportTypesFor(String containerPackage) {
-        ImmutableList.Builder<String> result = ImmutableList.builder();
+        List<String> result = new ArrayList<String>();
         if (requiresImportFor(containerPackage))
             result.add(pkg + rawType);
         if (generic != null) {
@@ -64,17 +59,17 @@ public class TypeMatcher {
                 result.addAll(subType.getImportTypesFor(containerPackage));
             }
         }
-        return result.build();
+        return result;
     }
 
     private List<TypeMatcher> getGenericTypeMatchers() {
-        ImmutableList.Builder<TypeMatcher> result = ImmutableList.builder();
+        List<TypeMatcher> result = new ArrayList<TypeMatcher>();
 
         for (String genericParameter : parseGeneric()) {
             result.add(new TypeMatcher(genericParameter));
         }
 
-        return result.build();
+        return result;
     }
 
     /** Split that generic parameter list into separate type names. */
@@ -82,7 +77,7 @@ public class TypeMatcher {
         char[] gen = generic.substring(1).toCharArray(); // remove initial '<'
         gen[gen.length - 1] = ','; // replace final '>' with comma sentinel
 
-        ImmutableList.Builder<String> matches = ImmutableList.builder();
+        List<String> matches = new ArrayList<String>();
         StringBuilder type = new StringBuilder();
         int level = 0;
         for (char c : gen) {
@@ -114,7 +109,7 @@ public class TypeMatcher {
                 type.append(c);
             }
         }
-        return matches.build();
+        return matches;
     }
 
     private void fail(String message) {

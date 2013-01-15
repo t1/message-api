@@ -4,8 +4,7 @@ import static net.sf.twip.verify.Verify.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.enterprise.util.AnnotationLiteral;
 
@@ -14,8 +13,6 @@ import net.sf.twip.TwiP;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(TwiP.class)
 public class MessageApiBeanTest {
@@ -51,7 +48,7 @@ public class MessageApiBeanTest {
         }
     }
 
-    private static final Map<String, Object> EMPTY_PROPS = ImmutableMap.of();
+    private static final Map<String, Object> EMPTY_PROPS = Collections.emptyMap();
 
     @MessageApi
     public static interface DummyApi {

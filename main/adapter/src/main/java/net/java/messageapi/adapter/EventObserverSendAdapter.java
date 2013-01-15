@@ -2,7 +2,7 @@ package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.Set;
+import java.util.*;
 
 import javax.enterprise.event.*;
 import javax.enterprise.inject.spi.ObserverMethod;
@@ -12,15 +12,12 @@ import net.java.messageapi.*;
 
 import org.slf4j.*;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-
 public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
 
     static final AnnotationLiteral<JmsOutgoing> OUTGOING = new AnnotationLiteral<JmsOutgoing>() {
         private static final long serialVersionUID = 1L;
     };
-    private static final ImmutableSet<Annotation> QUALIFIERS = ImmutableSet.<Annotation> of(OUTGOING);
+    private static final Set<Annotation> QUALIFIERS = Collections.<Annotation> singleton(OUTGOING);
 
     private final Class<T> eventType;
     private final Logger logger;
@@ -40,7 +37,7 @@ public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
         // TODO allow other payload handlers
         XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler();
         // TODO join with EventDecoder
-        Function<Object, String> destinationNameFunction = new Function<Object, String>() {
+        DestinationNameFunction destinationNameFunction = new DestinationNameFunction() {
             @Override
             public String apply(Object from) {
                 for (Field field : from.getClass().getDeclaredFields()) {

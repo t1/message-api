@@ -3,12 +3,10 @@ package net.java.messageapi.adapter;
 import java.lang.reflect.*;
 import java.util.Arrays;
 
-import com.google.common.base.Function;
-
 /**
  * Creates instances of the class corresponding to a method invocation.
  */
-public class MessageCallFactory<T> implements Function<Object[], T> {
+public class MessageCallFactory<T> {
 
     private final Method method;
     private final Class<T> pojoClass;
@@ -23,7 +21,6 @@ public class MessageCallFactory<T> implements Function<Object[], T> {
         return (Class<T>) new MethodAsClassGenerator(method).get();
     }
 
-    @Override
     public T apply(Object[] args) {
         try {
             Class<?>[] argTypes = getArgTypes(args);

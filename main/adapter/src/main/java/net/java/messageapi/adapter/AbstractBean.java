@@ -2,15 +2,11 @@ package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionPoint;
-
-import com.google.common.collect.Sets;
+import javax.enterprise.inject.spi.*;
 
 public abstract class AbstractBean<T> implements Bean<T> {
     protected final Class<T> type;
@@ -51,7 +47,7 @@ public abstract class AbstractBean<T> implements Bean<T> {
 
     @Override
     public Set<Type> getTypes() {
-        return Sets.<Type> newHashSet(type, Object.class);
+        return new HashSet<Type>(Arrays.<Type> asList(type, Object.class));
     }
 
     @Override

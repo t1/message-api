@@ -7,9 +7,6 @@ import javax.jms.*;
 
 import net.java.messageapi.MessageApi;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 /**
  * Takes a {@link MapMessage}, deserializes it and calls the corresponding method in an implementation of some
  * {@link MessageApi}. If a parameter is missing in the map, zero or @code null is used (depending on the type).
@@ -51,7 +48,7 @@ public class MapMessageDecoder<T> implements MessageListener {
     }
 
     private Map<String, String> convert(MapMessage message) {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        Map<String, String> result = new HashMap<String, String>();
         try {
             @SuppressWarnings("unchecked")
             Enumeration<String> mapNames = message.getMapNames();
@@ -60,9 +57,9 @@ public class MapMessageDecoder<T> implements MessageListener {
                 String value = message.getString(name);
                 if (value == null)
                     throw new RuntimeException("no value for field [" + name + "]");
-                builder.put(name, value);
+                result.put(name, value);
             }
-            return builder.build();
+            return result;
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
@@ -131,11 +128,11 @@ public class MapMessageDecoder<T> implements MessageListener {
     }
 
     private Collection<Field> getFields(Object pojo) {
-        ImmutableSet.Builder<Field> builder = ImmutableSet.builder();
+        Set<Field> result = new HashSet<Field>();
         for (Field f : pojo.getClass().getDeclaredFields()) {
-            builder.add(f);
+            result.add(f);
         }
-        return builder.build();
+        return result;
     }
 
     private Object convertType(String convertable, Class<?> type) {

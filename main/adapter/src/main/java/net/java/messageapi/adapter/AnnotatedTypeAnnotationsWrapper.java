@@ -1,22 +1,20 @@
 package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
-import java.util.Set;
+import java.util.*;
 
 import javax.enterprise.inject.spi.AnnotatedType;
 
-import com.google.common.collect.ImmutableSet;
-
 public class AnnotatedTypeAnnotationsWrapper<X> extends AnnotatedTypeWrapper<X> {
 
-    private final ImmutableSet<Annotation> annotations;
+    private final Set<Annotation> annotations;
 
     public AnnotatedTypeAnnotationsWrapper(AnnotatedType<X> target, Annotation annotation) {
         super(target);
-        ImmutableSet.Builder<Annotation> builder = ImmutableSet.builder();
-        builder.addAll(super.getAnnotations());
-        builder.add(annotation);
-        this.annotations = builder.build();
+        Set<Annotation> result = new HashSet<Annotation>();
+        result.addAll(super.getAnnotations());
+        result.add(annotation);
+        this.annotations = Collections.unmodifiableSet(result);
     }
 
     @Override

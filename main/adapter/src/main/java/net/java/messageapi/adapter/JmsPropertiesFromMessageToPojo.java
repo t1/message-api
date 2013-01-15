@@ -2,13 +2,9 @@ package net.java.messageapi.adapter;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-
-import com.google.common.collect.*;
+import javax.jms.*;
 
 class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     public static void scan(Message message, Object pojo) {
@@ -67,7 +63,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     }
 
     private List<String> getListProperty(String propertyName) throws JMSException {
-        List<String> list = Lists.newArrayList();
+        List<String> list = new ArrayList<String>();
         Pattern pattern = Pattern.compile("^" + propertyName + "\\[([0-9]+)\\]$");
         @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
@@ -86,7 +82,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     }
 
     private Set<String> getSetProperty(String propertyName) throws JMSException {
-        Set<String> set = Sets.newHashSet();
+        Set<String> set = new HashSet<String>();
         Pattern pattern = Pattern.compile("^" + propertyName + "\\[([0-9]+)\\]$");
         @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
@@ -102,7 +98,7 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
     }
 
     private Map<String, String> getMapProperty(String propertyName) throws JMSException {
-        ImmutableMap.Builder<String, String> map = ImmutableMap.builder();
+        Map<String, String> map = new HashMap<String, String>();
         Pattern pattern = Pattern.compile("^" + propertyName + "\\[([^\\]]+)\\]$");
         @SuppressWarnings("unchecked")
         Enumeration<String> propertyNames = message.getPropertyNames();
@@ -115,6 +111,6 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
                 map.put(key, value);
             }
         }
-        return map.build();
+        return map;
     }
 }

@@ -4,11 +4,8 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.common.collect.ImmutableList;
+import java.util.*;
+import java.util.regex.*;
 
 public class ParameterMapNameSupplier implements ParameterNameSupplier {
 
@@ -31,7 +28,7 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
                 for (String line = readLine(content); line != null; line = readLine(content)) {
                     if (line.startsWith("#"))
                         continue;
-                    ImmutableList<String> matchedNames = matchedNames(line, method);
+                    List<String> matchedNames = matchedNames(line, method);
                     if (matchedNames == null)
                         continue;
                     return matchedNames.get(index);
@@ -76,7 +73,7 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
         }
     }
 
-    private ImmutableList<String> matchedNames(String line, Method method) {
+    private List<String> matchedNames(String line, Method method) {
         Matcher methodMatcher = METHOD_SIGNATURE.matcher(line);
         if (!methodMatcher.matches())
             throw new InvalidParameterMapFileException(method, "[" + line
@@ -84,7 +81,7 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
         if (!method.getName().equals(methodMatcher.group(1)))
             return null;
 
-        ImmutableList.Builder<String> names = ImmutableList.builder();
+        List<String> names = new ArrayList<String>();
         List<ParameterMatch> matches = ParameterMatch.parse(methodMatcher.group(2));
         for (int i = 0; i < method.getParameterTypes().length; i++) {
             Class<?> type = method.getParameterTypes()[i];
@@ -94,6 +91,6 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
             names.add(match.getParameterName());
         }
 
-        return names.build();
+        return names;
     }
 }

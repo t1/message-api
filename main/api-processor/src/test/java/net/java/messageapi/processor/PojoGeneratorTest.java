@@ -8,16 +8,14 @@ import java.io.Serializable;
 import java.util.*;
 
 import javax.annotation.Generated;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
+import javax.annotation.processing.*;
 import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.*;
-import net.java.messageapi.pojo.Pojo;
-import net.java.messageapi.pojo.PojoProperty;
+import net.java.messageapi.pojo.*;
 import net.java.messageapi.processor.mock.*;
 
 import org.joda.time.Instant;
@@ -26,19 +24,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-
 @RunWith(MockitoJUnitRunner.class)
 public class PojoGeneratorTest {
 
-    private static final Set<String> REQUIRED_IMPORTS = ImmutableSet.of( //
+    private static final Set<String> REQUIRED_IMPORTS = new HashSet<String>(Arrays.asList( //
             Generated.class.getName(), //
             XmlRootElement.class.getName(), //
             XmlType.class.getName(), //
             XmlElement.class.getName(), //
-            Serializable.class.getName());
+            Serializable.class.getName()));
 
     private static final String PACKAGE = PojoGeneratorTest.class.getPackage().getName();
 
@@ -78,14 +72,18 @@ public class PojoGeneratorTest {
     }
 
     private void assertPojoGenerated(final String pojoName) {
-        Pojo generated = Iterables.find(getGeneratedPojos(), new Predicate<Pojo>() {
-            @Override
-            public boolean apply(Pojo input) {
-                return input.getSimplifiedClassName().equals(pojoName);
-            }
-        });
+        Pojo generated = find(getGeneratedPojos(), pojoName);
         assertNotNull(generated);
         getGeneratedPojos().remove(generated);
+    }
+
+    private Pojo find(List<Pojo> pojos, String name) {
+        for (Pojo pojo : pojos) {
+            if (pojo.getSimplifiedClassName().equals(name)) {
+                return pojo;
+            }
+        }
+        throw new IllegalArgumentException("can't find " + name);
     }
 
     @MessageApi
@@ -161,9 +159,12 @@ public class PojoGeneratorTest {
     public void noArgPojoShouldImportOnlyRequiredClasses() throws Exception {
         convert(NoArgApi.class);
 
-        Set<String> expected = ImmutableSet.of(Generated.class.getName(), XmlRootElement.class.getName(),
-                XmlType.class.getName(), Serializable.class.getName());
-        assertEquals(expected, popPojo().getImports());
+        Set<String> imports = popPojo().getImports();
+        assertEquals(4, imports.size());
+        assertTrue(imports.contains(Generated.class.getName()));
+        assertTrue(imports.contains(XmlRootElement.class.getName()));
+        assertTrue(imports.contains(XmlType.class.getName()));
+        assertTrue(imports.contains(Serializable.class.getName()));
     }
 
     @Test
@@ -246,8 +247,8 @@ public class PojoGeneratorTest {
     public void instantPojoShouldImportInstant() throws Exception {
         convert(InstantApi.class);
 
-        ImmutableSet<String> expected = ImmutableSet.<String> builder().addAll(REQUIRED_IMPORTS).add(
-                Instant.class.getName()).build();
+        Set<String> expected = new HashSet<String>(REQUIRED_IMPORTS);
+        expected.add(Instant.class.getName());
         assertEquals(expected, popPojo().getImports());
     }
 

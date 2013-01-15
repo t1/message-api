@@ -34,11 +34,6 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.seam.solder</groupId>
 			<artifactId>seam-solder-api</artifactId>
 			<version>3.0.0.Final</version>

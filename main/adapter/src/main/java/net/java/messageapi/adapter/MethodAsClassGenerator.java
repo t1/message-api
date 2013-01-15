@@ -1,34 +1,29 @@
 package net.java.messageapi.adapter;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.*;
 
 import javassist.*;
 
 import javax.xml.bind.annotation.*;
 
-import net.java.messageapi.JmsProperty;
-import net.java.messageapi.Optional;
-import net.java.messageapi.reflection.Parameter;
-import net.java.messageapi.reflection.ReflectionAdapter;
-
-import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
+import net.java.messageapi.*;
+import net.java.messageapi.reflection.*;
 
 /**
  * TODO some of the logic in here is duplicated in the annotation processor; it's not going to change much, so that's
  * not a huge deal, but separating the concern of what has to go into the pojo, from the concern of how to put that into
  * source resp. bytecode, would make everything easier to understand.
  */
-public class MethodAsClassGenerator implements Supplier<Class<?>> {
+public class MethodAsClassGenerator {
 
     private final ReflectionAdapter<Method> reflectionAdapter;
     private final List<Parameter> parameters;
     private final ClassPool classPool;
     private CtClass ctClass;
     private final Class<?> result;
-    private final List<String> xmlTypePropOrder = Lists.newArrayList();
-    private final List<String> totalPropOrder = Lists.newArrayList();
+    private final List<String> xmlTypePropOrder = new ArrayList<String>();
+    private final List<String> totalPropOrder = new ArrayList<String>();
 
     public MethodAsClassGenerator(Method method) {
         this.classPool = getClassPool(method);
@@ -107,7 +102,7 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
     }
 
     private void addFullConstructor() throws NotFoundException, CannotCompileException {
-        List<CtClass> argTypes = Lists.newArrayList();
+        List<CtClass> argTypes = new ArrayList<CtClass>();
         String constructorBody = constructorBody(argTypes);
 
         CtClass[] argTypeArray = argTypes.toArray(new CtClass[argTypes.size()]);
@@ -158,7 +153,6 @@ public class MethodAsClassGenerator implements Supplier<Class<?>> {
         return field;
     }
 
-    @Override
     public Class<?> get() {
         return result;
     }

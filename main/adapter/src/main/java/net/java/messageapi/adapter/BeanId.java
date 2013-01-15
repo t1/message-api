@@ -1,9 +1,7 @@
 package net.java.messageapi.adapter;
 
 import java.lang.annotation.Annotation;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
+import java.util.*;
 
 /** A CDI bean is identified by its type and qualifiers */
 class BeanId {
@@ -12,7 +10,7 @@ class BeanId {
 
     BeanId(Class<?> type, Set<Annotation> qualifiers) {
         this.type = type;
-        this.qualifiers = ImmutableSet.copyOf(qualifiers);
+        this.qualifiers = new HashSet<Annotation>(qualifiers);
     }
 
     @Override

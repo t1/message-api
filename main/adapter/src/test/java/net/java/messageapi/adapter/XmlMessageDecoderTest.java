@@ -4,18 +4,14 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
-import net.java.messageapi.JmsProperty;
-import net.java.messageapi.Optional;
+import net.java.messageapi.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.*;
 
 /**
  * This is actually an integration test within the adapter classes
@@ -358,7 +354,7 @@ public class XmlMessageDecoderTest {
 
         decoder.onMessage(message);
 
-        verify(implList).testMethodHeaderOnly("foo", ImmutableList.of("one", "two", "three"));
+        verify(implList).testMethodHeaderOnly("foo", Arrays.asList("one", "two", "three"));
     }
 
     public interface TestInterfaceHeaderOnlyArray {
@@ -410,7 +406,8 @@ public class XmlMessageDecoderTest {
 
         decoder.onMessage(message);
 
-        verify(implSet).testMethodHeaderOnly("foo", ImmutableSet.of("one", "two", "three"));
+        Set<String> set = new HashSet<String>(Arrays.asList("one", "two", "three"));
+        verify(implSet).testMethodHeaderOnly("foo", set);
     }
 
     public interface TestInterfaceHeaderOnlyMap {
@@ -436,6 +433,10 @@ public class XmlMessageDecoderTest {
 
         decoder.onMessage(message);
 
-        verify(implMap).testMethodHeaderOnly("foo", ImmutableMap.of("A", "one", "B", "two", "C", "three"));
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("A", "one");
+        map.put("B", "two");
+        map.put("C", "three");
+        verify(implMap).testMethodHeaderOnly("foo", map);
     }
 }

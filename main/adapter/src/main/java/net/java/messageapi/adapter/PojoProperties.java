@@ -1,18 +1,13 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 
 import javax.xml.bind.annotation.XmlType;
 
 import net.java.messageapi.reflection.Parameter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
+import org.slf4j.*;
 
 class PojoProperties {
     final Logger log = LoggerFactory.getLogger(PojoProperties.class);
@@ -22,7 +17,7 @@ class PojoProperties {
     public static PojoProperties of(Object pojo) {
         Class<? extends Object> pojoType = pojo.getClass();
         List<String> propOrder = getPropOrder(pojoType);
-        List<Object> result = Lists.newArrayList();
+        List<Object> result = new ArrayList<Object>();
         for (Method method : pojoType.getMethods()) {
             if (!isGetter(method))
                 continue;
@@ -121,7 +116,7 @@ class PojoProperties {
     }
 
     public Object[] getArgs() {
-        List<Object> result = Lists.newArrayList();
+        List<Object> result = new ArrayList<Object>();
         for (int i = 0; i < properties.size(); i++) {
             Object property = properties.get(i);
             result.add(property);
