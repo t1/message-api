@@ -299,13 +299,24 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>non-release</id>
+			<activation>
+				<property>
+					<name>!prepareRelease</name>
+				</property>
+			</activation>
+			<modules>
+				<!-- these don't need to be released and miss release config -->
+				<module>test</module>
+				<module>demo</module>
+			</modules>
+		</profile>
 	</profiles>
 
 	<modules>
 		<module>main</module>
 		<module>archetype</module>
-		<!-- exclude <module>test</module>; doesn't build when releasing -->
-		<!-- exclude <module>demo</module>; it's not being released -->
 	</modules>
 
 	<dependencyManagement>
