@@ -304,7 +304,7 @@
 	<modules>
 		<module>main</module>
 		<module>archetype</module>
-		<module>test</module>
+		<!-- exclude <module>test</module>; doesn't build when releasing -->
 		<!-- exclude <module>demo</module>; it's not being released -->
 	</modules>
 
