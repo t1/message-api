@@ -4,6 +4,7 @@
 mvn -DprepareRelease clean release:prepare
 
 # put the password into system properties, so GPG doesn't block
+# see http://jira.codehaus.org/browse/MGPG-9
 read -p "please enter the GPG passphrase: " -s PWD
 echo .
 mvn -Dgpg.passphrase="$PWD" -Darguments="-Dgpg.passphrase=$PWD" release:perform
