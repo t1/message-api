@@ -10,12 +10,16 @@ import javax.xml.bind.annotation.*;
 import net.java.messageapi.*;
 import net.java.messageapi.reflection.*;
 
+import org.slf4j.*;
+
 /**
  * TODO some of the logic in here is duplicated in the annotation processor; it's not going to change much, so that's
  * not a huge deal, but separating the concern of what has to go into the pojo, from the concern of how to put that into
  * source resp. bytecode, would make everything easier to understand.
  */
 public class MethodAsClassGenerator {
+
+    private final Logger log = LoggerFactory.getLogger(MethodAsClassGenerator.class);
 
     private final ReflectionAdapter<Method> reflectionAdapter;
     private final List<Parameter> parameters;
@@ -35,7 +39,9 @@ public class MethodAsClassGenerator {
 
     private ClassPool getClassPool(Method method) {
         ClassPool pool = new ClassPool(true);
-        pool.insertClassPath(new LoaderClassPath(method.getDeclaringClass().getClassLoader()));
+        ClassLoader classLoader = method.getDeclaringClass().getClassLoader();
+        log.info("generate class for {} in {}", method, classLoader);
+        pool.insertClassPath(new LoaderClassPath(classLoader));
         return pool;
     }
 

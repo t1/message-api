@@ -20,18 +20,18 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
     }
 
     @Override
-    public String get(Method method, int index) {
+    public String get(Parameter parameter) {
         LineNumberReader content = null;
         try {
-            content = getParameterMap(method);
+            content = getParameterMap(parameter.getMethod());
             if (content != null) {
                 for (String line = readLine(content); line != null; line = readLine(content)) {
                     if (line.startsWith("#"))
                         continue;
-                    List<String> matchedNames = matchedNames(line, method);
+                    List<String> matchedNames = matchedNames(line, parameter.getMethod());
                     if (matchedNames == null)
                         continue;
-                    return matchedNames.get(index);
+                    return matchedNames.get(parameter.getIndex());
                 }
             }
         } finally {
@@ -43,7 +43,7 @@ public class ParameterMapNameSupplier implements ParameterNameSupplier {
                 }
             }
         }
-        return delegate.get(method, index);
+        return delegate.get(parameter);
     }
 
     private LineNumberReader getParameterMap(Method method) {

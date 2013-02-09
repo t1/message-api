@@ -1,11 +1,10 @@
 package net.java.messageapi.reflection;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.lang.reflect.Modifier;
 
 import javassist.*;
-import javassist.bytecode.CodeAttribute;
-import javassist.bytecode.LocalVariableAttribute;
+import javassist.bytecode.*;
 
 /**
  * Read the debug info from the class file of the method, if the class was compiled with debug information and is not an
@@ -22,18 +21,21 @@ public class DebugInfoParameterNameSupplier implements ParameterNameSupplier {
     }
 
     @Override
-    public String get(Method method, int index) {
+    public String get(Parameter parameter) {
         try {
-            String parameterName = getParameterNameOrThrow(method, index);
+            String parameterName = getParameterNameOrThrow(parameter);
             if (parameterName == null)
-                return delegate.get(method, index);
+                return delegate.get(parameter);
             return parameterName;
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static String getParameterNameOrThrow(Method method, int index) throws NotFoundException {
+    private static String getParameterNameOrThrow(Parameter parameter) throws NotFoundException {
+        Method method = parameter.getMethod();
+        int index = parameter.getIndex();
+
         checkIndex(method, index);
 
         LocalVariableAttribute localVariables = getLocalVariableTable(method);

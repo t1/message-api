@@ -21,9 +21,11 @@ public class JmsSender {
 
     private final List<JmsHeaderSupplier> headerSuppliers;
     private final DestinationNameFunction destinationNameFunction;
+    private final Class<?> api;
 
-    public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Logger logger,
+    public JmsSender(JmsQueueConfig config, JmsPayloadHandler payloadHandler, Class<?> api, Logger logger,
             DestinationNameFunction destinationNameFunction) {
+        this.api = api;
         if (config == null)
             throw new NullPointerException();
         this.config = config;
@@ -126,8 +128,8 @@ public class JmsSender {
             Message message = payloadHandler.createJmsMessage(payload, session);
 
             for (JmsHeaderSupplier supplier : headerSuppliers) {
-                logger.debug("adding header of " + supplier.getClass().getName());
-                supplier.addTo(message, pojo);
+                logger.debug("adding header of {}", supplier.getClass().getName());
+                supplier.addTo(message, api, pojo);
             }
 
             for (Map.Entry<String, Object> additionalProperty : config.getAdditionalProperties().entrySet()) {

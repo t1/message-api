@@ -5,8 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class MethodNameHelperTest {
 
@@ -38,8 +37,7 @@ public class MethodNameHelperTest {
     }
 
     private final ParameterNameSupplier delegate = mock(ParameterNameSupplier.class);
-    private final DebugInfoParameterNameSupplier supplier = new DebugInfoParameterNameSupplier(
-            delegate);
+    private final DebugInfoParameterNameSupplier supplier = new DebugInfoParameterNameSupplier(delegate);
 
     private Method noArgs;
     private Method oneArg;
@@ -59,7 +57,7 @@ public class MethodNameHelperTest {
     }
 
     private String getParameterName(Method method, int index) {
-        return supplier.get(method, index);
+        return supplier.get(new Parameter(method, index));
     }
 
     @Test(expected = RuntimeException.class)
@@ -99,13 +97,13 @@ public class MethodNameHelperTest {
 
     @Test
     public void shouldNotFindParameterNameFromInterfaceMethod() throws Exception {
-        when(delegate.get(interfaceOneArg, 0)).thenReturn("from-mock");
+        when(delegate.get(new Parameter(interfaceOneArg, 0))).thenReturn("from-mock");
         assertEquals("from-mock", getParameterName(interfaceOneArg, 0));
     }
 
     @Test
     public void shouldNotFindParameterNameFromAbstractMethod() throws Exception {
-        when(delegate.get(abstractOneArg, 0)).thenReturn("from-mock");
+        when(delegate.get(new Parameter(abstractOneArg, 0))).thenReturn("from-mock");
         assertEquals("from-mock", getParameterName(abstractOneArg, 0));
     }
 

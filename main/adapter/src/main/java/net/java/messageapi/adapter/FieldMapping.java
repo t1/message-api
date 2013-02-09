@@ -1,7 +1,6 @@
 package net.java.messageapi.adapter;
 
-import net.java.messageapi.converter.Converter;
-import net.java.messageapi.converter.IdentityConverter;
+import net.java.messageapi.converter.*;
 
 public final class FieldMapping<BoundType> {
 
@@ -13,14 +12,13 @@ public final class FieldMapping<BoundType> {
         return mapWithDefault(attributeName, null, defaultValue);
     }
 
-    public static <BoundType> FieldMapping<BoundType> map(String attributeName,
-            Converter<BoundType> converter) {
-        return new FieldMapping<BoundType>(attributeName, converter);
+    public static <BoundType> FieldMapping<BoundType> map(String attributeName, Converter<BoundType> converter) {
+        return new FieldMapping<BoundType>(attributeName, converter, false, null);
     }
 
     public static <BoundType> FieldMapping<BoundType> mapWithDefault(String attributeName,
             Converter<BoundType> converter, BoundType defaultValue) {
-        return new FieldMapping<BoundType>(attributeName, converter, defaultValue);
+        return new FieldMapping<BoundType>(attributeName, converter, true, defaultValue);
     }
 
     private final String attributeName;
@@ -28,23 +26,15 @@ public final class FieldMapping<BoundType> {
     private final boolean hasDefaultValue;
     private final BoundType defaultValue;
 
-    private FieldMapping(String attributeName, Converter<BoundType> converter) {
-        this.attributeName = attributeName;
-        this.converter = converterOrIdentity(converter);
-        hasDefaultValue = false;
-        defaultValue = null;
-    }
-
-    private FieldMapping(String attributeName, Converter<BoundType> converter,
+    private FieldMapping(String attributeName, Converter<BoundType> converter, boolean hasDefaultValue,
             BoundType defaultValue) {
         this.attributeName = attributeName;
         this.converter = converterOrIdentity(converter);
-        this.hasDefaultValue = true;
+        this.hasDefaultValue = hasDefaultValue;
         this.defaultValue = defaultValue;
     }
 
-    private Converter<BoundType> converterOrIdentity(
-            @SuppressWarnings("hiding") Converter<BoundType> converter) {
+    private Converter<BoundType> converterOrIdentity(@SuppressWarnings("hiding") Converter<BoundType> converter) {
         return (converter == null) ? new IdentityConverter<BoundType>() : converter;
     }
 

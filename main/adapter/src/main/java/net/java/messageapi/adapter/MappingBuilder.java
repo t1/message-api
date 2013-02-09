@@ -33,7 +33,7 @@ public class MappingBuilder {
     }
 
     private void mapMethod(Method method) {
-        JmsMappedName mappedOperation = method.getAnnotation(JmsMappedName.class);
+        JmsName mappedOperation = method.getAnnotation(JmsName.class);
         if (mappedOperation != null) {
             String methodName = method.getName();
             String mappedName = mappedOperation.value();
@@ -45,7 +45,7 @@ public class MappingBuilder {
     }
 
     private void mapParameter(Parameter parameter) {
-        JmsMappedName mappedParameter = parameter.getAnnotation(JmsMappedName.class);
+        JmsName mappedParameter = parameter.getAnnotation(JmsName.class);
         if (mappedParameter != null) {
             mapField(parameter.getName(), mappedParameter.value());
         }

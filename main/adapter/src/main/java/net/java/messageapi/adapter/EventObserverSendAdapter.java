@@ -53,7 +53,7 @@ public class EventObserverSendAdapter<T> implements ObserverMethod<T> {
                 return null;
             }
         };
-        return new JmsSender(config, payloadHandler, logger, destinationNameFunction);
+        return new JmsSender(config, payloadHandler, eventType, logger, destinationNameFunction);
     }
 
     @Override

@@ -4,8 +4,7 @@ import java.lang.reflect.*;
 
 import javax.xml.bind.annotation.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 /**
  * A {@link MessageSenderFactory} that transfers calls using JMS. A {@link JmsQueueConfig} specifies the JMS destination
@@ -49,10 +48,10 @@ public class JmsSenderFactory implements MessageSenderFactory {
     }
 
     @Override
-    public <T> T create(final Class<T> api) {
+    public <T> T create(Class<T> api) {
         Logger logger = LoggerFactory.getLogger(api);
         // TODO implement destinationNameFunction for MessageApis
-        final JmsSender sender = new JmsSender(config, payloadHandler, logger, null);
+        final JmsSender sender = new JmsSender(config, payloadHandler, api, logger, null);
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {

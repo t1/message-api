@@ -12,7 +12,7 @@ public class MessageApiBeanIntegrationTest {
         MessageApiBean<ConfiguredTestApi> bean = MessageApiBean.of(ConfiguredTestApi.class);
 
         MapJmsPayloadHandler handler = (MapJmsPayloadHandler) bean.factory.getPayloadHandler();
-        assertEquals("aarg", handler.mapping.getMappingForField("arg0").getAttributeName());
+        assertEquals("aarg", handler.mapping.getMappingForField("aarg").getAttributeName());
     }
 
     @Test

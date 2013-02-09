@@ -3,15 +3,14 @@ package net.java.messageapi.adapter;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import javax.jms.*;
 
 /**
  * Provides the header fields that are annotated as {@link net.java.messageapi.JmsProperty}
  */
 public class JmsPropertySupplier implements JmsHeaderSupplier {
     @Override
-    public void addTo(final Message message, Object pojo) throws JMSException {
+    public void addTo(final Message message, Class<?> api, Object pojo) throws JMSException {
         JmsPropertyScanner scanner = new JmsPropertyScanner(new JmsPropertyScanner.Visitor() {
             @Override
             public void visit(String propertyName, Object container, Field field) throws JMSException,

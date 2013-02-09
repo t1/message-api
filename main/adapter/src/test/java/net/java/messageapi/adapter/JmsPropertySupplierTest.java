@@ -4,7 +4,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import javax.jms.Message;
+import javax.jms.*;
 
 import net.java.messageapi.JmsProperty;
 import net.sf.twip.TwiP;
@@ -18,6 +18,10 @@ public class JmsPropertySupplierTest {
 
     private final JmsPropertySupplier supplier = new JmsPropertySupplier();
 
+    private void apply(Object pojo) throws JMSException {
+        supplier.addTo(message, null, pojo);
+    }
+
     @Mock
     Message message;
 
@@ -30,7 +34,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetStringProperty() throws Exception {
         StringContainer pojo = new StringContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one", "1");
     }
@@ -44,7 +48,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetBooleanProperty() throws Exception {
         BooleanContainer pojo = new BooleanContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setBooleanProperty("one", true);
     }
@@ -58,7 +62,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveBooleanProperty() throws Exception {
         PrimitiveBooleanContainer pojo = new PrimitiveBooleanContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setBooleanProperty("one", true);
     }
@@ -72,7 +76,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetByteProperty() throws Exception {
         ByteContainer pojo = new ByteContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setByteProperty("one", (byte) 'b');
     }
@@ -86,7 +90,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveByteProperty() throws Exception {
         PrimitiveByteContainer pojo = new PrimitiveByteContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setByteProperty("one", (byte) 'b');
     }
@@ -100,7 +104,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetCharacterProperty() throws Exception {
         CharacterContainer pojo = new CharacterContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one", "c");
     }
@@ -114,7 +118,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveCharacterProperty() throws Exception {
         PrimitiveCharacterContainer pojo = new PrimitiveCharacterContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one", "c");
     }
@@ -128,7 +132,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetShortProperty() throws Exception {
         ShortContainer pojo = new ShortContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setShortProperty("one", (short) 123);
     }
@@ -142,7 +146,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveShortProperty() throws Exception {
         PrimitiveShortContainer pojo = new PrimitiveShortContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setShortProperty("one", (short) 123);
     }
@@ -156,7 +160,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetIntegerProperty() throws Exception {
         IntegerContainer pojo = new IntegerContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setIntProperty("one", 123);
     }
@@ -170,7 +174,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveIntegerProperty() throws Exception {
         PrimitiveIntegerContainer pojo = new PrimitiveIntegerContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setIntProperty("one", 123);
     }
@@ -184,7 +188,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetLongProperty() throws Exception {
         LongContainer pojo = new LongContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setLongProperty("one", 123L);
     }
@@ -198,7 +202,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveLongProperty() throws Exception {
         PrimitiveLongContainer pojo = new PrimitiveLongContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setLongProperty("one", 123L);
     }
@@ -212,7 +216,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetFloatProperty() throws Exception {
         FloatContainer pojo = new FloatContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setFloatProperty("one", 12.3f);
     }
@@ -226,7 +230,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveFloatProperty() throws Exception {
         PrimitiveFloatContainer pojo = new PrimitiveFloatContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setFloatProperty("one", 12.3f);
     }
@@ -240,7 +244,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetDoubleProperty() throws Exception {
         DoubleContainer pojo = new DoubleContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setDoubleProperty("one", 12.3);
     }
@@ -254,7 +258,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetPrimitiveDoubleProperty() throws Exception {
         PrimitiveDoubleContainer pojo = new PrimitiveDoubleContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setDoubleProperty("one", 12.3);
     }
@@ -268,7 +272,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetListProperty() throws Exception {
         ListContainer pojo = new ListContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one[0]", "111");
         verify(message).setStringProperty("one[1]", "222");
@@ -284,7 +288,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetArrayProperty() throws Exception {
         ArrayContainer pojo = new ArrayContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one[0]", "111");
         verify(message).setStringProperty("one[1]", "222");
@@ -300,7 +304,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetSetProperty() throws Exception {
         SetContainer pojo = new SetContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one[0]", "111");
         verify(message).setStringProperty("one[1]", "222");
@@ -321,7 +325,7 @@ public class JmsPropertySupplierTest {
     public void shouldSetMapProperty() throws Exception {
         MapContainer pojo = new MapContainer();
 
-        supplier.addTo(message, pojo);
+        apply(pojo);
 
         verify(message).setStringProperty("one[aaa]", "111");
         verify(message).setStringProperty("one[bbb]", "222");

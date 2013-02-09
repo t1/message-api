@@ -59,7 +59,7 @@ public class MessageApiBeanTest {
     public void shouldCreateDefaultConfig() throws Exception {
         MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class);
 
-        assertEquals(bean.getBeanClass(), DummyApi.class);
+        assertEquals(DummyApi.class, bean.getBeanClass());
 
         JmsQueueConfig config = bean.factory.getConfig();
 
@@ -85,7 +85,7 @@ public class MessageApiBeanTest {
         MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class, binding);
         JmsQueueConfig config = bean.factory.getConfig();
 
-        assertEquals(config.getFactoryName(), "foo");
+        assertEquals("foo", config.getFactoryName());
     }
 
     @Test
@@ -93,14 +93,13 @@ public class MessageApiBeanTest {
         MessageApiBean<DummyApi> bean = MessageApiBean.of(DummyApi.class, new DestinationNameBinding("bar"));
         JmsQueueConfig config = bean.factory.getConfig();
 
-        assertEquals(config.getDestinationName(), "bar");
+        assertEquals("bar", config.getDestinationName());
     }
 
     @MessageApi
     @JmsMappedPayload(operationName = "op")
     public static interface MappedDummyApi {
-        /* no parameter name is known here => use native arg0 */
-        public void unconfiguredTestMethod(@JmsMappedName("aarg") String arg0);
+        public void unconfiguredTestMethod(@JmsName("aarg") String arg0);
     }
 
     @Test
@@ -108,7 +107,7 @@ public class MessageApiBeanTest {
         MessageApiBean<MappedDummyApi> bean = MessageApiBean.of(MappedDummyApi.class);
 
         MapJmsPayloadHandler payloadHandler = (MapJmsPayloadHandler) bean.factory.getPayloadHandler();
-        assertEquals(payloadHandler.mapping.getOperationMessageAttibute(), "op");
+        assertEquals("op", payloadHandler.mapping.getOperationMessageAttibute());
     }
 
     @Test
@@ -116,6 +115,6 @@ public class MessageApiBeanTest {
         MessageApiBean<MappedDummyApi> bean = MessageApiBean.of(MappedDummyApi.class);
 
         MapJmsPayloadHandler handler = (MapJmsPayloadHandler) bean.factory.getPayloadHandler();
-        assertEquals(handler.mapping.getMappingForField("arg0").getAttributeName(), "aarg");
+        assertEquals("aarg", handler.mapping.getMappingForField("aarg").getAttributeName());
     }
 }

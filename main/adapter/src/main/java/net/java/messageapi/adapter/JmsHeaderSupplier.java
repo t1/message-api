@@ -1,8 +1,7 @@
 package net.java.messageapi.adapter;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import javax.jms.*;
 
 public interface JmsHeaderSupplier {
-    void addTo(Message message, Object pojo) throws JMSException;
+    void addTo(Message message, Class<?> api, Object pojo) throws JMSException;
 }

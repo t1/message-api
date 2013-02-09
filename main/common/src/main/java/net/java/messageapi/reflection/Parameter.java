@@ -1,12 +1,10 @@
 package net.java.messageapi.reflection;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 /**
  * The Java reflection api regards method arguments as second class citizens: They are not represented as objects like
@@ -27,6 +25,7 @@ public class Parameter {
         if (javassistAvailable())
             stack = new DebugInfoParameterNameSupplier(stack);
         stack = new ParameterMapNameSupplier(stack);
+        stack = new JmsNameSupplier(stack);
         return stack;
     }
 
@@ -97,9 +96,8 @@ public class Parameter {
     }
 
     public String getName() {
-        if (name == null) {
-            name = PARAMETER_NAME_SUPPLIER.get(method, index);
-        }
+        if (name == null)
+            name = PARAMETER_NAME_SUPPLIER.get(this);
         return name;
     }
 
@@ -137,5 +135,30 @@ public class Parameter {
     public String toString() {
         return Parameter.class.getSimpleName() + "#" + getIndex() + ((name == null) ? "" : (":" + name)) + " of "
                 + getMethod().toGenericString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + index;
+        result = prime * result + method.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Parameter that = (Parameter) obj;
+        if (index != that.index)
+            return false;
+        if (!method.equals(that.method))
+            return false;
+        return true;
     }
 }
