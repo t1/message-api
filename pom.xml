@@ -47,7 +47,7 @@
 	<distributionManagement>
 		<repository>
 			<id>jvnet-nexus-releases</id>
-			<url>https://maven.java.net/content/repositories/releases/</url>
+			<url>https://maven.java.net/service/local/staging/deploy/maven2/</url>
 		</repository>
 		<snapshotRepository>
 			<id>jvnet-nexus-snapshots</id>
