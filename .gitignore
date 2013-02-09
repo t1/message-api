@@ -6,3 +6,5 @@ target/
 .factorypath
 pom.xml.releaseBackup
 release.properties
+.gradle
+build
