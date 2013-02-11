@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>main-container</artifactId>
 		<groupId>net.java.messageapi</groupId>
-		<version>2.0a14</version>
+		<version>2.0a15-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>xstream</artifactId>
