@@ -50,17 +50,6 @@
 		<tag>HEAD</tag>
 	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>jvnet-nexus-releases</id>
-			<url>https://maven.java.net/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>jvnet-nexus-snapshots</id>
-			<url>https://maven.java.net/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<repositories>
 		<repository>
 			<id>EclipseLink Repo</id>
