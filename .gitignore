@@ -8,3 +8,5 @@ pom.xml.releaseBackup
 release.properties
 .gradle
 build
+
+test/.forge_settings
