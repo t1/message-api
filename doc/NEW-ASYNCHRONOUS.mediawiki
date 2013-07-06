@@ -51,7 +51,7 @@ public class Client {
 
     public void someLocalCall() {
         ...
-        replyTo(this).customerCreated(service.createCustomer("Joe", "Doe"););
+        replyTo(this).customerCreated(service.createCustomer("Joe", "Doe"));
     }
 
     void customerCreated(long id) {
