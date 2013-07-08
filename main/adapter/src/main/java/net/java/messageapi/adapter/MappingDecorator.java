@@ -5,6 +5,8 @@ class MappingDecorator implements Mapping {
     final Mapping target;
 
     public MappingDecorator(Mapping target) {
+        if (target == null)
+            throw new NullPointerException("target mapping must not be null");
         this.target = target;
     }
 

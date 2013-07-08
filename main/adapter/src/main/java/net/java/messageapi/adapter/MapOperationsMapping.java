@@ -8,6 +8,8 @@ class MapOperationsMapping extends MappingDecorator {
 
     public MapOperationsMapping(Mapping target, Map<String, String> map) {
         super(target);
+        if (map == null)
+            throw new NullPointerException("the map must not be null");
         this.map = map;
     }
 

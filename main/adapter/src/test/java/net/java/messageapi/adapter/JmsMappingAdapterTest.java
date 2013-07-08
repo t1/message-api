@@ -1,7 +1,8 @@
 package net.java.messageapi.adapter;
 
-import static junit.framework.Assert.*;
 import static org.custommonkey.xmlunit.XMLAssert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.io.*;
 
@@ -14,9 +15,8 @@ import net.java.messageapi.converter.*;
 import net.sf.twip.*;
 import net.sf.twip.Assume;
 
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.runner.*;
 
 @RunWith(TwiP.class)
 public class JmsMappingAdapterTest {
@@ -131,6 +131,9 @@ public class JmsMappingAdapterTest {
         memento.restore();
     }
 
+    @Rule
+    public XmlUnitRule xml = new XmlUnitRule().ignoreWhitespace();
+
     @Test
     public void shouldMarshal() throws Exception {
         StringWriter writer = new StringWriter();
@@ -138,7 +141,6 @@ public class JmsMappingAdapterTest {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(CONTAINER, writer);
 
-        XMLUnit.setIgnoreWhitespace(true); // TODO move this into a JUnit-Rule
         assertXMLEqual(XML, writer.toString().replace(" standalone=\"yes\"", ""));
     }
 
@@ -147,6 +149,6 @@ public class JmsMappingAdapterTest {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Container container = (Container) unmarshaller.unmarshal(new StringReader(XML));
 
-        assertEquals(CONTAINER.mapping.toString(), container.mapping.toString());
+        assertThat(CONTAINER.mapping.toString(), is(equalTo(container.mapping.toString())));
     }
 }

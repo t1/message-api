@@ -8,6 +8,8 @@ class MapFieldsMapping extends MappingDecorator {
 
     public MapFieldsMapping(Mapping target, Map<String, FieldMapping<?>> map) {
         super(target);
+        if (map == null)
+            throw new NullPointerException("the map must not be null");
         this.map = map;
     }
 
