@@ -1,17 +1,14 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.List;
 
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ConstPool;
+import javassist.bytecode.*;
 import javassist.bytecode.annotation.*;
 
 /**
- * This class should normally be part of javassist. But because CtField and CtClass don't share a
- * common interface with the methods to access the {@link ConstPool}, and get and add attributes, we
- * have to resort to subclasses.
+ * This class should normally be part of javassist. But because CtField and CtClass don't share a common interface with
+ * the methods to access the {@link ConstPool}, and get and add attributes, we have to resort to subclasses.
  */
 public abstract class CtAbstractAnnotation {
     protected static final String VISIBLE = AnnotationsAttribute.visibleTag;
@@ -19,8 +16,7 @@ public abstract class CtAbstractAnnotation {
     protected ConstPool constPool;
     protected Annotation annotation;
 
-    protected void init(@SuppressWarnings("hiding") ConstPool constPool,
-            Class<? extends java.lang.annotation.Annotation> type) {
+    protected void init(ConstPool constPool, Class<? extends java.lang.annotation.Annotation> type) {
         this.constPool = constPool;
         this.annotation = new Annotation(type.getName(), constPool);
     }
@@ -35,8 +31,8 @@ public abstract class CtAbstractAnnotation {
         }
     }
 
-    private void copyFieldsOrThrow(java.lang.annotation.Annotation property)
-            throws IllegalAccessException, InvocationTargetException {
+    private void copyFieldsOrThrow(java.lang.annotation.Annotation property) throws IllegalAccessException,
+            InvocationTargetException {
         for (Method method : property.annotationType().getMethods()) {
             if (method.getDeclaringClass() == Object.class
                     || method.getDeclaringClass() == java.lang.annotation.Annotation.class)

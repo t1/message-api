@@ -34,8 +34,7 @@ import org.slf4j.*;
  * }
  * </pre>
  * 
- * @todo AsynchronousService annotation and an according Producer
- * @todo get rid of the replyTo type argument (requires dynamic class instead of a proxy)
+ * TODO AsynchronousService annotation and an according Producer
  */
 public class Callback {
     private static final Logger log = LoggerFactory.getLogger(Callback.class);
@@ -73,22 +72,18 @@ public class Callback {
                 new Class<?>[] { type }, handler));
     }
 
-    public static <T> T replyTo(final T target, Class<T> type) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        InvocationHandler handler = new InvocationHandler() {
+    public static <T> T replyTo(final T target) {
+        @SuppressWarnings("unchecked")
+        Class<T> type = (Class<T>) target.getClass();
+        return new InvocationProxy<T>(type) {
             @Override
-            public Object invoke(Object proxy, Method method, Object[] args) {
+            public Object invoke(Method method, Object[] args) {
                 final Callback callback = CALL_INFO.get();
                 CALL_INFO.set(null);
                 callback.invokeAndReplyTo(target, method);
                 return null; // this is never used... the actual reply is asynchronous
             }
-        };
-
-        @SuppressWarnings("unchecked")
-        T proxy = (T) Proxy.newProxyInstance(classLoader, new Class<?>[] { type }, handler);
-        return proxy;
+        }.cast();
     }
 
     private static void printMethod(String prefix, Method method, Object[] args) {
@@ -101,7 +96,7 @@ public class Callback {
             info.append(arg);
         }
         info.insert(0, "(");
-        info.insert(0, method.getName());
+        // info.insert(0, method.getName());
         info.append(")");
         log.debug("{} {}", prefix, info);
     }
