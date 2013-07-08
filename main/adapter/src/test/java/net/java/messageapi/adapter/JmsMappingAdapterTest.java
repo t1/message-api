@@ -10,19 +10,18 @@ import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import net.java.messageapi.adapter.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.converter.*;
 import net.sf.twip.*;
 import net.sf.twip.Assume;
 
 import org.junit.*;
-import org.junit.runner.*;
+import org.junit.runner.RunWith;
 
 @RunWith(TwiP.class)
 public class JmsMappingAdapterTest {
 
     @XmlRootElement(name = "test-container")
-    private static class Container {
+    static class Container {
         @XmlElement
         @XmlJavaTypeAdapter(JmsMappingAdapter.class)
         Mapping mapping;
@@ -117,27 +116,20 @@ public class JmsMappingAdapterTest {
                 .build();
     }
 
-    private final JaxbProviderMemento memento; // TODO move this into a JUnit-Rule
-    private final JAXBContext context;
-
-    public JmsMappingAdapterTest(@NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) throws Exception {
-        this.memento = jaxbProvider.setUp();
-        this.context =
-                JAXBContext.newInstance(Container.class, Converter.class, SimpleTypeConverter.class, SimpleType.class);
-    }
-
-    @After
-    public void after() {
-        memento.restore();
-    }
-
     @Rule
     public XmlUnitRule xml = new XmlUnitRule().ignoreWhitespace();
+
+    @Rule
+    public JaxbRule jaxb = new JaxbRule();
+
+    public JmsMappingAdapterTest(@NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) throws Exception {
+        jaxb.setProvider(jaxbProvider);
+    }
 
     @Test
     public void shouldMarshal() throws Exception {
         StringWriter writer = new StringWriter();
-        Marshaller marshaller = context.createMarshaller();
+        Marshaller marshaller = jaxb.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(CONTAINER, writer);
 
@@ -146,7 +138,7 @@ public class JmsMappingAdapterTest {
 
     @Test
     public void shouldUnmarshal() throws Exception {
-        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Unmarshaller unmarshaller = jaxb.createUnmarshaller();
         Container container = (Container) unmarshaller.unmarshal(new StringReader(XML));
 
         assertThat(CONTAINER.mapping.toString(), is(equalTo(container.mapping.toString())));
