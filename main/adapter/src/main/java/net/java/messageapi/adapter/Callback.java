@@ -77,7 +77,7 @@ public class Callback {
         Class<T> type = (Class<T>) target.getClass();
         return new InvocationProxy<T>(type) {
             @Override
-            public Object invoke(Method method, Object[] args) {
+            public Object invoke(Method method, Object... args) {
                 final Callback callback = CALL_INFO.get();
                 CALL_INFO.set(null);
                 callback.invokeAndReplyTo(target, method);
