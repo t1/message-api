@@ -12,9 +12,8 @@ import net.java.messageapi.MessageEvent;
 import org.slf4j.*;
 
 /**
- * Scans {@link MessageEvent}s and generates {@link EventObserverSendAdapter observers} to forward them to JMS.
- * 
- * TODO generate the {@link EventDecoder}-MDBs dynamically (don't know how to register them with the container) TODO
+ * Scans {@link MessageEvent}s and generates {@link EventObserverSendAdapter observers} to forward them to JMS. TODO
+ * generate the {@link EventDecoder}-MDBs dynamically (don't know how to register them with the container) TODO
  * workaround for <a href="https://issues.jboss.org/browse/WELD-1035">WELD-1035</a> analogous to
  * {@link MessageApiInterfaceScanner}
  */
@@ -53,7 +52,7 @@ public class MessageApiEventScanner {
     private <T> void annotateAsOutgoing(final InjectionPoint injectionPoint, ProcessInjectionTarget<T> pit) {
         // TODO this doesn't work... why?
         // TODO only of not yet annotated as JmsOutgoing
-        if (true)
+        if (injectionPoint != null)
             return;
         InjectionTarget<T> target = pit.getInjectionTarget();
         log.debug("wrapping {} in {}", injectionPoint, target);

@@ -27,7 +27,7 @@ public class EventDecoder<T> implements MessageListener {
     @Override
     public void onMessage(Message message) {
         log.debug("received " + message);
-        // FIXME handle other message types
+        // TODO handle other message types
         TextMessage textMessage = (TextMessage) message;
         T pojo = decode(getText(textMessage));
         JmsPropertiesFromMessageToPojo.scan(message, pojo);

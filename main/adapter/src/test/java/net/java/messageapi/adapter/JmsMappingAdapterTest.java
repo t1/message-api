@@ -1,6 +1,7 @@
 package net.java.messageapi.adapter;
 
-import static org.junit.Assert.*;
+import static junit.framework.Assert.*;
+import static org.custommonkey.xmlunit.XMLAssert.*;
 
 import java.io.*;
 
@@ -13,6 +14,7 @@ import net.java.messageapi.converter.*;
 import net.sf.twip.*;
 import net.sf.twip.Assume;
 
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 
@@ -103,28 +105,25 @@ public class JmsMappingAdapterTest {
     private static final Container CONTAINER = new Container();
     static {
         CONTAINER.mapping = new MappingBuilder("method") //
-        .mapOperation("m1", "o1") //
-        .mapOperation("m2", "o2") //
-        .mapField("s1", FieldMapping.map("A")) //
-        .mapField("s2", FieldMapping.map("B", new JodaInstantConverter())) //
-        .mapField("s3", FieldMapping.map("C", new JodaLocalDateConverter())) //
-        .mapField("s4", FieldMapping.map("D", new JodaLocalDateConverter("yyyy-MM-dd"))) //
-        .mapField("s5", FieldMapping.map("E", new StringToBooleanConverter("yes", "no"))) //
-        .mapField("s6", FieldMapping.mapWithDefault("F", new SimpleTypeConverter(), DEFAULT)) //
-        .upperCaseFields() //
-        .build();
+                .mapOperation("m1", "o1") //
+                .mapOperation("m2", "o2") //
+                .mapField("s1", FieldMapping.map("A")) //
+                .mapField("s2", FieldMapping.map("B", new JodaInstantConverter())) //
+                .mapField("s3", FieldMapping.map("C", new JodaLocalDateConverter())) //
+                .mapField("s4", FieldMapping.map("D", new JodaLocalDateConverter("yyyy-MM-dd"))) //
+                .mapField("s5", FieldMapping.map("E", new StringToBooleanConverter("yes", "no"))) //
+                .mapField("s6", FieldMapping.mapWithDefault("F", new SimpleTypeConverter(), DEFAULT)) //
+                .upperCaseFields() //
+                .build();
     }
 
-    private final JaxbProviderMemento memento;
+    private final JaxbProviderMemento memento; // TODO move this into a JUnit-Rule
     private final JAXBContext context;
 
-    // TODO support ECLIPSE_LINK when this bug is fixed:
-    // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
-    public JmsMappingAdapterTest(@NotNull @Assume("!= XSTREAM & != ECLIPSE_LINK") JaxbProvider jaxbProvider)
-            throws Exception {
+    public JmsMappingAdapterTest(@NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) throws Exception {
         this.memento = jaxbProvider.setUp();
-        this.context = JAXBContext.newInstance(Container.class, Converter.class, SimpleTypeConverter.class,
-                SimpleType.class);
+        this.context =
+                JAXBContext.newInstance(Container.class, Converter.class, SimpleTypeConverter.class, SimpleType.class);
     }
 
     @After
@@ -139,8 +138,8 @@ public class JmsMappingAdapterTest {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(CONTAINER, writer);
 
-        String actual = writer.toString().replace(" standalone=\"yes\"", "");
-        assertEquals(XML, actual);
+        XMLUnit.setIgnoreWhitespace(true); // TODO move this into a JUnit-Rule
+        assertXMLEqual(XML, writer.toString().replace(" standalone=\"yes\"", ""));
     }
 
     @Test
