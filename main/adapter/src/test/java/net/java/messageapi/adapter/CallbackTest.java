@@ -14,19 +14,19 @@ public class CallbackTest {
     private static final Semaphore semaphoreOut = new Semaphore(0);
 
     public interface CustomerService {
-        public long createCustomer(String first, String last);
+        public Long createCustomer(String first, String last);
     }
 
     public static CustomerService realService = new CustomerService() {
         @Override
-        public long createCustomer(String first, String last) {
+        public Long createCustomer(String first, String last) {
             // wait for the main thread to release me
             try {
                 assertTrue(semaphoreIn.tryAcquire(1, SECONDS));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return (first + last).hashCode();
+            return (long) (first + last).hashCode();
         }
     };
 
@@ -43,16 +43,16 @@ public class CallbackTest {
         assertEquals("JoeDoe".hashCode(), createdCustomerId);
     }
 
-    // @Test
-    // public void shouldWorkRepeatedly() throws Exception {
-    // replyTo(this).customerCreated(service.createCustomer("Joey", "Doey"));
-    // semaphoreIn.release(); // let the service thread continue
-    //
-    // assertTrue(semaphoreOut.tryAcquire(1, SECONDS)); // wait for the callback from the service
-    // assertEquals("JoeyDoey".hashCode(), createdCustomerId);
-    // }
+    @Test
+    public void shouldWorkRepeatedly() throws Exception {
+        replyTo(this).customerCreated(service.createCustomer("Joey", "Doey"));
+        semaphoreIn.release(); // let the service thread continue
 
-    public void customerCreated(long createdCustomerId) {
+        assertTrue(semaphoreOut.tryAcquire(1, SECONDS)); // wait for the callback from the service
+        assertEquals("JoeyDoey".hashCode(), createdCustomerId);
+    }
+
+    public void customerCreated(Long createdCustomerId) {
         this.createdCustomerId = createdCustomerId;
         semaphoreOut.release(); // let the main thread continue
     }

@@ -13,11 +13,16 @@ import org.slf4j.*;
  * handled by an abstract method for you to override.
  * <p>
  * TODO find out if this can be done with a CDI interceptor
+ * <p>
+ * TODO make it work with primitive types
  * 
  * @param <T>
  *            the type to proxy
  */
 public abstract class InvocationProxy<T> {
+
+    /** The directory to store all generated proxy classes to for debug purposes, or null */
+    private static final String generatedProxies = "target/generated-proxies";
 
     private final Logger log = LoggerFactory.getLogger(InvocationProxy.class);
 
@@ -77,29 +82,10 @@ public abstract class InvocationProxy<T> {
 
         // now really generate
         generate(className);
-        log.debug("write");
-        proxyType.debugWriteFile("xxx");
-        log.debug("written");
+        if (generatedProxies != null)
+            proxyType.debugWriteFile(generatedProxies);
         return proxyType.toClass();
     }
-
-    // public class CallbackTest$$InvocationProxy extends CallbackTest {
-    // private final InvocationProxy<CallbackTest> proxy;
-    //
-    // public CallbackTest$$InvocationProxy(InvocationProxy<CallbackTest> proxy) {
-    // this.proxy = proxy;
-    // }
-    //
-    // @Override
-    // public void customerCreated(long createdCustomerId) {
-    // try {
-    // Method method = CallbackTest.class.getMethod("customerCreated", Long.TYPE);
-    // proxy.invoke(method, createdCustomerId);
-    // } catch (NoSuchMethodException e) {
-    // throw new RuntimeException(e);
-    // }
-    // }
-    // }
 
     private void generate(String className) throws CannotCompileException, NotFoundException {
         proxyType = classPool.makeClass(className);
@@ -113,11 +99,15 @@ public abstract class InvocationProxy<T> {
     }
 
     private void addProxyField() throws CannotCompileException, NotFoundException {
-        CtClass type = classPool.get("net.java.messageapi.adapter.InvocationProxy");
+        CtClass type = classPool.get(InvocationProxy.class.getName());
         CtField field = new CtField(type, "proxy", proxyType);
         field.setModifiers(Modifier.PRIVATE | Modifier.FINAL);
-        field.setGenericSignature("Lnet/java/messageapi/adapter/InvocationProxy<Lnet/java/messageapi/adapter/CallbackTest;>;");
+        field.setGenericSignature(encode(type) + "<" + encode(targetType) + ";>;");
         proxyType.addField(field);
+    }
+
+    private String encode(CtClass type) {
+        return "L" + type.getName().replace(".", "/");
     }
 
     private void addConstuctor() throws CannotCompileException, NotFoundException {
@@ -131,22 +121,18 @@ public abstract class InvocationProxy<T> {
         for (CtMethod targetMethod : targetType.getMethods()) {
             if (isStatic(targetMethod) || isFinal(targetMethod) || isObjectMethod(targetMethod))
                 continue;
-            log.debug("override {}", targetMethod.getLongName());
             CtClass[] parameterTypes = targetMethod.getParameterTypes();
-            if (parameterTypes.length == 0)
+            if (parameterTypes.length != 1)
                 continue;
+            log.debug("override {}", targetMethod.getLongName());
             CtMethod method =
                     new CtMethod(targetMethod.getReturnType(), targetMethod.getName(), parameterTypes, proxyType);
-            StringBuilder args = args(parameterTypes.length);
             method.setBody("{" //
-                    + "try {\n" //
                     + "java.lang.reflect.Method method = "
-                    + "net.java.messageapi.adapter.CallbackTest.class.getMethod(\"customerCreated\", new Class[]{Long.TYPE});\n" //
-                    + "System.out.println(\":::: \" + method);" //
-                    + "proxy.invoke(method, new Object[] {" + args + "});\n" //
-                    + "} catch (NoSuchMethodException e) {\n" //
-                    + "throw new RuntimeException(e);\n" //
-                    + "}\n" //
+                    + targetType.getName()
+                    + ".class.getMethod(\"customerCreated\", new Class[]{" + argTypes(parameterTypes) + "});\n" //
+                    // + "System.out.println(\":::: \" + method);" //
+                    + "proxy.invoke(method, new Object[]{" + args(parameterTypes.length) + "});\n" //
                     + "}");
             proxyType.addMethod(method);
         }
@@ -164,6 +150,14 @@ public abstract class InvocationProxy<T> {
         return "java.lang.Object".equals(targetMethod.getDeclaringClass().getName());
     }
 
+    private String argTypes(CtClass[] parameterTypes) {
+        StringBuilder types = new StringBuilder();
+        for (CtClass parameterType : parameterTypes) {
+            types.append(parameterType.getName() + ".class");
+        }
+        return types.toString();
+    }
+
     private StringBuilder args(int count) {
         StringBuilder args = new StringBuilder();
         for (int i = 1; i <= count; i++) {
@@ -174,5 +168,5 @@ public abstract class InvocationProxy<T> {
         return args;
     }
 
-    public abstract Object invoke(Method method, Object[] args);
+    public abstract Object invoke(Method method, Object... args);
 }
