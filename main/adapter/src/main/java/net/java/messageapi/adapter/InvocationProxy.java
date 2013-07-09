@@ -10,11 +10,9 @@ import org.slf4j.*;
  * Similar to a {@link java.lang.reflect.Proxy}, only that it works with classes as well as interfaces; the only
  * restriction is that the class and the methods to be forwarded must not be final and the class must have a non-arg
  * constructor. Instead of an extra {@link java.lang.reflect.InvocationHandler invocation handler}, all calls are
- * handled by an abstract method for you to override.
+ * handled by an {@link #invoke(Method, Object...) abstract method} for you to override.
  * <p>
- * TODO find out if this can be done with a CDI interceptor
- * <p>
- * TODO make it work with primitive types
+ * <b>Note:</b> Return values and primitive types are <b>not implemented, yet.</b>
  * 
  * @param <T>
  *            the type to proxy
@@ -53,7 +51,9 @@ public abstract class InvocationProxy<T> {
     public T cast() {
         String className = targetType.getName() + "$$InvocationProxy";
         try {
-            return proxyType(className).getConstructor(InvocationProxy.class).newInstance(this);
+            Class<T> type = proxyType(className);
+            log.debug("instantiate {}", type);
+            return type.getConstructor(InvocationProxy.class).newInstance(this);
         } catch (Exception e) {
             throw new RuntimeException("can't generate " + className, e);
         }
@@ -88,6 +88,7 @@ public abstract class InvocationProxy<T> {
     }
 
     private void generate(String className) throws CannotCompileException, NotFoundException {
+        log.debug("proxy class {}", targetType.getName());
         proxyType = classPool.makeClass(className);
         proxyType.getClassFile().setVersionToJava5();
 
@@ -122,18 +123,19 @@ public abstract class InvocationProxy<T> {
             if (isStatic(targetMethod) || isFinal(targetMethod) || isObjectMethod(targetMethod))
                 continue;
             CtClass[] parameterTypes = targetMethod.getParameterTypes();
-            if (parameterTypes.length != 1)
-                continue;
-            log.debug("override {}", targetMethod.getLongName());
+            log.debug("proxy method {}", targetMethod.getLongName());
             CtMethod method =
                     new CtMethod(targetMethod.getReturnType(), targetMethod.getName(), parameterTypes, proxyType);
-            method.setBody("{" //
-                    + "java.lang.reflect.Method method = "
-                    + targetType.getName()
-                    + ".class.getMethod(\"customerCreated\", new Class[]{" + argTypes(parameterTypes) + "});\n" //
-                    // + "System.out.println(\":::: \" + method);" //
-                    + "proxy.invoke(method, new Object[]{" + args(parameterTypes.length) + "});\n" //
-                    + "}");
+            String body =
+                    "{" //
+                            + "java.lang.reflect.Method method = " + targetType.getName()
+                            + ".class.getMethod(\""
+                            + targetMethod.getName() + "\", " + argTypes(parameterTypes) + ");\n" //
+                            // + "System.out.println(\":::: \" + method);" //
+                            + "proxy.invoke(method, " + args(parameterTypes.length) + ");\n" //
+                            + "}";
+            log.debug(body);
+            method.setBody(body);
             proxyType.addMethod(method);
         }
     }
@@ -151,21 +153,27 @@ public abstract class InvocationProxy<T> {
     }
 
     private String argTypes(CtClass[] parameterTypes) {
+        if (parameterTypes.length == 0)
+            return "new Class[0]";
         StringBuilder types = new StringBuilder();
         for (CtClass parameterType : parameterTypes) {
+            if (types.length() > 0)
+                types.append(", ");
             types.append(parameterType.getName() + ".class");
         }
-        return types.toString();
+        return "new Class[]{" + types.toString() + "}";
     }
 
-    private StringBuilder args(int count) {
+    private String args(int count) {
+        if (count == 0)
+            return "new Object[0]";
         StringBuilder args = new StringBuilder();
         for (int i = 1; i <= count; i++) {
             if (i > 1)
                 args.append(", ");
-            args.append("$").append(i++);
+            args.append("$").append(i);
         }
-        return args;
+        return "new Object[]{" + args + "}";
     }
 
     public abstract Object invoke(Method method, Object... args);
