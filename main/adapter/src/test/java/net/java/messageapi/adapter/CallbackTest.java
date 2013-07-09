@@ -30,7 +30,7 @@ public class CallbackTest {
         }
     };
 
-    private static final CustomerService service = forService(realService, CustomerService.class);
+    private static final CustomerService service = Callback.forService(realService);
 
     private long createdCustomerId;
 

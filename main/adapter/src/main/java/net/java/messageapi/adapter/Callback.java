@@ -52,10 +52,15 @@ public class Callback {
         }
     }
 
-    public static <T> T forService(final Object target, Class<T> type) {
-        InvocationHandler handler = new InvocationHandler() {
+    /**
+     * Creates an instance of that type
+     */
+    public static <T> T forService(final T target) {
+        @SuppressWarnings("unchecked")
+        Class<T> type = (Class<T>) target.getClass();
+        return new InvocationProxy<T>(type) {
             @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            public Object invoke(Method method, Object... args) {
                 printMethod("store call info", method, args);
                 storeCallbackInfo(target, method, args);
                 return 0L;
@@ -67,9 +72,7 @@ public class Callback {
                 Callback callback = new Callback(target, method, args);
                 CALL_INFO.set(callback);
             }
-        };
-        return type.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] { type }, handler));
+        }.cast();
     }
 
     public static <T> T replyTo(final T target) {
@@ -84,6 +87,10 @@ public class Callback {
                 return null; // this is never used... the actual reply is asynchronous
             }
         }.cast();
+    }
+
+    public static boolean hasCallbackInfo() {
+        return CALL_INFO.get() != null;
     }
 
     private static void printMethod(String prefix, Method method, Object[] args) {
