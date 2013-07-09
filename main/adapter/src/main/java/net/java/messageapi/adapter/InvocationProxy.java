@@ -12,7 +12,7 @@ import org.slf4j.*;
  * constructor. Instead of an extra {@link java.lang.reflect.InvocationHandler invocation handler}, all calls are
  * handled by an {@link #invoke(Method, Object...) abstract method} for you to override.
  * <p>
- * <b>Note:</b> Return values and primitive types are <b>not implemented, yet.</b>
+ * <b>Note:</b> Primitive parameter and return types are <b>not implemented, yet.</b>
  * 
  * @param <T>
  *            the type to proxy
@@ -124,18 +124,18 @@ public abstract class InvocationProxy<T> {
                 continue;
             CtClass[] parameterTypes = targetMethod.getParameterTypes();
             log.debug("proxy method {}", targetMethod.getLongName());
-            CtMethod method =
-                    new CtMethod(targetMethod.getReturnType(), targetMethod.getName(), parameterTypes, proxyType);
-            String body =
-                    "{" //
-                            + "java.lang.reflect.Method method = " + targetType.getName()
-                            + ".class.getMethod(\""
-                            + targetMethod.getName() + "\", " + argTypes(parameterTypes) + ");\n" //
-                            // + "System.out.println(\":::: \" + method);" //
-                            + "proxy.invoke(method, " + args(parameterTypes.length) + ");\n" //
-                            + "}";
-            log.debug(body);
-            method.setBody(body);
+            CtClass returnType = targetMethod.getReturnType();
+            CtMethod method = new CtMethod(returnType, targetMethod.getName(), parameterTypes, proxyType);
+            StringBuilder body = new StringBuilder("{");
+            body.append("java.lang.reflect.Method method = " + targetType.getName() + ".class.getMethod(\""
+                    + targetMethod.getName() + "\", " + argTypes(parameterTypes) + ");\n");
+            // + "System.out.println(\":::: \" + method);" //
+            if (returnType != CtClass.voidType)
+                body.append("return (" + returnType.getName() + ") ");
+            body.append("proxy.invoke(method, " + args(parameterTypes.length) + ");\n");
+            body.append("}");
+            log.debug("    -> {}", body.toString());
+            method.setBody(body.toString());
             proxyType.addMethod(method);
         }
     }
