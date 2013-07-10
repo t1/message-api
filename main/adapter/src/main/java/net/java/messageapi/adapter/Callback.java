@@ -29,6 +29,25 @@ import org.slf4j.*;
  *     }
  * }
  * </pre>
+ * 
+ * If the called method returns <code>void</code> (i.e. the callback method can't take any arguments), but you still
+ * want the callback, when the asynchronous call was successful, then you'll have to do the call in a separate line. For
+ * example, if <code>createCustomer</code> would return <code>void</code>, your code would look like this:
+ * 
+ * <pre>
+ * void main() {
+ *     service.createCustomer(&quot;Joe&quot;, &quot;Doe&quot;);
+ *     Callback.replyTo(this).customerCreated();
+ * }
+ * 
+ * void customerCreated() {
+ *     ...
+ * }
+ * </pre>
+ * 
+ * TODO add exception callback handling
+ * <p>
+ * TODO improve error reporting for illegal number of argument combinations
  */
 public class Callback {
     private static final Logger log = LoggerFactory.getLogger(Callback.class);
@@ -103,7 +122,7 @@ public class Callback {
             info.append(arg);
         }
         info.insert(0, "(");
-        // info.insert(0, method.getName());
+        info.insert(0, method.getName());
         info.append(")");
         log.debug("{} {}", prefix, info);
     }
@@ -162,9 +181,14 @@ public class Callback {
     }
 
     private void callback(Object callbackTarget, Method callbackMethod, Object result) {
-        printMethod("reply", callbackMethod, new Object[] { result });
+        boolean hasArgs = callbackMethod.getParameterTypes().length > 0;
+        printMethod("reply", callbackMethod, hasArgs ? new Object[] { result } : new Object[0]);
         try {
-            callbackMethod.invoke(callbackTarget, result);
+            if (hasArgs) {
+                callbackMethod.invoke(callbackTarget, result);
+            } else {
+                callbackMethod.invoke(callbackTarget);
+            }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {

@@ -10,12 +10,17 @@ import org.junit.Test;
 
 public class CallbackTest {
 
+    private static final Long DELETE_CUSTOMER_ID = 243245876L;
+    private static final long CALLBACK_MARKER = 2345769238475L;
+
     // two semaphores to make really sure it's asynchronous
     private static final Semaphore IN = new Semaphore(0);
     private static final Semaphore OUT = new Semaphore(0);
 
     public interface CustomerService {
         public Long createCustomer(String first, String last);
+
+        public void deleteCustomer(Long id);
     }
 
     public static CustomerService realService = new CustomerService() {
@@ -32,6 +37,12 @@ public class CallbackTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public void deleteCustomer(Long id) {
+            acquireIn();
+            assertEquals(DELETE_CUSTOMER_ID, id);
         }
     };
 
@@ -54,13 +65,17 @@ public class CallbackTest {
     }
 
     @Test
-    public void shouldFailOutsideOfMethodCall() throws Exception {
-        Long create = service.createCustomer("Joe", "Doe");
-        System.out.println("------------------> " + create);
-        replyTo(this).customerCreated(create);
+    public void shouldReplyAsynchronouslyToDeleteCustomer() throws Exception {
+        service.deleteCustomer(DELETE_CUSTOMER_ID);
+        replyTo(this).customerDeleted();
         IN.release(); // let the service thread continue
 
         assertTrue(OUT.tryAcquire(1, SECONDS)); // wait for the callback from the service
-        assertEquals("JoeDoe".hashCode(), createdCustomerId);
+        assertEquals(CALLBACK_MARKER, createdCustomerId);
+    }
+
+    public void customerDeleted() {
+        createdCustomerId = CALLBACK_MARKER;
+        OUT.release(); // let the main thread continue
     }
 }
