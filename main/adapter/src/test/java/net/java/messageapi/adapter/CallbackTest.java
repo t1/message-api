@@ -10,8 +10,9 @@ import org.junit.Test;
 
 public class CallbackTest {
 
-    private static final Semaphore semaphoreIn = new Semaphore(0);
-    private static final Semaphore semaphoreOut = new Semaphore(0);
+    // two semaphores to make really sure it's asynchronous
+    private static final Semaphore IN = new Semaphore(0);
+    private static final Semaphore OUT = new Semaphore(0);
 
     public interface CustomerService {
         public Long createCustomer(String first, String last);
@@ -20,13 +21,17 @@ public class CallbackTest {
     public static CustomerService realService = new CustomerService() {
         @Override
         public Long createCustomer(String first, String last) {
-            // wait for the main thread to release me
+            acquireIn();
+            return (long) (first + last).hashCode();
+        }
+
+        /** wait for the main thread to release me */
+        private void acquireIn() {
             try {
-                assertTrue(semaphoreIn.tryAcquire(1, SECONDS));
+                assertTrue(IN.tryAcquire(1, SECONDS));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return (long) (first + last).hashCode();
         }
     };
 
@@ -35,25 +40,27 @@ public class CallbackTest {
     private long createdCustomerId;
 
     @Test
-    public void shouldReplyAsynchronously() throws Exception {
+    public void shouldReplyAsynchronouslyToCreateCustomer() throws Exception {
         replyTo(this).customerCreated(service.createCustomer("Joe", "Doe"));
-        semaphoreIn.release(); // let the service thread continue
+        IN.release(); // let the service thread continue
 
-        assertTrue(semaphoreOut.tryAcquire(1, SECONDS)); // wait for the callback from the service
+        assertTrue(OUT.tryAcquire(1, SECONDS)); // wait for the callback from the service
         assertEquals("JoeDoe".hashCode(), createdCustomerId);
-    }
-
-    @Test
-    public void shouldWorkRepeatedly() throws Exception {
-        replyTo(this).customerCreated(service.createCustomer("Joey", "Doey"));
-        semaphoreIn.release(); // let the service thread continue
-
-        assertTrue(semaphoreOut.tryAcquire(1, SECONDS)); // wait for the callback from the service
-        assertEquals("JoeyDoey".hashCode(), createdCustomerId);
     }
 
     public void customerCreated(Long createdCustomerId) {
         this.createdCustomerId = createdCustomerId;
-        semaphoreOut.release(); // let the main thread continue
+        OUT.release(); // let the main thread continue
+    }
+
+    @Test
+    public void shouldFailOutsideOfMethodCall() throws Exception {
+        Long create = service.createCustomer("Joe", "Doe");
+        System.out.println("------------------> " + create);
+        replyTo(this).customerCreated(create);
+        IN.release(); // let the service thread continue
+
+        assertTrue(OUT.tryAcquire(1, SECONDS)); // wait for the callback from the service
+        assertEquals("JoeDoe".hashCode(), createdCustomerId);
     }
 }

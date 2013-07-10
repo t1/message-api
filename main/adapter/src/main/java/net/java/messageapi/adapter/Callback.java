@@ -13,28 +13,22 @@ import org.slf4j.*;
  * Executes a method call asynchronously and invokes a callback method with the result. For example:
  * 
  * <pre>
- * @AsynchronousService
  * interface CustomerService {
  *     long createCustomer(String first, String last);
  * }
  * 
- * import static net.java.messageapi.adapter.Callback.*;
- * 
  * class Client {
- *     @Inject
- *     CustomerService service;
- *     
+ *     CustomerService service = Callback.forService(realService);
+ * 
  *     void main() {
- *         replyTo(this).customerCreated(service.createCustomer("Joe", "Doe"));
+ *         Callback.replyTo(this).customerCreated(service.createCustomer(&quot;Joe&quot;, &quot;Doe&quot;));
  *     }
- *     
+ * 
  *     void customerCreated(long newCustomerId) {
  *         ...
  *     }
  * }
  * </pre>
- * 
- * TODO AsynchronousService annotation and an according Producer
  */
 public class Callback {
     private static final Logger log = LoggerFactory.getLogger(Callback.class);
@@ -53,7 +47,8 @@ public class Callback {
     }
 
     /**
-     * Creates an instance of that type
+     * Creates an instance of that type, storing all (proxyable) method calls so that they can be retrieved in
+     * {@link Callback#replyTo(Object)}.
      */
     public static <T> T forService(final T target) {
         @SuppressWarnings("unchecked")
@@ -72,9 +67,14 @@ public class Callback {
                 Callback callback = new Callback(target, method, args);
                 CALL_INFO.set(callback);
             }
-        }.cast();
+        }.newInstance();
     }
 
+    /**
+     * Picks up the call that was passed to the proxy created with {@link #forService(Object)}, invokes it
+     * asynchronously, and replies to the target object passed in with the method called on the proxy returned by this
+     * method. Sounds confusing? It's actually quite simple if you look at the example above.
+     */
     public static <T> T replyTo(final T target) {
         @SuppressWarnings("unchecked")
         Class<T> type = (Class<T>) target.getClass();
@@ -86,7 +86,7 @@ public class Callback {
                 callback.invokeAndReplyTo(target, method);
                 return null; // this is never used... the actual reply is asynchronous
             }
-        }.cast();
+        }.newInstance();
     }
 
     public static boolean hasCallbackInfo() {

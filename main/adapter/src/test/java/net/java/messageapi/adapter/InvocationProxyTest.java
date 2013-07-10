@@ -11,6 +11,20 @@ public class InvocationProxyTest {
     private Method methodCalled;
     private Object[] argsCalled;
 
+    @Test
+    public void shouldInvokeSimpleClassMethod() throws Exception {
+        new InvocationProxy<VersionSupplier>(VersionSupplier.class) {
+            @Override
+            public Object invoke(Method method, Object... args) {
+                methodCalled = method;
+                argsCalled = args;
+                return null;
+            }
+        }.newInstance().getVersion(null);
+        assertEquals("getVersion", methodCalled.getName());
+        assertEquals(1, argsCalled.length);
+    }
+
     public static class ProxiedClass {
         public void zeroArgNoReturnMethod() {
             throw new UnsupportedOperationException();
@@ -36,7 +50,7 @@ public class InvocationProxyTest {
             argsCalled = args;
             return null;
         }
-    }.cast();
+    }.newInstance();
 
     @Test
     public void shouldInvokeClassZeroArgMethod() throws Exception {
@@ -91,7 +105,7 @@ public class InvocationProxyTest {
             argsCalled = args;
             return null;
         }
-    }.cast();
+    }.newInstance();
 
     @Test
     public void shouldInvokeInterfaceZeroArgMethod() throws Exception {
@@ -139,7 +153,7 @@ public class InvocationProxyTest {
             argsCalled = args;
             return null;
         }
-    }.cast();
+    }.newInstance();
 
     @Test
     public void shouldReturningObject() throws Exception {
@@ -153,5 +167,123 @@ public class InvocationProxyTest {
         returningClassProxy.stringReturningMethod();
         assertEquals("stringReturningMethod", methodCalled.getName());
         assertEquals(0, argsCalled.length);
+    }
+
+    private static class PrivateClass {
+        public void privateClassMethod() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Test
+    public void shouldFailWithPrivateClass() throws Exception {
+        try {
+            new InvocationProxy<PrivateClass>(PrivateClass.class) {
+                @Override
+                public Object invoke(Method method, Object... args) {
+                    methodCalled = method;
+                    argsCalled = args;
+                    return null;
+                }
+            }.newInstance().privateClassMethod();
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "classes to be proxied must not be private: net.java.messageapi.adapter.InvocationProxyTest$PrivateClass",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldProxyAnonymousClass() throws Exception {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                throw new UnsupportedOperationException();
+            }
+        };
+
+        @SuppressWarnings("unchecked")
+        Class<Runnable> type = (Class<Runnable>) runnable.getClass();
+        new InvocationProxy<Runnable>(type) {
+            @Override
+            public Object invoke(Method method, Object... args) {
+                methodCalled = method;
+                argsCalled = args;
+                return null;
+            }
+        }.newInstance().run();
+
+        assertEquals("run", methodCalled.getName());
+        assertEquals(0, argsCalled.length);
+    }
+
+    class InnerClass {
+        public void innerClassMethod() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Test
+    public void shouldFailWithInnerClass() throws Exception {
+        try {
+            new InvocationProxy<InnerClass>(InnerClass.class) {
+                @Override
+                public Object invoke(Method method, Object... args) {
+                    methodCalled = method;
+                    argsCalled = args;
+                    return null;
+                }
+            }.newInstance().innerClassMethod();
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "inner classes can not be proxied. Use nested classes, i.e. make them static: net.java.messageapi.adapter.InvocationProxyTest$InnerClass",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldFailWithLocalClass() throws Exception {
+        class LocalClass {
+            public void localClassMethod() {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        try {
+            new InvocationProxy<LocalClass>(LocalClass.class) {
+                @Override
+                public Object invoke(Method method, Object... args) {
+                    methodCalled = method;
+                    argsCalled = args;
+                    return null;
+                }
+            }.newInstance().localClassMethod();
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "classes to be proxied must not be local: net.java.messageapi.adapter.InvocationProxyTest$1LocalClass",
+                    e.getMessage());
+        }
+    }
+
+    final static class FinalClass {}
+
+    @Test
+    public void shouldFailForFinalClass() throws Exception {
+        try {
+            new InvocationProxy<FinalClass>(FinalClass.class) {
+                @Override
+                public Object invoke(Method method, Object... args) {
+                    throw new UnsupportedOperationException();
+                }
+            }.newInstance();
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "classes to be proxied must not be final: net.java.messageapi.adapter.InvocationProxyTest$FinalClass",
+                    e.getMessage());
+        }
     }
 }

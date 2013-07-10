@@ -1,16 +1,18 @@
 package net.java.messageapi.adapter;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 import javassist.*;
+import javassist.Modifier;
 
 import org.slf4j.*;
 
 /**
  * Similar to a {@link java.lang.reflect.Proxy}, only that it works with classes as well as interfaces; the only
- * restriction is that the class and the methods to be forwarded must not be final and the class must have a non-arg
- * constructor. Instead of an extra {@link java.lang.reflect.InvocationHandler invocation handler}, all calls are
- * handled by an {@link #invoke(Method, Object...) abstract method} for you to override.
+ * restriction is that the class must be static and the class and the methods to be forwarded must not be final nor
+ * private, and the class must have a constructor that is not private or have arguments. Instead of an extra
+ * {@link java.lang.reflect.InvocationHandler invocation handler} , all calls are handled by an
+ * {@link #invoke(Method, Object...) abstract method} for you to override.
  * <p>
  * <b>Note:</b> Primitive parameter and return types are <b>not implemented, yet.</b>
  * 
@@ -18,9 +20,6 @@ import org.slf4j.*;
  *            the type to proxy
  */
 public abstract class InvocationProxy<T> {
-
-    /** The directory to store all generated proxy classes to for debug purposes, or null */
-    private static final String generatedProxies = "target/generated-proxies";
 
     private final Logger log = LoggerFactory.getLogger(InvocationProxy.class);
 
@@ -41,6 +40,16 @@ public abstract class InvocationProxy<T> {
     }
 
     private CtClass getTargetType(Class<T> targetType) {
+        if (Modifier.isFinal(targetType.getModifiers()))
+            throw new IllegalArgumentException("classes to be proxied must not be final: " + targetType.getName());
+        if (targetType.isLocalClass())
+            throw new IllegalArgumentException("classes to be proxied must not be local: " + targetType.getName());
+        if (Modifier.isPrivate(targetType.getModifiers()))
+            throw new IllegalArgumentException("classes to be proxied must not be private: " + targetType.getName());
+        if (isInnerClass(targetType) && !Modifier.isStatic(targetType.getModifiers()))
+            throw new IllegalArgumentException(
+                    "inner classes can not be proxied. Use nested classes, i.e. make them static: "
+                            + targetType.getName());
         try {
             return classPool.get(targetType.getName());
         } catch (NotFoundException e) {
@@ -48,12 +57,22 @@ public abstract class InvocationProxy<T> {
         }
     }
 
-    public T cast() {
+    /**
+     * Is this an non-static member class?
+     * 
+     * @see Class#getEnclosingClass()
+     */
+    private boolean isInnerClass(Class<T> targetType) {
+        return targetType.getEnclosingClass() != null && !targetType.isAnonymousClass();
+    }
+
+    public T newInstance() {
         String className = targetType.getName() + "$$InvocationProxy";
         try {
             Class<T> type = proxyType(className);
             log.debug("instantiate {}", type);
-            return type.getConstructor(InvocationProxy.class).newInstance(this);
+            Constructor<T> constructor = type.getConstructor(InvocationProxy.class);
+            return constructor.newInstance(this);
         } catch (Exception e) {
             throw new RuntimeException("can't generate " + className, e);
         }
@@ -82,8 +101,7 @@ public abstract class InvocationProxy<T> {
 
         // now really generate
         generate(className);
-        if (generatedProxies != null)
-            proxyType.debugWriteFile(generatedProxies);
+        // for debugging uncomment: proxyType.debugWriteFile("target/generated-proxies");
         return proxyType.toClass();
     }
 
@@ -92,11 +110,23 @@ public abstract class InvocationProxy<T> {
         proxyType = classPool.makeClass(className);
         proxyType.getClassFile().setVersionToJava5();
 
-        proxyType.setSuperclass(targetType);
+        setSuper();
 
         addProxyField();
         addConstuctor();
         forwardMethods();
+    }
+
+    private void setSuper() throws CannotCompileException, NotFoundException {
+        if (isAnonymousTarget()) {
+            proxyType.addInterface(targetType.getInterfaces()[0]); // must be exactly one
+        } else {
+            proxyType.setSuperclass(targetType);
+        }
+    }
+
+    private boolean isAnonymousTarget() {
+        return targetType.getName().matches(".*\\$[0-9]+$");
     }
 
     private void addProxyField() throws CannotCompileException, NotFoundException {
@@ -126,7 +156,7 @@ public abstract class InvocationProxy<T> {
             log.debug("proxy method {}", targetMethod.getLongName());
             CtClass returnType = targetMethod.getReturnType();
             CtMethod method = new CtMethod(returnType, targetMethod.getName(), parameterTypes, proxyType);
-            StringBuilder body = new StringBuilder("{");
+            StringBuilder body = new StringBuilder("{\n");
             body.append("java.lang.reflect.Method method = " + targetType.getName() + ".class.getMethod(\""
                     + targetMethod.getName() + "\", " + argTypes(parameterTypes) + ");\n");
             // + "System.out.println(\":::: \" + method);" //
@@ -134,7 +164,7 @@ public abstract class InvocationProxy<T> {
                 body.append("return (" + returnType.getName() + ") ");
             body.append("proxy.invoke(method, " + args(parameterTypes.length) + ");\n");
             body.append("}");
-            log.debug("    -> {}", body.toString());
+            log.debug("method body:\n{}", body);
             method.setBody(body.toString());
             proxyType.addMethod(method);
         }
