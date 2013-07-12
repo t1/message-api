@@ -156,17 +156,14 @@ public class Callback {
      * JavaEE).
      */
     private Executor executor() {
-        if (executor == null)
-            executor = lookupExecutor();
-        return executor;
-    }
-
-    private Executor lookupExecutor() {
-        try {
-            return (Executor) new InitialContext().lookup("java:module/Executor");
-        } catch (NamingException e) {
-            return Executors.newCachedThreadPool();
+        if (executor == null) {
+            try {
+                executor = (Executor) new InitialContext().lookup("java:module/Executor");
+            } catch (NamingException e) {
+                executor = Executors.newCachedThreadPool();
+            }
         }
+        return executor;
     }
 
     private Object invoke() {
