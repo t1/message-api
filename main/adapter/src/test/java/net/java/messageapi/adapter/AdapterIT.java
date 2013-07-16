@@ -4,12 +4,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.NamingException;
+import javax.naming.*;
 import javax.naming.spi.InitialContextFactory;
 
 import net.java.messageapi.*;
@@ -17,14 +15,13 @@ import net.sf.twip.TwiP;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
+import org.mockito.*;
 
 /**
  * This is actually an integration test within the adapter classes
  */
 @RunWith(TwiP.class)
-public class AdapterIntegrationTest {
+public class AdapterIT {
 
     public interface MessageApiInterface {
         public void method(String foo, @JmsProperty @Optional Integer bar);
