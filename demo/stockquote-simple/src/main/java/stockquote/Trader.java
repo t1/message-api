@@ -1,12 +1,14 @@
 package stockquote;
 
+import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 
 import net.java.messageapi.JmsIncoming;
 
+@Stateless
 public class Trader {
     // TODO send qualifier and select here
-    void receive(@Observes @JmsIncoming StockQuote quote) {
+    public void receive(@Observes @JmsIncoming StockQuote quote) {
         System.out.println("##### received " + quote);
     }
 }

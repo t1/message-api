@@ -3,7 +3,6 @@ package net.java.messageapi.adapter;
 import java.lang.reflect.*;
 import java.util.concurrent.*;
 
-import javax.ejb.*;
 import javax.inject.Inject;
 import javax.naming.*;
 
@@ -52,18 +51,6 @@ import org.slf4j.*;
 public class Callback {
     private static final Logger log = LoggerFactory.getLogger(Callback.class);
     private static final ThreadLocal<Callback> CALL_INFO = new ThreadLocal<Callback>();
-
-    /**
-     * @see http://stackoverflow.com/questions/13932083/jboss-java-ee-container-and-an-executorservice
-     */
-    @Stateless(name = "Executor")
-    public static class ExecutorBean implements Executor {
-        @Override
-        @Asynchronous
-        public void execute(Runnable command) {
-            command.run();
-        }
-    }
 
     /**
      * Creates an instance of that type, storing all (proxyable) method calls so that they can be retrieved in
