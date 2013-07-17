@@ -2,23 +2,21 @@ package net.java.messageapi.adapter;
 
 import java.util.Arrays;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import javax.xml.bind.*;
 
 /**
- * You can use one of the three configuration mechanisms built into JAXB yourself, or you can use
- * this enum for convenience; the main purpose of this enum is to ease testing.
+ * You can use one of the three configuration mechanisms built into JAXB yourself, or you can use this enum for
+ * convenience; the main purpose of this enum is to ease testing.
  * <p>
- * NOTE: {@link #createJaxbContextFor(Package)} restores the previous configuration. This is very
- * important to keep tests independent of each another. But most commonly you'd use the {@link #setUp}
- *  method and restore the previous state with the {@link JaxbProviderMemento memento} that method
- *  returns.
+ * NOTE: {@link #createJaxbContextFor(Package)} restores the previous configuration. This is very important to keep
+ * tests independent of each another. But most commonly you'd use the {@link #setUp} method and restore the previous
+ * state with the {@link JaxbProviderMemento memento} that method returns.
  */
 public enum JaxbProvider {
 
     /**
-     * Don't change the provider... the configuration can remain as it is. This may be the
-     * {@link #SUN_JDK default} or it may already have been configured externally.
+     * Don't change the provider... the configuration can remain as it is. This may be the {@link #SUN_JDK default} or
+     * it may already have been configured externally.
      */
     UNCHANGED(null),
 
@@ -65,14 +63,16 @@ public enum JaxbProvider {
     /**
      * Creates a {@link JAXBContext} using this JAXB provider.
      * <p>
-     * Note that we currently require only support for newInstance with a package-path and an array
-     * of classes; maybe others have to be supported later.
+     * Note that we currently require only support for newInstance with a package-path and an array of classes; maybe
+     * others have to be supported later.
      */
     public JAXBContext createJaxbContextFor(Package pkg) {
         JaxbProviderMemento memento = setUp();
         try {
             return JAXBContext.newInstance(pkg.getName());
         } catch (JAXBException e) {
+            throw new RuntimeException("can't create JAXB context for " + pkg, e);
+        } catch (RuntimeException e) {
             throw new RuntimeException("can't create JAXB context for " + pkg, e);
         } finally {
             memento.restore();
@@ -82,16 +82,17 @@ public enum JaxbProvider {
     /**
      * Creates a {@link JAXBContext} using this JAXB provider.
      * <p>
-     * Note that we currently require only support for newInstance with a package-path and an array
-     * of classes; maybe others have to be supported later.
+     * Note that we currently require only support for newInstance with a package-path and an array of classes; maybe
+     * others have to be supported later.
      */
     public JAXBContext createJaxbContextFor(Class<?>... classesToBeBound) {
         JaxbProviderMemento memento = setUp();
         try {
             return JAXBContext.newInstance(classesToBeBound);
         } catch (JAXBException e) {
-            throw new RuntimeException("can't create JAXB context for "
-                    + Arrays.asList(classesToBeBound), e);
+            throw new RuntimeException("can't create JAXB context for " + Arrays.asList(classesToBeBound), e);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("can't create JAXB context for " + Arrays.asList(classesToBeBound), e);
         } finally {
             memento.restore();
         }
