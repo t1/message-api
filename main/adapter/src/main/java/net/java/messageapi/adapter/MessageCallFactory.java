@@ -87,21 +87,21 @@ public class MessageCallFactory<T> {
             return true;
         }
         if (constructorArgType.isPrimitive()) {
-            if (constructorArgType == Boolean.TYPE && methodArgType == Boolean.class)
+            if (constructorArgType == boolean.class && methodArgType == Boolean.class)
                 return true;
-            if (constructorArgType == Byte.TYPE && methodArgType == Byte.class)
+            if (constructorArgType == byte.class && methodArgType == Byte.class)
                 return true;
-            if (constructorArgType == Character.TYPE && methodArgType == Character.class)
+            if (constructorArgType == char.class && methodArgType == Character.class)
                 return true;
-            if (constructorArgType == Short.TYPE && methodArgType == Short.class)
+            if (constructorArgType == short.class && methodArgType == Short.class)
                 return true;
-            if (constructorArgType == Integer.TYPE && methodArgType == Integer.class)
+            if (constructorArgType == int.class && methodArgType == Integer.class)
                 return true;
-            if (constructorArgType == Long.TYPE && methodArgType == Long.class)
+            if (constructorArgType == long.class && methodArgType == Long.class)
                 return true;
-            if (constructorArgType == Float.TYPE && methodArgType == Float.class)
+            if (constructorArgType == float.class && methodArgType == Float.class)
                 return true;
-            if (constructorArgType == Double.TYPE && methodArgType == Double.class)
+            if (constructorArgType == double.class && methodArgType == Double.class)
                 return true;
             throw new AssertionError("unexpected primitive");
         }

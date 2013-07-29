@@ -11,16 +11,16 @@ class JmsPropertyScanner {
 
     /** The types that can directly be set on or read from a JMS message property */
     private static final List<Class<?>> JMS_PROPERTY_TYPES = Arrays.asList(new Class<?>[] { //
-    String.class, //
-            Boolean.class, Boolean.TYPE, //
-            Byte.class, Byte.TYPE, //
-            Character.class, Character.TYPE,//
-            Short.class, Short.TYPE, //
-            Integer.class, Integer.TYPE, //
-            Long.class, Long.TYPE, //
-            Float.class, Float.TYPE, //
-            Double.class, Double.TYPE //
-    });
+            String.class, //
+                    Boolean.class, boolean.class, //
+                    Byte.class, byte.class, //
+                    Character.class, char.class,//
+                    Short.class, short.class, //
+                    Integer.class, int.class, //
+                    Long.class, long.class, //
+                    Float.class, float.class, //
+                    Double.class, double.class //
+            });
 
     interface Visitor {
         public void visit(String propertyName, Object container, Field field) throws JMSException,

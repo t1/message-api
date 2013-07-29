@@ -23,25 +23,26 @@ class JmsPropertiesFromMessageToPojo implements JmsPropertyScanner.Visitor {
         if (String.class.equals(type)) {
             String value = message.getStringProperty(propertyName);
             field.set(container, value);
-        } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+        } else if (Boolean.class.equals(type) || boolean.class.equals(type)) {
             boolean value = message.getBooleanProperty(propertyName);
             field.set(container, value);
-        } else if (Byte.class.equals(type) || Byte.TYPE.equals(type)) {
+        } else if (Byte.class.equals(type) || byte.class.equals(type)) {
             byte value = message.getByteProperty(propertyName);
             field.set(container, value);
-        } else if (Short.class.equals(type) || Short.TYPE.equals(type)) {
+            // there is no getCharacterProperty
+        } else if (Short.class.equals(type) || short.class.equals(type)) {
             short value = message.getShortProperty(propertyName);
             field.set(container, value);
-        } else if (Integer.class.equals(type) || Integer.TYPE.equals(type)) {
+        } else if (Integer.class.equals(type) || int.class.equals(type)) {
             int value = message.getIntProperty(propertyName);
             field.set(container, value);
-        } else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
+        } else if (Long.class.equals(type) || long.class.equals(type)) {
             long value = message.getLongProperty(propertyName);
             field.set(container, value);
-        } else if (Float.class.equals(type) || Float.TYPE.equals(type)) {
+        } else if (Float.class.equals(type) || float.class.equals(type)) {
             float value = message.getFloatProperty(propertyName);
             field.set(container, value);
-        } else if (Double.class.equals(type) || Double.TYPE.equals(type)) {
+        } else if (Double.class.equals(type) || double.class.equals(type)) {
             double value = message.getDoubleProperty(propertyName);
             field.set(container, value);
         } else if (List.class.equals(type)) {

@@ -9,9 +9,8 @@ import net.java.messageapi.MessageApi;
 
 /**
  * Takes a {@link MapMessage}, deserializes it and calls the corresponding method in an implementation of some
- * {@link MessageApi}. If a parameter is missing in the map, zero or @code null is used (depending on the type).
- * 
- * TODO optionally fail when message fields are missing and/or unexpected
+ * {@link MessageApi}. If a parameter is missing in the map, zero or @code null is used (depending on the type). TODO
+ * optionally fail when message fields are missing and/or unexpected
  * 
  * @param <T>
  *            the {@link MessageApi} interface that the calls are for and the <code>impl</code> implements.
@@ -136,28 +135,28 @@ public class MapMessageDecoder<T> implements MessageListener {
     }
 
     private Object convertType(String convertable, Class<?> type) {
-        if (type == Byte.class || type == Byte.TYPE) {
+        if (type == Byte.class || type == byte.class) {
             return Byte.valueOf(convertable);
         }
-        if (type == Short.class || type == Short.TYPE) {
+        if (type == Short.class || type == short.class) {
             return Short.valueOf(convertable);
         }
-        if (type == Integer.class || type == Integer.TYPE) {
+        if (type == Integer.class || type == int.class) {
             return Integer.valueOf(convertable);
         }
-        if (type == Long.class || type == Long.TYPE) {
+        if (type == Long.class || type == long.class) {
             return Long.valueOf(convertable);
         }
-        if (type == Float.class || type == Float.TYPE) {
+        if (type == Float.class || type == float.class) {
             return Float.valueOf(convertable);
         }
-        if (type == Double.class || type == Double.TYPE) {
+        if (type == Double.class || type == double.class) {
             return Double.valueOf(convertable);
         }
-        if (type == Character.class || type == Character.TYPE) {
+        if (type == Character.class || type == char.class) {
             return Character.valueOf(convertable.charAt(0));
         }
-        if (type == Boolean.class || type == Boolean.TYPE) {
+        if (type == Boolean.class || type == boolean.class) {
             return Boolean.valueOf(convertable);
         }
         if (type == String.class) {

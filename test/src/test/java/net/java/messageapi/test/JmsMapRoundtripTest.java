@@ -2,19 +2,17 @@ package net.java.messageapi.test;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 import javax.jms.*;
 
 import net.java.messageapi.adapter.*;
-import net.java.messageapi.converter.JodaLocalDateConverter;
-import net.java.messageapi.converter.StringToBooleanConverter;
+import net.java.messageapi.converter.*;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
-import net.sf.twip.TwiP;
-import net.sf.twip.Values;
+import net.sf.twip.*;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -22,8 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockejb.jms.MapMessageImpl;
 import org.mockito.Mock;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.*;
 
 @RunWith(TwiP.class)
 public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
@@ -49,18 +46,18 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         }
     }
 
-    public static final Collection<SimpleServiceCall> PRIMITIVE_CALLS = ImmutableList.of(new SimpleServiceCall(
-            "booleanCall", "b", Boolean.TYPE, false),//
-            new SimpleServiceCall("byteCall", "b", Byte.TYPE, (byte) 0),//
-            new SimpleServiceCall("charCall", "c", Character.TYPE, 'c'),//
-            new SimpleServiceCall("shortCall", "s", Short.TYPE, (short) 0),//
-            new SimpleServiceCall("intCall", "i", Integer.TYPE, 0),//
-            new SimpleServiceCall("longCall", "l", Long.TYPE, 0L),//
-            new SimpleServiceCall("floatCall", "f", Float.TYPE, 0.0f),//
-            new SimpleServiceCall("doubleCall", "d", Double.TYPE, 0.0));
+    public static final Collection<SimpleServiceCall> PRIMITIVE_CALLS = ImmutableList.of(//
+            new SimpleServiceCall("booleanCall", "b", boolean.class, false),//
+            new SimpleServiceCall("byteCall", "b", byte.class, (byte) 0),//
+            new SimpleServiceCall("charCall", "c", char.class, 'c'),//
+            new SimpleServiceCall("shortCall", "s", short.class, (short) 0),//
+            new SimpleServiceCall("intCall", "i", int.class, 0),//
+            new SimpleServiceCall("longCall", "l", long.class, 0L),//
+            new SimpleServiceCall("floatCall", "f", float.class, 0.0f),//
+            new SimpleServiceCall("doubleCall", "d", double.class, 0.0));
 
-    public static final Collection<SimpleServiceCall> BOXED_PRIMITIVE_CALLS = ImmutableList.of(new SimpleServiceCall(
-            "boxedBooleanCall", "b", Boolean.class, false),//
+    public static final Collection<SimpleServiceCall> BOXED_PRIMITIVE_CALLS = ImmutableList.of(//
+            new SimpleServiceCall("boxedBooleanCall", "b", Boolean.class, false),//
             new SimpleServiceCall("boxedByteCall", "b", Byte.class, (byte) 0),//
             new SimpleServiceCall("boxedCharCall", "c", Character.class, 'c'),//
             new SimpleServiceCall("boxedShortCall", "s", Short.class, (short) 0),//
@@ -86,9 +83,9 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         // Given
         MappedApi sendProxy = MessageSender.of(MappedApi.class);
         Mapping receiveMapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapField("s1", FieldMapping.map("A")) //
-        .mapField("s2", FieldMapping.map("B")) //
-        .build();
+                .mapField("s1", FieldMapping.map("A")) //
+                .mapField("s2", FieldMapping.map("B")) //
+                .build();
 
         // When
         sendProxy.mappedCall("a", 0L);
@@ -108,7 +105,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         // When
         sendProxy.a("content");
         MapMessageDecoder.of(OneCharTestApi.class, oneCharServiceMock, receiveMapping) //
-        .onMessage(captureMessage());
+                .onMessage(captureMessage());
 
         // Then
         verify(oneCharServiceMock).a("content");
@@ -198,9 +195,9 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         LocalDate today = new LocalDate();
         String pattern = "dd.MM.YYYY";
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
-        .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
-        .build();
+                .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
+                .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
+                .build();
         MapJmsPayloadHandler payloadHandler = new MapJmsPayloadHandler(mapping);
         JodaTimeApi service = JmsSenderFactory.create(CONFIG, payloadHandler).create(JodaTimeApi.class);
 
@@ -219,12 +216,13 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
         String pattern = "dd.MM.YYYY";
         LocalDate today = new LocalDate();
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
-        .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
-        .build();
+                .mapField("date", FieldMapping.map("date", new JodaLocalDateConverter(pattern))) //
+                .mapField("flag", FieldMapping.map("flag", new StringToBooleanConverter("1", "0"))) //
+                .build();
 
-        MapMessage message = createPayload(OPERATION_FIELD_NAME, "localDateCall", "date", today.toString(pattern),
-                "flag", flag ? "1" : "0");
+        MapMessage message =
+                createPayload(OPERATION_FIELD_NAME, "localDateCall", "date", today.toString(pattern), "flag", flag
+                        ? "1" : "0");
 
         // When
         JodaTimeApi mock = mock(JodaTimeApi.class);
@@ -264,7 +262,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldMapSendOperationName() throws JMSException {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapOperation("mappedNoArgCall", "MAPPED_NOARG_OP").build();
+                .mapOperation("mappedNoArgCall", "MAPPED_NOARG_OP").build();
         MappedApi service = service(mapping);
 
         // When
@@ -279,7 +277,7 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     public void shouldMapReceiveOperationName() throws JMSException {
         // Given
         Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME) //
-        .mapOperation("mappedNoArgCall", "MAPPED_NOARG_OP").build();
+                .mapOperation("mappedNoArgCall", "MAPPED_NOARG_OP").build();
 
         MapMessage message = createPayload(OPERATION_FIELD_NAME, "MAPPED_NOARG_OP");
 
@@ -321,8 +319,9 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void shouldCallServiceWithDefaultValueIfNotSendingOptionalParameter() {
         // Given
-        Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).mapField("string",
-                FieldMapping.mapWithDefault("string", "default value")).build();
+        Mapping mapping =
+                new MappingBuilder(OPERATION_FIELD_NAME).mapField("string",
+                        FieldMapping.mapWithDefault("string", "default value")).build();
         MappedApi service = service(mapping);
 
         // When
@@ -336,8 +335,9 @@ public class JmsMapRoundtripTest extends AbstractJmsSenderFactoryTest {
     @Test
     public void shouldCallServiceWithDefaultValueIfNotSendingMandatoryParameter() {
         // Given
-        Mapping mapping = new MappingBuilder(OPERATION_FIELD_NAME).mapField("s1",
-                FieldMapping.mapWithDefault("s1", "default value")).build();
+        Mapping mapping =
+                new MappingBuilder(OPERATION_FIELD_NAME).mapField("s1",
+                        FieldMapping.mapWithDefault("s1", "default value")).build();
         MappedApi service = service(mapping);
 
         // When

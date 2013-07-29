@@ -60,7 +60,7 @@ class PojoProperties {
                 && method.getParameterTypes().length == 0
                 && method.getName().startsWith("get")
                 && method.getName().length() > 3
-                && method.getReturnType() != Void.TYPE
+                && method.getReturnType() != void.class
                 && Character.isUpperCase(method.getName().charAt(3)) && method.getDeclaringClass() != Object.class // getClass
         ;
     }
