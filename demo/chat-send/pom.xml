@@ -100,11 +100,6 @@
 			<artifactId>adapter</artifactId>
 			<version>2.0a19-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.18.0-GA</version>
-		</dependency>
 
 		<dependency>
 			<groupId>joda-time</groupId>
