@@ -2,18 +2,15 @@ package net.java.messageapi.test;
 
 import static org.mockito.Mockito.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import net.java.messageapi.adapter.ForwardingSenderFactory;
-import net.java.messageapi.adapter.JaxbProvider;
+import net.java.messageapi.adapter.*;
 import net.sf.twip.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.*;
 
 @RunWith(TwiP.class)
 public class SimpleCollectionsApiTest {
@@ -21,7 +18,7 @@ public class SimpleCollectionsApiTest {
     private final SimpleCollectionsApi service = mock(SimpleCollectionsApi.class);
     private final SimpleCollectionsApi sender;
 
-    public SimpleCollectionsApiTest(@NotNull @Assume("!= XSTREAM") JaxbProvider provider) {
+    public SimpleCollectionsApiTest(@NotNull JaxbProvider provider) {
         sender = ForwardingSenderFactory.create(SimpleCollectionsApi.class, service, provider);
     }
 

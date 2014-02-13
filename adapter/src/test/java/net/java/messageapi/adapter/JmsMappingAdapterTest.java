@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.java.messageapi.converter.*;
 import net.sf.twip.*;
-import net.sf.twip.Assume;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -122,7 +121,7 @@ public class JmsMappingAdapterTest {
     @Rule
     public JaxbRule jaxb = new JaxbRule();
 
-    public JmsMappingAdapterTest(@NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) throws Exception {
+    public JmsMappingAdapterTest(@NotNull JaxbProvider jaxbProvider) throws Exception {
         jaxb.setProvider(jaxbProvider);
     }
 

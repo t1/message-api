@@ -2,10 +2,8 @@ package net.java.messageapi.test;
 
 import static org.junit.Assert.*;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
 import javax.xml.bind.JAXB;
 
@@ -64,11 +62,12 @@ public class XmlSenderFactoryTest {
     private final JmsQueueConfig config;
     private final JmsSenderFactory factory;
 
-    public XmlSenderFactoryTest(Params params, @NotNull @Assume("!= XSTREAM") JaxbProvider jaxbProvider) {
+    public XmlSenderFactoryTest(Params params, @NotNull JaxbProvider jaxbProvider) {
         @SuppressWarnings("unchecked")
         Map<String, Object> headerMap = (Map<String, Object>) params.header;
-        this.config = new JmsQueueConfig(params.factory, params.destination, params.user, params.password,
-                params.transacted, params.contextProperties, headerMap);
+        this.config =
+                new JmsQueueConfig(params.factory, params.destination, params.user, params.password, params.transacted,
+                        params.contextProperties, headerMap);
         XmlJmsPayloadHandler payloadHandler = new XmlJmsPayloadHandler(jaxbProvider);
         this.factory = JmsSenderFactory.create(config, payloadHandler);
     }

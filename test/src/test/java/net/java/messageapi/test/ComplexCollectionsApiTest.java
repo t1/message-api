@@ -4,8 +4,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import net.java.messageapi.adapter.ForwardingSenderFactory;
-import net.java.messageapi.adapter.JaxbProvider;
+import net.java.messageapi.adapter.*;
 import net.sf.twip.*;
 
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class ComplexCollectionsApiTest {
     private final ComplexCollectionsApi sender;
 
     // TODO support: SUN_JDK
-    public ComplexCollectionsApiTest(@NotNull @Assume("!= XSTREAM & != UNCHANGED & != SUN_JDK") JaxbProvider provider) {
+    public ComplexCollectionsApiTest(@NotNull @Assume("!= UNCHANGED & != SUN_JDK") JaxbProvider provider) {
         sender = ForwardingSenderFactory.create(ComplexCollectionsApi.class, service, provider);
     }
 

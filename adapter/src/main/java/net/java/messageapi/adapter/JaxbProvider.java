@@ -26,10 +26,7 @@ public enum JaxbProvider {
     SUN_JDK(null),
 
     /** EclipseLink MOXy: http://wiki.eclipse.org/EclipseLink/FAQ/WhatIsMOXy */
-    ECLIPSE_LINK("org.eclipse.persistence.jaxb.JAXBContextFactory"),
-
-    /** An adapter for http://xstream.codehaus.org/ */
-    XSTREAM("net.java.messageapi.xstream.XStreamJaxbContextFactory");
+    ECLIPSE_LINK("org.eclipse.persistence.jaxb.JAXBContextFactory");
 
     public static class JaxbProviderMemento {
         private final String oldFactoryName;

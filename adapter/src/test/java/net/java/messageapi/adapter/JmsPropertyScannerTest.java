@@ -7,15 +7,15 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import net.java.messageapi.JmsProperty;
-import net.sf.twip.TwiP;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-@RunWith(TwiP.class)
+@RunWith(MockitoJUnitRunner.class)
 public class JmsPropertyScannerTest {
 
     @Mock
