@@ -4,8 +4,7 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class ParameterTest {
 
@@ -13,12 +12,10 @@ public class ParameterTest {
         // intentionally left empty
     }
 
-    @SuppressWarnings("unused")
     public void oneArg(String foo) {
         // intentionally left empty
     }
 
-    @SuppressWarnings("unused")
     public void twoArgs(String foo, int bar) {
         // intentionally left empty
     }
@@ -30,7 +27,6 @@ public class ParameterTest {
     public abstract class AbstractClass {
         public abstract void abstractOneArg(String abs);
 
-        @SuppressWarnings("unused")
         public void concreteOneArg(String conc) {
             // intentionally left empty
         }
