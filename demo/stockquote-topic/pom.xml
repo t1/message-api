@@ -54,16 +54,16 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>net.java.messageapi</groupId>
-			<artifactId>adapter</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
-			<artifactId>api-processor</artifactId>
-			<version>2.0-SNAPSHOT</version>
-			<scope>provided</scope>
-			<optional>true</optional>
+			<artifactId>adapter</artifactId>
+			<version>2.0a19-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
