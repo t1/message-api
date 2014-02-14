@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.java.messageapi</groupId>
 	<artifactId>root-container</artifactId>
-	<version>2.0a21-SNAPSHOT</version>
+	<version>2.0a21</version>
 	<packaging>pom</packaging>
 	<name>MessageAPI root container pom</name>
 	<description>
@@ -42,7 +41,7 @@
 		<connection>scm:git:git@github.com:t1/message-api.git</connection>
 		<developerConnection>scm:git:git@github.com:t1/message-api.git</developerConnection>
 		<url>https://github.com/t1/message-api</url>
-		<tag>HEAD</tag>
+		<tag>2.0a21</tag>
 	</scm>
 
 	<distributionManagement>
