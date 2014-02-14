@@ -46,7 +46,7 @@
 
 	<distributionManagement>
 		<repository>
-			<id>bintray-t1-javaee-helpers-message-api</id>
+			<id>bintray-t1-javaee-helpers</id>
 			<name>t1-javaee-helpers-message-api</name>
 			<url>https://api.bintray.com/maven/t1/javaee-helpers/message-api</url>
 		</repository>
