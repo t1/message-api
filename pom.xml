@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.java.messageapi</groupId>
@@ -228,11 +229,25 @@
 		</plugins>
 	</reporting>
 
+	<profiles>
+		<profile>
+			<id>non-release</id>
+			<activation>
+				<property>
+					<name>!prepareRelease</name>
+				</property>
+			</activation>
+			<modules>
+				<!-- these don't need to be released and miss release config -->
+				<!-- <module>test</module> -->
+				<module>demo</module>
+			</modules>
+		</profile>
+	</profiles>
+
 	<modules>
 		<module>adapter</module>
 		<module>annotations</module>
-		<module>demo</module>
-		<!-- <module>test</module> -->
 	</modules>
 
 	<dependencyManagement>
