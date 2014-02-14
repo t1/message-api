@@ -3,7 +3,7 @@
 
 	<groupId>net.java.messageapi.demo</groupId>
 	<artifactId>stockquote-simple</artifactId>
-	<version>2.0a21</version>
+	<version>2.0a22-SNAPSHOT</version>
 	<name>Stock quote simple example</name>
 	<packaging>war</packaging>
 	<description>A MessageApi example sending to a generated MDB</description>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>net.java.messageapi</groupId>
 			<artifactId>adapter</artifactId>
-			<version>2.0a21</version>
+			<version>2.0a22-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.spec</groupId>
