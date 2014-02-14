@@ -11,12 +11,9 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.java.messageapi.converter.*;
-import net.sf.twip.*;
 
 import org.junit.*;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
 public class JmsMappingAdapterTest {
 
     @XmlRootElement(name = "test-container")
@@ -120,10 +117,6 @@ public class JmsMappingAdapterTest {
 
     @Rule
     public JaxbRule jaxb = new JaxbRule();
-
-    public JmsMappingAdapterTest(@NotNull JaxbProvider jaxbProvider) throws Exception {
-        jaxb.setProvider(jaxbProvider);
-    }
 
     @Test
     public void shouldMarshal() throws Exception {

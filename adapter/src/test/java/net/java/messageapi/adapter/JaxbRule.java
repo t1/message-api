@@ -16,7 +16,7 @@ public class JaxbRule implements TestRule {
     private JAXBContext context;
 
     private JaxbProviderMemento memento;
-    private JaxbProvider jaxbProvider;
+    private JaxbProvider jaxbProvider = JaxbProvider.UNCHANGED;
 
     @Override
     public Statement apply(final Statement base, Description description) {

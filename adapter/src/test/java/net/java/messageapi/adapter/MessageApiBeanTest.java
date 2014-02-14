@@ -1,6 +1,5 @@
 package net.java.messageapi.adapter;
 
-import static net.sf.twip.verify.Verify.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
@@ -9,12 +8,9 @@ import java.util.*;
 import javax.enterprise.util.AnnotationLiteral;
 
 import net.java.messageapi.*;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
 public class MessageApiBeanTest {
 
     @SuppressWarnings("all")
@@ -63,13 +59,13 @@ public class MessageApiBeanTest {
 
         JmsQueueConfig config = bean.factory.getConfig();
 
-        verifyThat(config.getFactoryName(), is(ConnectionFactoryName.DEFAULT));
-        verifyThat(config.getDestinationName(), is(DummyApi.class.getCanonicalName()));
-        verifyThat(config.getUser(), is(nullValue()));
-        verifyThat(config.getPass(), is(nullValue()));
-        verifyThat(config.isTransacted(), is(false));
-        verifyThat(config.getContextProperties(), is(new Properties()));
-        verifyThat(config.getAdditionalProperties(), is(EMPTY_PROPS));
+        assertThat(config.getFactoryName(), is(ConnectionFactoryName.DEFAULT));
+        assertThat(config.getDestinationName(), is(DummyApi.class.getCanonicalName()));
+        assertThat(config.getUser(), is(nullValue()));
+        assertThat(config.getPass(), is(nullValue()));
+        assertThat(config.isTransacted(), is(false));
+        assertThat(config.getContextProperties(), is(new Properties()));
+        assertThat(config.getAdditionalProperties(), is(EMPTY_PROPS));
     }
 
     @Test

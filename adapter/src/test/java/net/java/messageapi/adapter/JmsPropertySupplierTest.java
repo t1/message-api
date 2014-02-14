@@ -7,13 +7,13 @@ import java.util.*;
 import javax.jms.*;
 
 import net.java.messageapi.JmsProperty;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(TwiP.class)
+@RunWith(MockitoJUnitRunner.class)
 public class JmsPropertySupplierTest {
 
     private final JmsPropertySupplier supplier = new JmsPropertySupplier();

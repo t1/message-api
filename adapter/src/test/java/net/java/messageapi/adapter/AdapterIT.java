@@ -11,16 +11,16 @@ import javax.naming.*;
 import javax.naming.spi.InitialContextFactory;
 
 import net.java.messageapi.*;
-import net.sf.twip.TwiP;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * This is actually an integration test within the adapter classes
  */
-@RunWith(TwiP.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AdapterIT {
 
     public interface MessageApiInterface {

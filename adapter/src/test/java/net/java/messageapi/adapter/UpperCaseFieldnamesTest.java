@@ -1,34 +1,74 @@
 package net.java.messageapi.adapter;
 
 import static org.junit.Assert.*;
-import net.java.messageapi.adapter.Mapping;
-import net.java.messageapi.adapter.MappingBuilder;
-import net.sf.twip.TwiP;
-import net.sf.twip.Values;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
 public class UpperCaseFieldnamesTest {
 
     private final Mapping mapping = new MappingBuilder("op").upperCaseFields().build();
-
-    public static final Integer[] LENGTHS = { 1, 2, 3, 4, 5 };
 
     private String map(String string) {
         return mapping.getMappingForField(string).getAttributeName();
     }
 
     @Test
-    public void shouldUpperCaseAllLowerCase(@Values("LENGTHS") int length) throws Exception {
+    public void shouldUpperCaseAllLowerCase1() throws Exception {
+        shouldUpperCaseAllLowerCase(1);
+    }
+
+    @Test
+    public void shouldUpperCaseAllLowerCase2() throws Exception {
+        shouldUpperCaseAllLowerCase(2);
+    }
+
+    @Test
+    public void shouldUpperCaseAllLowerCase3() throws Exception {
+        shouldUpperCaseAllLowerCase(3);
+    }
+
+    @Test
+    public void shouldUpperCaseAllLowerCase4() throws Exception {
+        shouldUpperCaseAllLowerCase(4);
+    }
+
+    @Test
+    public void shouldUpperCaseAllLowerCase5() throws Exception {
+        shouldUpperCaseAllLowerCase(5);
+    }
+
+    private void shouldUpperCaseAllLowerCase(int length) throws Exception {
         String input = "lower".substring(0, length);
         String expected = "LOWER".substring(0, length);
         assertEquals(expected, map(input));
     }
 
     @Test
-    public void shouldLeaveAllUpperCase(@Values("LENGTHS") int length) throws Exception {
+    public void shouldLeaveAllUpperCase1() throws Exception {
+        shouldLeaveAllUpperCase(1);
+    }
+
+    @Test
+    public void shouldLeaveAllUpperCase2() throws Exception {
+        shouldLeaveAllUpperCase(2);
+    }
+
+    @Test
+    public void shouldLeaveAllUpperCase3() throws Exception {
+        shouldLeaveAllUpperCase(3);
+    }
+
+    @Test
+    public void shouldLeaveAllUpperCase4() throws Exception {
+        shouldLeaveAllUpperCase(4);
+    }
+
+    @Test
+    public void shouldLeaveAllUpperCase5() throws Exception {
+        shouldLeaveAllUpperCase(5);
+    }
+
+    private void shouldLeaveAllUpperCase(int length) throws Exception {
         String inout = "UPPER".substring(0, length);
         assertEquals(inout, map(inout));
     }
