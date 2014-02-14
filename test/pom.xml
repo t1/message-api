@@ -10,11 +10,6 @@
 	<artifactId>test</artifactId>
 	<name>Test Module</name>
 	<packaging>war</packaging>
-	<description>
-		This module is required to integration test the adapter,
-		as it requires the generators which are unavailable when
-		building the adapter itself.
-	</description>
 
 	<build>
 		<plugins>
