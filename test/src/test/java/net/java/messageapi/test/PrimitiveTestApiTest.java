@@ -6,12 +6,9 @@ import static org.junit.Assert.*;
 import java.io.StringWriter;
 
 import net.java.messageapi.adapter.JaxbProvider;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
 public class PrimitiveTestApiTest {
 
     private static final String NS = "http://messageapi.java.net";

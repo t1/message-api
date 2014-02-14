@@ -94,11 +94,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.twip</groupId>
-			<artifactId>twip</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.2</version>

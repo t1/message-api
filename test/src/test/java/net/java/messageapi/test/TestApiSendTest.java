@@ -5,25 +5,15 @@ import static org.junit.Assert.*;
 
 import java.io.StringWriter;
 
-import net.java.messageapi.adapter.JaxbProvider;
-import net.sf.twip.TwiP;
+import org.junit.*;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-@RunWith(TwiP.class)
 public class TestApiSendTest {
 
     private static final String NS = "http://messageapi.java.net";
 
     private final StringWriter writer = new StringWriter();
 
-    private final TestApi testApi;
-
-    public TestApiSendTest(JaxbProvider jaxbProvider) {
-        testApi = ToXmlEncoderHelper.create(TestApi.class, writer, jaxbProvider);
-    }
+    private final TestApi testApi = ToXmlEncoderHelper.create(TestApi.class, writer);
 
     private String getLine(int lineNumber) {
         return writer.toString().split("\n")[lineNumber];

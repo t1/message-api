@@ -8,23 +8,20 @@ import javax.jms.*;
 import net.java.messageapi.adapter.*;
 import net.java.messageapi.adapter.JaxbProvider.JaxbProviderMemento;
 import net.java.messageapi.test.defaultjaxb.JodaTimeApi;
-import net.sf.twip.*;
-import net.sf.twip.Assume;
 
 import org.joda.time.Instant;
 import org.junit.*;
-import org.junit.runner.RunWith;
 import org.mockejb.jms.TextMessageImpl;
 
-@RunWith(TwiP.class)
 public class JmsXmlRoundtripTest extends AbstractJmsSenderFactoryTest {
 
     private final JaxbProviderMemento memento;
 
     // TODO support ECLIPSE_LINK when this bug is fixed:
     // https://bugs.eclipse.org/bugs/show_bug.cgi?id=327811
-    public JmsXmlRoundtripTest(@NotNull @Assume("!= ECLIPSE_LINK") JaxbProvider jaxbProvider) {
-        this.memento = jaxbProvider.setUp();
+    // TODO reenable
+    public JmsXmlRoundtripTest(/* @NotNull @Assume("!= ECLIPSE_LINK") JaxbProvider jaxbProvider */) {
+        this.memento = JaxbProvider.UNCHANGED.setUp();
     }
 
     @After

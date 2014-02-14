@@ -5,22 +5,19 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 
 import net.java.messageapi.adapter.*;
-import net.sf.twip.*;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import com.google.common.collect.*;
 
-@RunWith(TwiP.class)
 public class ComplexCollectionsApiTest {
 
     private final ComplexCollectionsApi service = mock(ComplexCollectionsApi.class);
     private final ComplexCollectionsApi sender;
 
     // TODO support: SUN_JDK
-    public ComplexCollectionsApiTest(@NotNull @Assume("!= UNCHANGED & != SUN_JDK") JaxbProvider provider) {
-        sender = ForwardingSenderFactory.create(ComplexCollectionsApi.class, service, provider);
+    public ComplexCollectionsApiTest() {
+        sender = ForwardingSenderFactory.create(ComplexCollectionsApi.class, service, JaxbProvider.ECLIPSE_LINK);
     }
 
     @Test

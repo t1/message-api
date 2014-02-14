@@ -5,13 +5,8 @@ import static org.junit.Assert.*;
 
 import java.io.StringWriter;
 
-import net.java.messageapi.adapter.JaxbProvider;
-import net.sf.twip.TwiP;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
 public class BoxedPrimitiveTestApiTest {
 
     private static final String NS = "http://messageapi.java.net";
@@ -20,8 +15,8 @@ public class BoxedPrimitiveTestApiTest {
 
     private final StringWriter writer = new StringWriter();
 
-    public BoxedPrimitiveTestApiTest(JaxbProvider jaxbProvider) {
-        this.testApi = ToXmlEncoderHelper.create(BoxedPrimitivesTestApi.class, writer, jaxbProvider);
+    public BoxedPrimitiveTestApiTest() {
+        this.testApi = ToXmlEncoderHelper.create(BoxedPrimitivesTestApi.class, writer);
     }
 
     private String getLine(int lineNumber) {

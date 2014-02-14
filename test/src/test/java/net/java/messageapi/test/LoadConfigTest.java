@@ -2,16 +2,12 @@ package net.java.messageapi.test;
 
 import static org.mockito.Mockito.*;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import net.java.messageapi.adapter.*;
-import net.sf.twip.TwiP;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(TwiP.class)
 public class LoadConfigTest extends AbstractJmsSenderFactoryTest {
 
     private String getMessagePayload() throws JMSException {
