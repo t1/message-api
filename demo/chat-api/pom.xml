@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.java.messageapi</groupId>
 		<artifactId>demo</artifactId>
-		<version>2.0a22</version>
+		<version>2.0a23-SNAPSHOT</version>
 	</parent>
 
 	<groupId>net.java.messageapi.demo</groupId>
