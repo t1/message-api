@@ -3,12 +3,15 @@ package jmskata.send;
 import javax.annotation.Resource;
 import javax.jms.*;
 
-public class CustomerService {
+import jmskata.messaging.CustomerService;
+
+public class CustomerServiceSender implements CustomerService {
     @Resource(mappedName = "java:/ConnectionFactory")
     private ConnectionFactory connectionFactory;
     @Resource(mappedName = "java:/jmskata.messaging.CustomerService")
     private Destination destination;
 
+    @Override
     public void createCustomer(String first, String last) {
         Connection connection = null;
 
@@ -36,6 +39,7 @@ public class CustomerService {
         }
     }
 
+    @Override
     public void deleteCustomer(String id) {
         Connection connection = null;
 

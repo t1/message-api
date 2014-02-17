@@ -7,16 +7,18 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+import jmskata.messaging.CustomerService;
+
 @WebServlet("/sender")
 public class SenderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private CustomerServiceSender customerService;
+    private CustomerService customerService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        reply(response, "create/delete customer (1)", "" //
+        reply(response, "create/delete customer (2)", "" //
                 + "    <hr/>\n"//
                 + "    <h3>Please enter the name of the customer to be created</h3>\n"
                 + "    <form method=\"post\" action=\"sender\"><p/>\n"
