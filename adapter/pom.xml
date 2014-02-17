@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>net.java.messageapi</groupId>
-		<artifactId>root-container</artifactId>
+		<artifactId>parent</artifactId>
 		<version>2.0a22-SNAPSHOT</version>
 	</parent>
 
@@ -30,22 +31,27 @@
 									<include>net.java.messageapi:adapter</include>
 									<include>net.java.messageapi:annotations</include>
 									<include>org.javassist:javassist</include>
-									<include>joda-time:joda-time</include>
 								</includes>
 							</artifactSet>
-							<filters>
-								<filter>
-									<artifact>joda-time:joda-time</artifact>
+							<relocations>
+								<relocation>
+									<pattern>javassist</pattern>
+									<shadedPattern>net.java.messageapi.shaded.javassist</shadedPattern>
 									<excludes>
-										<exclude>META-INF/LICENSE.txt</exclude>
-										<exclude>META-INF/NOTICE.txt</exclude>
 										<exclude>META-INF/maven/**</exclude>
+										<!-- causes ClassNotFoundException: com.sun.jdi.request.EventRequest -->
+										<exclude>javassist/util/HotSwapper.class</exclude>
+										<exclude>javassist/util/HotSwapper$1.class</exclude>
 									</excludes>
-								</filter>
+								</relocation>
+							</relocations>
+							<filters>
 								<filter>
 									<artifact>org.javassist:javassist</artifact>
 									<excludes>
 										<exclude>META-INF/maven/**</exclude>
+										<!-- duplicate the relocation excludes, but doesn't work without :( -->
+										<exclude>javassist/util/**</exclude>
 									</excludes>
 								</filter>
 							</filters>
@@ -61,37 +67,35 @@
 			<groupId>net.java.messageapi</groupId>
 			<artifactId>annotations</artifactId>
 			<version>${project.version}</version>
+			<optional>true</optional><!-- will be shaded -->
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.18.1-GA</version>
+			<optional>true</optional><!-- will be shaded -->
 		</dependency>
 
+
 		<dependency>
-			<groupId>org.jboss.spec</groupId>
-			<artifactId>jboss-javaee-6.0</artifactId>
-			<version>3.0.2.Final</version>
-			<type>pom</type>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
 			<scope>provided</scope>
-			<!-- somebody broke xalan as of 2012-12-17 -->
-			<exclusions>
-				<exclusion>
-					<artifactId>xalan</artifactId>
-					<groupId>xalan</groupId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.18.1-GA</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.3</version>
 		</dependency>
 
 		<dependency>

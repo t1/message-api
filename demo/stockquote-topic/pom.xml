@@ -1,9 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>net.java.messageapi</groupId>
+		<artifactId>demo</artifactId>
+		<version>2.0a22-SNAPSHOT</version>
+	</parent>
+
 	<groupId>net.java.messageapi.demo</groupId>
 	<artifactId>stockquote-topic</artifactId>
-	<version>2.0a22-SNAPSHOT</version>
 	<name>Stock quote dynamic topics example</name>
 	<packaging>war</packaging>
 	<description>A MessageApi example sending messages to a dynamic topic, i.e. one topic per symbol</description>
@@ -53,43 +58,38 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.6</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>net.java.messageapi</groupId>
 			<artifactId>adapter</artifactId>
-			<version>2.0a22-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.spec</groupId>
-			<artifactId>jboss-javaee-6.0</artifactId>
-			<version>3.0.2.Final</version>
-			<type>pom</type>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
 			<scope>provided</scope>
-			<!-- somebody broke xalan as of 2012-12-17 -->
-			<exclusions>
-				<exclusion>
-					<artifactId>xalan</artifactId>
-					<groupId>xalan</groupId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_1.1_spec</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
