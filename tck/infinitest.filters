@@ -1,0 +1,2 @@
+# don't run integration tests from infinitest
+.*IT
