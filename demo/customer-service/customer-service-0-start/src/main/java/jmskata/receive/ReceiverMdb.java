@@ -15,14 +15,18 @@ public class ReceiverMdb implements MessageListener {
                 String first = msg.getString("first");
                 String last = msg.getString("last");
 
+                System.out.println("customer service (0)");
                 System.out.println("create customer:");
                 System.out.println("first: " + first);
                 System.out.println("last: " + last);
+                System.out.println();
             } else if ("DELETE".equals(action)) {
                 String id = msg.getString("id");
 
+                System.out.println("customer service (0)");
                 System.out.println("delete customer:");
                 System.out.println("id: " + id);
+                System.out.println();
             } else {
                 System.out.println("error: unknown action: " + action);
             }

@@ -72,9 +72,6 @@ public class JmsMappingAdapterTest {
             + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
             + "<test-container>\n" //
             + "    <mapping methodName=\"method\" upperCase=\"true\">\n"//
-            + "        <mapField from=\"s2\" to=\"B\">\n"//
-            + "            <jodaInstantConverter/>\n"//
-            + "        </mapField>\n"//
             + "        <mapField from=\"s1\" to=\"A\"/>\n"//
             + "        <mapField from=\"s5\" to=\"E\">\n"//
             + "            <stringToBooleanConverter true=\"yes\" false=\"no\"/>\n"//
@@ -84,12 +81,6 @@ public class JmsMappingAdapterTest {
             + "            <default>\n"//
             + "                <simpleType>FFF</simpleType>\n"//
             + "            </default>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField from=\"s3\" to=\"C\">\n"//
-            + "            <jodaLocalDateConverter/>\n"//
-            + "        </mapField>\n"//
-            + "        <mapField from=\"s4\" to=\"D\">\n"//
-            + "            <jodaLocalDateConverter pattern=\"yyyy-MM-dd\"/>\n"//
             + "        </mapField>\n"//
             + "        <mapOperation from=\"m1\">o1</mapOperation>\n"//
             + "        <mapOperation from=\"m2\">o2</mapOperation>\n"//
@@ -103,9 +94,6 @@ public class JmsMappingAdapterTest {
                 .mapOperation("m1", "o1") //
                 .mapOperation("m2", "o2") //
                 .mapField("s1", FieldMapping.map("A")) //
-                .mapField("s2", FieldMapping.map("B", new JodaInstantConverter())) //
-                .mapField("s3", FieldMapping.map("C", new JodaLocalDateConverter())) //
-                .mapField("s4", FieldMapping.map("D", new JodaLocalDateConverter("yyyy-MM-dd"))) //
                 .mapField("s5", FieldMapping.map("E", new StringToBooleanConverter("yes", "no"))) //
                 .mapField("s6", FieldMapping.mapWithDefault("F", new SimpleTypeConverter(), DEFAULT)) //
                 .upperCaseFields() //
