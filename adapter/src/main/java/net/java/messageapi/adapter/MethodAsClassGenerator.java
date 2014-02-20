@@ -13,12 +13,17 @@ import net.java.messageapi.reflection.*;
 
 import org.slf4j.*;
 
-/**
- * TODO some of the logic in here is duplicated in the annotation processor; it's not going to change much, so that's
- * not a huge deal, but separating the concern of what has to go into the pojo, from the concern of how to put that into
- * source resp. bytecode, would make everything easier to understand.
- */
 public class MethodAsClassGenerator {
+    private static final Map<Method, Class<?>> CACHE = new HashMap<Method, Class<?>>();
+
+    public static Class<?> of(Method method) {
+        Class<?> type = CACHE.get(method);
+        if (type == null) {
+            type = new MethodAsClassGenerator(method).get();
+            CACHE.put(method, type);
+        }
+        return type;
+    }
 
     private final Logger log = LoggerFactory.getLogger(MethodAsClassGenerator.class);
 
@@ -30,7 +35,7 @@ public class MethodAsClassGenerator {
     private final List<String> xmlTypePropOrder = new ArrayList<String>();
     private final List<String> totalPropOrder = new ArrayList<String>();
 
-    public MethodAsClassGenerator(Method method) {
+    MethodAsClassGenerator(Method method) {
         this.classPool = getClassPool(method);
         this.reflectionAdapter = ReflectionAdapter.of(method);
         this.parameters = Parameter.allOf(method);

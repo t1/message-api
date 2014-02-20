@@ -52,9 +52,10 @@ public class SimpleIT {
     public void shouldSendSimpleMessage() throws InterruptedException {
         List<String> uuids = new ArrayList<String>();
         for (int i = 0; i < MESSAGE_COUNT; i++) {
-            String uuid = UUID.randomUUID().toString();
+            String uuid = "message-" + i;
             uuids.add(uuid);
             sender.execute(uuid);
+            Thread.sleep(500);
         }
 
         System.out.println("-------------------------------- sleep " + SLEEP);

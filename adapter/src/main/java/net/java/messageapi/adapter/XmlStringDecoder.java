@@ -46,7 +46,7 @@ public class XmlStringDecoder<T> {
     protected JAXBContext getContext(Class<T> api, JaxbProvider jaxbProvider) {
         List<Class<?>> classes = new ArrayList<Class<?>>();
         for (Method method : api.getMethods()) {
-            Class<?> type = new MethodAsClassGenerator(method).get();
+            Class<?> type = MethodAsClassGenerator.of(method);
             classes.add(type);
         }
         Class<?>[] classesToBeBound = classes.toArray(new Class[classes.size()]);

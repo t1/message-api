@@ -8,7 +8,7 @@ import net.java.messageapi.adapter.MessageDecoder;
 
 @MessageDriven(messageListenerInterface = MessageListener.class, //
 activationConfig = { //
-@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/test" // "jmskata.messaging.CustomerService"
+@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/test" // "net.java.messageapi.tck.simple.SimpleApi"
 ) })
 public class SimpleMDB extends MessageDecoder<SimpleApi> implements SimpleApi {
     @Inject

@@ -18,7 +18,7 @@ public class MessageCallFactory<T> {
 
     @SuppressWarnings("unchecked")
     private Class<T> getType() {
-        return (Class<T>) new MethodAsClassGenerator(method).get();
+        return (Class<T>) MethodAsClassGenerator.of(method);
     }
 
     public T apply(Object[] args) {
