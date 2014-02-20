@@ -6,7 +6,7 @@ public class SimpleSender {
     @Inject
     private SimpleApi customerService;
 
-    public void execute() {
-        customerService.simpleMethod("simpleValue");
+    public void execute(String string) {
+        customerService.simpleMethod(string);
     }
 }
