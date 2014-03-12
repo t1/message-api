@@ -4,40 +4,28 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
-import org.slf4j.*;
+import net.java.messageapi.JmsName;
 
 /**
- * The Java reflection api regards method arguments as second class citizens: They are not represented as objects like
- * Class, Method, Package, etc. are. They are only accessible through helper methods. This class tries to fill that gap
- * as good as it goes.
- * 
- * Note that the parameter name is not accessible through the normal reflection apis. It is stored in the debug infos,
- * though, so we use javassist to read it. If your code is not compiled with debug options, if the method is abstract
- * (including interfaces), or if javassist is not available, we'll fall back to the generic name <code>arg0</code> etc.
+ * The Java reflection api (before Java 8) regards method arguments as second class citizens: They are not represented
+ * as objects like Class, Method, Package, etc. are; they are only accessible through helper methods.<br/>
+ * This class tries to fill that gap as good as it goes, while the parameter <i>name</i> is not accessible through the
+ * normal reflection apis. For the parameter name, this class tries the following:
+ * <ol>
+ * <li>If a parameter is annotated as {@link JmsName}, that value is used.</li>
+ * <li>If the name is stored in the debug infos, we use javassist to read it. This only works, if your code is compiled
+ * with debug options and the method is not abstract (which includes interfaces)</li>
+ * <li>Otherwise it falls back to the generic name <code>arg0</code> etc.</li>
+ * </ol>
  */
 public class Parameter {
-    private static final Logger log = LoggerFactory.getLogger(Parameter.class);
-
     private static final ParameterNameSupplier PARAMETER_NAME_SUPPLIER = parameterNameSupplierStack();
 
     private static ParameterNameSupplier parameterNameSupplierStack() {
         ParameterNameSupplier stack = new FallbackParameterNameSupplier();
-        if (javassistAvailable())
-            stack = new DebugInfoParameterNameSupplier(stack);
-        stack = new ParameterMapNameSupplier(stack);
+        stack = new DebugInfoParameterNameSupplier(stack);
         stack = new JmsNameSupplier(stack);
         return stack;
-    }
-
-    private static boolean javassistAvailable() {
-        try {
-            Class.forName("javassist.ClassPool");
-        } catch (ClassNotFoundException e) {
-            log.info("javassist is not available");
-            return false;
-        }
-        log.info("javassist is available");
-        return true;
     }
 
     public static List<Parameter> allOf(Method method) {

@@ -46,7 +46,7 @@ public class MethodAsClassGenerator {
     private ClassPool getClassPool(Method method) {
         ClassPool pool = new ClassPool(true);
         ClassLoader classLoader = method.getDeclaringClass().getClassLoader();
-        log.info("generate class for {} in {}", method, classLoader);
+        log.debug("generate class for {} in {}", method, classLoader);
         pool.insertClassPath(new LoaderClassPath(classLoader));
         return pool;
     }
@@ -79,6 +79,7 @@ public class MethodAsClassGenerator {
     }
 
     private void generate(String className) throws Exception {
+        log.info("generate: {}", className);
         this.ctClass = classPool.makeClass(className);
         ctClass.getClassFile().setVersionToJava5();
 
@@ -86,6 +87,8 @@ public class MethodAsClassGenerator {
         addConstructors();
         addClassAnnotations();
     }
+
+    // TODO generate toString, hashCode and equals
 
     private void addClassAnnotations() {
         CtClassAnnotation xmlRootElementAnnotation = new CtClassAnnotation(ctClass, XmlRootElement.class);
@@ -138,7 +141,7 @@ public class MethodAsClassGenerator {
 
     private void addProperties() throws Exception {
         for (Parameter parameter : parameters) {
-            Optional optional = parameter.getAnnotation(Optional.class);
+            log.debug("    generate property for parameter: {}", parameter);
             CtField field = addProperty(parameter);
 
             if (parameter.isAnnotationPresent(JmsProperty.class)) {
@@ -146,6 +149,7 @@ public class MethodAsClassGenerator {
                 field.setModifiers(field.getModifiers() | Modifier.TRANSIENT);
             } else {
                 CtFieldAnnotation xmlElement = new CtFieldAnnotation(field, XmlElement.class);
+                Optional optional = parameter.getAnnotation(Optional.class);
                 xmlElement.addMemberValue("required", (optional == null));
                 xmlElement.set();
                 xmlTypePropOrder.add(field.getName());
@@ -159,10 +163,20 @@ public class MethodAsClassGenerator {
         CtField field = new CtField(type, parameter.getName(), ctClass);
         ctClass.addField(field);
 
-        CtMethod getter = CtNewMethod.getter("getArg" + parameter.getIndex(), field);
+        CtMethod getter = CtNewMethod.getter(getterName(parameter), field);
         ctClass.addMethod(getter);
 
         return field;
+    }
+
+    private String getterName(Parameter parameter) {
+        StringBuilder out = new StringBuilder();
+        out.append("get");
+        String name = parameter.getName();
+        out.append(Character.toUpperCase(name.charAt(0)));
+        if (name.length() > 1)
+            out.append(name.substring(1));
+        return out.toString();
     }
 
     public Class<?> get() {

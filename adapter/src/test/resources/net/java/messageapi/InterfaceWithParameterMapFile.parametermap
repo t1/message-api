@@ -1,8 +1,0 @@
-methodWithNoArgs()
-methodWithOneArg(java.lang.String stringArg)
-methodWithTwoArgs(java.lang.String stringArg, java.lang.Integer integerArg)
-methodWithThreeArgs(java.lang.String stringArg, java.lang.Integer integerArg, boolean booleanArg)
-ambiguousMethodWithOneArg(java.lang.String stringArg)
-ambiguousMethodWithOneArg(java.lang.Integer integerArg)
-methodWithOneGenericArg(java.util.List<String> listArg)
-methodWithOneNestedGenericArg(java.util.Map<java.lang.String, java.util.List<java.lang.String>> listArg)

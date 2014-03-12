@@ -5,5 +5,5 @@ import net.java.messageapi.*;
 @MessageApi
 @DestinationName("queue/test")
 public interface SimpleApi {
-    public void simpleMethod(String simpleArg);
+    public void simpleMethod(@JmsName("simpleArg") String simpleArg);
 }
