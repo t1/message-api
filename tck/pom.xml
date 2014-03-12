@@ -10,6 +10,10 @@
 	<artifactId>tck</artifactId>
 	<name>Test Kit</name>
 
+	<properties>
+		<arquillian.version>1.1.2.Final</arquillian.version>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -26,9 +30,11 @@
 				</executions>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<systemPropertyVariables>
+					<systemProperties>
+						<!-- <systemPropertyVariables> -->
 						<arquillian.launch>${arquillian.launch}</arquillian.launch>
-					</systemPropertyVariables>
+						<!-- </systemPropertyVariables> -->
+					</systemProperties>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -106,16 +112,11 @@
 	<profiles>
 		<!-- ========================================================================== -->
 		<profile>
-			<id>arquillian-jbossas7-managed</id>
-
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<id>arquillian-jboss7-managed</id>
 
 			<properties>
 				<jboss.version>7.1.1.Final</jboss.version>
-				<arquillian.version>1.1.2.Final</arquillian.version>
-				<arquillian.launch>jbossas7-managed</arquillian.launch>
+				<arquillian.launch>jboss7-managed</arquillian.launch>
 			</properties>
 
 			<build>
@@ -171,11 +172,11 @@
 
 		<!-- ========================================================================== -->
 		<profile>
-			<id>arquillian-jbossas-remote</id>
+			<id>arquillian-jboss7-remote</id>
 
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
+			<properties>
+				<arquillian.launch>jboss7-remote</arquillian.launch>
+			</properties>
 
 			<dependencies>
 				<dependency>
@@ -201,12 +202,12 @@
 
 		<!-- ========================================================================== -->
 		<profile>
-			<id>arquillian-jbossas8-managed</id>
+			<id>arquillian-jboss8-managed</id>
 
 			<properties>
 				<jboss.version>8.0.0.Final</jboss.version>
 				<arquillian.version>1.1.2.Final-wildfly-1</arquillian.version>
-				<arquillian.launch>jbossas8-managed</arquillian.launch>
+				<arquillian.launch>jboss8-managed</arquillian.launch>
 			</properties>
 
 			<build>
@@ -269,6 +270,11 @@
 		<!-- ========================================================================== -->
 		<profile>
 			<id>arquillian-glassfish-embedded</id>
+
+			<properties>
+				<arquillian.launch>glassfish-embedded</arquillian.launch>
+			</properties>
+
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
@@ -288,6 +294,11 @@
 		<!-- ========================================================================== -->
 		<profile>
 			<id>arquillian-glassfish-remote</id>
+
+			<properties>
+				<arquillian.launch>glassfish-remote</arquillian.launch>
+			</properties>
+
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.spec</groupId>
@@ -311,5 +322,49 @@
 			</dependencies>
 		</profile>
 		<!-- ========================================================================== -->
+
+		<profile>
+			<id>arquillian-tomee-embedded</id>
+
+			<properties>
+				<arquillian.launch>tomee-embedded</arquillian.launch>
+			</properties>
+
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.openejb</groupId>
+					<artifactId>apache-tomee</artifactId>
+					<version>1.5.1</version>
+					<classifier>plus</classifier>
+					<type>zip</type>
+					<exclusions>
+						<exclusion>
+							<groupId>commons-logging</groupId>
+							<artifactId>commons-logging</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.apache.commons</groupId>
+							<artifactId>commons-logging</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.openejb</groupId>
+					<artifactId>arquillian-tomee-embedded</artifactId>
+					<version>1.5.1</version>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>commons-logging</groupId>
+							<artifactId>commons-logging</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.apache.commons</groupId>
+							<artifactId>commons-logging</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 </project>
