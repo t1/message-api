@@ -62,14 +62,14 @@ public class MappingBuilder {
 
     public MappingBuilder mapField(String property, FieldMapping<?> attribute) {
         if (fieldMap == null)
-            fieldMap = new HashMap<String, FieldMapping<?>>();
+            fieldMap = new LinkedHashMap<String, FieldMapping<?>>();
         fieldMap.put(property, attribute);
         return this;
     }
 
     public MappingBuilder mapOperation(String method, String operation) {
         if (opMap == null)
-            opMap = new HashMap<String, String>();
+            opMap = new LinkedHashMap<String, String>();
         opMap.put(method, operation);
         return this;
     }
