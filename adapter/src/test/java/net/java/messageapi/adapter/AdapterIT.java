@@ -24,7 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class AdapterIT {
 
     public interface MessageApiInterface {
-        public void method(String foo, @JmsProperty @Optional Integer bar);
+        public void method(String foo, @JmsProperty @JmsOptional Integer bar);
     }
 
     public static class MockContextFactory implements InitialContextFactory {

@@ -32,7 +32,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyString {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty String bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty String bar);
     }
 
     @Mock
@@ -52,7 +52,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyBoolean {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Boolean bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Boolean bar);
     }
 
     @Mock
@@ -72,7 +72,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveBoolean {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty boolean bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty boolean bar);
     }
 
     @Mock
@@ -92,7 +92,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyByte {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Byte bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Byte bar);
     }
 
     @Mock
@@ -112,7 +112,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveByte {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty byte bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty byte bar);
     }
 
     @Mock
@@ -132,7 +132,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyShort {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Short bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Short bar);
     }
 
     @Mock
@@ -152,7 +152,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveShort {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty short bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty short bar);
     }
 
     @Mock
@@ -172,7 +172,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyInteger {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Integer bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Integer bar);
     }
 
     @Mock
@@ -192,7 +192,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyInt {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty int bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty int bar);
     }
 
     @Mock
@@ -212,7 +212,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyLong {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Long bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Long bar);
     }
 
     @Mock
@@ -232,7 +232,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveLong {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty long bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty long bar);
     }
 
     @Mock
@@ -252,7 +252,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyFloat {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Float bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Float bar);
     }
 
     @Mock
@@ -272,7 +272,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveFloat {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty float bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty float bar);
     }
 
     @Mock
@@ -292,7 +292,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyDouble {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Double bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Double bar);
     }
 
     @Mock
@@ -312,7 +312,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyPrimitiveDouble {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty double bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty double bar);
     }
 
     @Mock
@@ -332,7 +332,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyList {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty List<String> bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty List<String> bar);
     }
 
     @Mock
@@ -358,7 +358,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyArray {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty String[] bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty String[] bar);
     }
 
     @Mock
@@ -384,7 +384,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlySet {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Set<String> bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Set<String> bar);
     }
 
     @Mock
@@ -411,7 +411,7 @@ public class XmlMessageDecoderTest {
     }
 
     public interface TestInterfaceHeaderOnlyMap {
-        public void testMethodHeaderOnly(@Optional String foo, @JmsProperty Map<String, String> bar);
+        public void testMethodHeaderOnly(@JmsOptional String foo, @JmsProperty Map<String, String> bar);
     }
 
     @Mock

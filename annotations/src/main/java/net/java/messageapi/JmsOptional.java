@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Documented
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface Optional {
+public @interface JmsOptional {
     // empty
 }

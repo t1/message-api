@@ -9,7 +9,7 @@ import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.*;
 
 import net.java.messageapi.JmsProperty;
-import net.java.messageapi.Optional;
+import net.java.messageapi.JmsOptional;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import org.junit.Test;
 public class MethodAsClassGeneratorTwoArgsTest {
 
     public interface TestInterfaceTwo {
-        public void testMethodTwo(String foo, @JmsProperty @Optional Integer bar);
+        public void testMethodTwo(String foo, @JmsProperty @JmsOptional Integer bar);
     }
 
     private static Class<?> generated;

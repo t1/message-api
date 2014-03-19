@@ -149,7 +149,7 @@ public class MethodAsClassGenerator {
                 field.setModifiers(field.getModifiers() | Modifier.TRANSIENT);
             } else {
                 CtFieldAnnotation xmlElement = new CtFieldAnnotation(field, XmlElement.class);
-                Optional optional = parameter.getAnnotation(Optional.class);
+                JmsOptional optional = parameter.getAnnotation(JmsOptional.class);
                 xmlElement.addMemberValue("required", (optional == null));
                 xmlElement.set();
                 xmlTypePropOrder.add(field.getName());
