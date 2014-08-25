@@ -1,4 +1,4 @@
-### MessageApi ###
+# MessageApi [ ![Download](https://api.bintray.com/packages/t1/javaee-helpers/message-api/images/download.png) ](https://bintray.com/t1/javaee-helpers/message-api/_latestVersion) [![Dependency Status](https://www.versioneye.com/user/projects/53fb9c49e09da3d6e200066b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/53fb9c49e09da3d6e200066b)
 
 ![image](./www/1and1.jpg)
 
