@@ -280,7 +280,7 @@
 			<dependency>
 				<groupId>org.jboss.spec</groupId>
 				<artifactId>jboss-javaee-6.0</artifactId>
-				<version>3.0.2.Final</version>
+				<version>3.0.3.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 				<!-- somebody broke xalan as of 2012-12-17 -->
@@ -294,7 +294,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.7</version>
+				<version>1.7.9</version>
 				<scope>provided</scope>
 			</dependency>
 
