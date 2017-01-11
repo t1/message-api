@@ -10,3 +10,15 @@ release.properties
 build
 
 test/.forge_settings
+
+.idea/
+parent.iml
+adapter/adapter.iml
+annotations/annotations.iml
+demo/chat-api/chat-api.iml
+demo/chat-receive/chat-receive.iml
+demo/chat-send/chat-send.iml
+demo/demo.iml
+demo/stockquote-simple/stockquote-simple.iml
+demo/stockquote-topic/stockquote-topic.iml
+tck/tck.iml
