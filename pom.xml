@@ -49,7 +49,7 @@
 		<repository>
 			<id>bintray-t1-javaee-helpers</id>
 			<name>t1-javaee-helpers-message-api</name>
-			<url>https://api.bintray.com/maven/t1/javaee-helpers/message-api</url>
+			<url>https://api.bintray.com/maven/t1/javaee-helpers/message-api/;publish=1</url>
 		</repository>
 	</distributionManagement>
 
