@@ -1,4 +1,12 @@
-# MessageApi [ ![Download](https://api.bintray.com/packages/t1/javaee-helpers/message-api/images/download.png) ](https://bintray.com/t1/javaee-helpers/message-api/_latestVersion)
+# MessageApi
+
+# Status and Future
+
+The MessageApi is already reality: Version 1.0 is in production use internally at 1&1 since August 2010; by November 2010 we have sent or received over 250.000 messages. The work required to release it open source on java.net resulted in version 1.1 released in December 2010.
+
+The project has been quite dormant for the past years, as I'm not using a lot of JMS any more, and there have been no feature requests.
+
+## About
 
 [![Join the chat at https://gitter.im/t1/message-api](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/t1/message-api?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -8,7 +16,7 @@ We want to evolve it into a standard in some way (in some fits of megalomania I 
 
 Issue 6.2011 of the (German) Java Magazin contained my article on this subject. I've translated it into English to share it with the broader community. You can find it [http://java.net/projects/messageapi/downloads/download/MessageAPI.pdf here].
 
-# Motivation
+## Motivation
 
 Business code should concentrate on the message that is to be sent or what it has to do when a message is received. What technology is used, where the message is going to or coming from, how the message is transformed, etc. has to be provided by a configurable adapter layer and injected into the business code.
 
@@ -19,7 +27,7 @@ Moving from JMS 1.1 to the MessageApi means:
 * Your calls are type-safe.
 * You messages are versioned, i.e. they can evolve.
 
-# Solution
+## Solution
 
 The idea is actually quite simple: You add the @MessageApi annotation to an interface that has only methods that return void and don't declare any exceptions - remember: they are going the be sent asynchronously. An annotation processor converts all methods in that interface into POJOs, e.g. it transforms a method <tt>public void createCustomer(String firstName, String lastName)</tt> into a <tt>CreateCustomer</tt> POJO with the two parameters as properties (i.e. it has a <tt>getFirstName()</tt> method). This POJO is immutable, contains hashCode, equals, and toString methods, and is properly annotated for JAXB. You then package the interface and the generated POJOs into an API jar to be called by clients and implemented by services.
 
@@ -30,7 +38,7 @@ On the receiver side, an MDB receives the message, unmarshalls the POJO, and cal
 We have chosen to send XML messages instead of binary, serialized java objects to ease the tooling in the messaging system. But in order to communicate with 'legacy' JMS participants, you can configure the MessageApi adapter to send or receive mapped messages instead, and how to exactly map the message fields.
 
 
-# How It Feels
+## How It Feels
 
 A simple business interface to create a customer could look like this:
 
@@ -63,12 +71,7 @@ public class MyCustomerService implements CustomerService {
 }
 ```
 
-# Status and Future
-
-The MessageApi is already reality: Version 1.0 is in production use internally at 1&1 since August 2010; by November 2010 we have sent or received over 250.000 messages. The work required to release it open source on java.net resulted in version 1.1 released in December 2010.
-
-
-# Getting Started
+## Getting Started
 
 You can profit or participate in a variety of ways:
 
@@ -81,7 +84,7 @@ You can profit or participate in a variety of ways:
 * Or you can even request membership to this project
 
 
-# More
+## More
 
 [Proposal for a new Chapter in the JMS spec](doc/PROPOSAL.mediawiki)
 
